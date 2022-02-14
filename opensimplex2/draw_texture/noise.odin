@@ -50,6 +50,10 @@ create_vertices :: proc(x, y, width, height: f32) -> Vertices {
 	return vertices
 }
 
+noise_at :: proc(seed: i64, x, y: int) -> f32 {
+	return (noise.noise_2d(seed, {f64(x) / 120, f64(y) / 120}) + 1.0) / 2.0
+}
+
 create_texture_noise :: proc(texture_id: u32, adjust_noise: Adjust_Noise) {
 
 	texture_data: [dynamic]u8
@@ -92,48 +96,48 @@ create_texture_noise :: proc(texture_id: u32, adjust_noise: Adjust_Noise) {
 			
 			if color < 20 {
 				// Water
-				noise_val = 0.75 + 0.25 * ((noise.noise_2d(seed, {f64(x) / 120, f64(y) / 120}) + 1.0) / 2.0)
+				noise_val = 0.75 + 0.25 * noise_at(seed, x, y)
 				r := u8(51 * noise_val)
 				g := u8(81 * noise_val)
 				b := u8(251 * noise_val)
-				append(&texture_data, r, g, b, u8(255))
+				append(&texture_data, r, g, b, 255)
 			} else if color < 30 {
 				// Sand
-				noise_val = 0.75 + 0.25 * ((noise.noise_2d(seed, {f64(x) / 120, f64(y) / 120}) + 1.0) / 2.0)
+				noise_val = 0.75 + 0.25 * noise_at(seed, x, y)
 				r := u8(251 * noise_val)
 				g := u8(244 * noise_val)
 				b := u8(189 * noise_val)
-				append(&texture_data, r, g, b, u8(255))
+				append(&texture_data, r, g, b, 255)
 			} else if color < 60 {
 				// Grass
-				noise_val = 0.75 + 0.25 * ((noise.noise_2d(seed, {f64(x) / 120, f64(y) / 120}) + 1.0) / 2.0)
+				noise_val = 0.75 + 0.25 * noise_at(seed, x, y)
 				r := u8(124 * noise_val)
 				g := u8(200 * noise_val)
 				b := u8(65  * noise_val)
-				append(&texture_data, r, g, b, u8(255))				
+				append(&texture_data, r, g, b, 255)				
 			} else if color < 90 {
 				// The forest
-				noise_val = 0.35 + 0.25 * ((noise.noise_2d(seed, {f64(x) / 120, f64(y) / 120}) + 1.0) / 2.0)
+				noise_val = 0.35 + 0.25 * noise_at(seed, x, y)
 				r := u8(124 * noise_val)
 				g := u8(150 * noise_val)
 				b := u8(65  * noise_val)
-				append(&texture_data, r, g, b, u8(255))				
+				append(&texture_data, r, g, b, 255)				
 			} else if color < 120 {
 				// The Mountain
-				noise_val = 0.70 + 0.2 * ((noise.noise_2d(seed, {f64(x) / 120, f64(y) / 120}) + 1.0) / 2.0)
+				noise_val = 0.70 + 0.2 * noise_at(seed, x, y)
 				noise_val = glsl.pow(noise_val, 2)
 				r := u8(143 * noise_val)
 				g := u8(143 * noise_val)
 				b := u8(143 * noise_val)
-				append(&texture_data, r, g, b, u8(255))				
+				append(&texture_data, r, g, b, 255)				
 			} else {
 				// The peak of the mountain
-				noise_val = 0.70 + 0.2 * ((noise.noise_2d(seed, {f64(x) / 120, f64(y) / 120}) + 1.0) / 2.0)
+				noise_val = 0.70 + 0.2 * noise_at(seed, x, y)
 				noise_val = glsl.pow(noise_val, 2)
 				r := u8(205 * noise_val)
 				g := u8(221 * noise_val)
 				b := u8(246 * noise_val)
-				append(&texture_data, r, g, b, u8(255))
+				append(&texture_data, r, g, b, 255)
 			}			
 
 		}
