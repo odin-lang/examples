@@ -6,31 +6,22 @@ import "core:encoding/json"
 import "core:os"
 
 main :: proc() {
-
 	// Load in your json file!
 	data, ok := os.read_entire_file_from_filename("game_settings.json")
-	defer if ok {
-		delete(data)
-	}
-
 	if !ok {
-		fmt.println("Failed to load the file!")
+		fmt.eprintln("Failed to load the file!")
 		return
 	}
-
-
+	defer delete(data) // Free the memory at the end
+	
 	// Parse the json file.
 	json_data, err := json.parse(data)
-	defer if err == json.Error.None {
-		// Free the memory at the end.
-		json.destroy_value(json_data)
-	}
-
-	if err != json.Error.None {
-		fmt.println("Failed to parse the json file.")
-		fmt.println("Error:", err)
+	if err != .None {
+		fmt.eprintln("Failed to parse the json file.")
+		fmt.eprintln("Error:", err)
 		return
 	}
+	defer json.destroy_value(json_data)
 
 	// Access the Root Level Object
 	root := json_data.(json.Object)
@@ -47,7 +38,7 @@ main :: proc() {
 	fmt.println("rendering_api:", root["rendering_api"])
 
 	// Store the value.
-	window_width: f64 = root["window_width"].(json.Float)
+	window_width := root["window_width"].(json.Float)
 	fmt.println("window_width:", window_width)
 
 	fmt.println("")
