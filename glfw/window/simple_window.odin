@@ -1,21 +1,18 @@
 package glfw_window
 
 import "core:fmt"
-import gl "vendor:OpenGL"
 import "vendor:glfw"
+import gl "vendor:OpenGL"
 
 WIDTH  	:: 1600
 HEIGHT 	:: 900
 TITLE 	:: "My Window!"
 
-/**
-	@note You might need to lower this to 3.3 depending on how old your graphics card is.
-**/
+// @note You might need to lower this to 3.3 depending on how old your graphics card is.
 GL_MAJOR_VERSION :: 4
 GL_MINOR_VERSION :: 5
 
 main :: proc() {
-
 	if !bool(glfw.Init()) {
 		fmt.println("GLFW has failed to load.")
 		return
@@ -37,7 +34,6 @@ main :: proc() {
 	gl.load_up_to(GL_MAJOR_VERSION, GL_MINOR_VERSION, glfw.gl_set_proc_address)
 
 	for !glfw.WindowShouldClose(window_handle) {
-	
 		// Process all incoming events like keyboard press, window resize, and etc.
 		glfw.PollEvents()
 
@@ -45,7 +41,5 @@ main :: proc() {
 		gl.Clear(gl.COLOR_BUFFER_BIT)
 
 		glfw.SwapBuffers(window_handle)
-	
 	}
-
 }
