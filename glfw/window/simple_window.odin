@@ -14,7 +14,7 @@ GL_MINOR_VERSION :: 5
 
 main :: proc() {
 	if !bool(glfw.Init()) {
-		fmt.println("GLFW has failed to load.")
+		fmt.eprintln("GLFW has failed to load.")
 		return
 	}
 
@@ -24,7 +24,7 @@ main :: proc() {
 	defer glfw.DestroyWindow(window_handle)
 
 	if window_handle == nil {
-		fmt.println("GLFW has failed to load the window.")
+		fmt.eprintln("GLFW has failed to load the window.")
 		return
 	}
 
