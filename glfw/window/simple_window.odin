@@ -6,7 +6,7 @@ import "vendor:glfw"
 
 WIDTH  	:: 1600
 HEIGHT 	:: 900
-TITLE 	:: cstring("My Window!")
+TITLE 	:: "My Window!"
 
 /**
 	@note You might need to lower this to 3.3 depending on how old your graphics card is.
