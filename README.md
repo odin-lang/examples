@@ -12,7 +12,8 @@ Assets and third-party libraries are provided under their own license. If in dou
 
 ## By Example
 
-* [001 - Hellope](https://github.com/odin-lang/examples/tree/master/by_example/hellope)
+1) [Hellope](https://github.com/odin-lang/examples/tree/master/by_example/hellope)
+2) [Command Line Arguments](https://github.com/odin-lang/examples/tree/master/by_example/os_args)
 
 ## Formats
 
