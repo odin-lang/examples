@@ -18,6 +18,7 @@ Assets and third-party libraries are provided under their own license. If in dou
 
 * [D3D11 with SDL](https://github.com/odin-lang/examples/blob/master/sdl2/d3d11)
 * [Metal with SDL](https://github.com/odin-lang/examples/tree/master/sdl2/metal)
+* [OpenGL with SDL](https://github.com/odin-lang/examples/tree/master/sdl2/opengl)
 * [GLFW](https://github.com/odin-lang/examples/tree/master/glfw/window)
 * [SDL with PNG loader using `core:image`](https://github.com/odin-lang/examples/tree/master/sdl2/hellope)
 * [Open Simplex 2](https://github.com/odin-lang/examples/tree/master/opensimplex2/draw_texture)
