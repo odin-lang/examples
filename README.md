@@ -27,7 +27,10 @@ Assets and third-party libraries are provided under their own license. If in dou
 * [GLFW (Simple Window)](https://github.com/odin-lang/examples/tree/master/glfw/window)
 * [SDL with PNG loader using `core:image`](https://github.com/odin-lang/examples/tree/master/sdl2/hellope)
 * [MicroUI with SDL](https://github.com/odin-lang/examples/tree/master/sdl2/microui)
-* [Open Simplex 2](https://github.com/odin-lang/examples/tree/master/opensimplex2/draw_texture)
+
+## Math
+
+* [Simplex Noise Generation](https://github.com/odin-lang/examples/tree/master/math/noise/draw_texture)
 
 ## Games
 
