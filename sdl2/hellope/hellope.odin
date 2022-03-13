@@ -32,7 +32,7 @@ WINDOW_X      := i32(400)
 WINDOW_Y      := i32(400)
 WINDOW_WIDTH  := i32(800)
 WINDOW_HEIGHT := i32(600)
-WINDOW_FLAGS  :: sdl2.WindowFlags{.SHOWN, }
+WINDOW_FLAGS  :: sdl2.WindowFlags{.SHOWN}
 
 /*
 	If `true`, center the window using the desktop extents of the primary adapter.
