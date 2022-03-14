@@ -2,6 +2,10 @@
 	Simple game about enemies chasing and shooting you in 2D space.
 
 	Original repo: https://github.com/wbogocki/Odin-Play
+
+	To play:
+		- Move with WSAD or arrow keys
+		- Jump with Shift + direction
 */
 
 package chase_in_space
