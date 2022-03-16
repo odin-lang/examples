@@ -11,12 +11,12 @@
 package chase_in_space
 
 import "core:fmt"
-import "core:math"
+import "core:math/linalg"
 import "vendor:sdl2"
 
 Game :: struct {
 	renderer: ^sdl2.Renderer,
-	keyboard: []b8,
+	keyboard: []u8,
 	time:     f64,
 	dt:       f64,
 	entities: [dynamic]Entity,
@@ -72,17 +72,14 @@ update_entity :: proc(entity: ^Entity, game: ^Game) {
 	switch entity.type {
 	case .PLAYER:
 		dir := [2]f32{0, 0}
-		if game.keyboard[sdl2.SCANCODE_UP] | game.keyboard[sdl2.SCANCODE_W] do dir.y -= 1
-		if game.keyboard[sdl2.SCANCODE_DOWN] | game.keyboard[sdl2.SCANCODE_S] do dir.y += 1
-		if game.keyboard[sdl2.SCANCODE_LEFT] | game.keyboard[sdl2.SCANCODE_A] do dir.x -= 1
-		if game.keyboard[sdl2.SCANCODE_RIGHT] | game.keyboard[sdl2.SCANCODE_D] do dir.x += 1
-		dis := math.sqrt(dir.x * dir.x + dir.y * dir.y)
-		if dis > 0 {
-			dir /= dis
-			entity.pos += dir * 0.2 * dt
-		}
+		if b8(game.keyboard[sdl2.SCANCODE_UP   ]) | b8(game.keyboard[sdl2.SCANCODE_W]) do dir.y -= 1
+		if b8(game.keyboard[sdl2.SCANCODE_DOWN ]) | b8(game.keyboard[sdl2.SCANCODE_S]) do dir.y += 1
+		if b8(game.keyboard[sdl2.SCANCODE_LEFT ]) | b8(game.keyboard[sdl2.SCANCODE_A]) do dir.x -= 1
+		if b8(game.keyboard[sdl2.SCANCODE_RIGHT]) | b8(game.keyboard[sdl2.SCANCODE_D]) do dir.x += 1
+		dir = linalg.normalize0(dir)
+		entity.pos += dir * 0.2 * dt
 		// Dash
-		if game.keyboard[sdl2.SCANCODE_LSHIFT] && entity.dash_counter == 0 && dir != 0 {
+		if b8(game.keyboard[sdl2.SCANCODE_LSHIFT]) && entity.dash_counter == 0 && dir != 0 {
 			entity.vel = dir * 5.0
 			entity.dash_counter += 150
 		} else {
@@ -98,16 +95,13 @@ update_entity :: proc(entity: ^Entity, game: ^Game) {
 		player := find_entity(.PLAYER, game)
 		if player == nil do return
 		dir := player.pos - entity.pos
-		dis := math.sqrt(dir.x * dir.x + dir.y * dir.y)
-		if dis > 0 {
-			dir /= dis
-			entity.pos += dir * 0.12 * dt
-		}
+		dir = linalg.normalize0(dir)
+		entity.pos += dir * 0.12 * dt
 		// Away from other enemies
 		for _, i in game.entities {
 			if game.entities[i].type == .ENEMY && entity != &game.entities[i] {
 				dir := entity.pos - game.entities[i].pos
-				dis := math.sqrt(dir.x * dir.x + dir.y * dir.y)
+				dis := linalg.length(dir)
 				if dis > 0 {
 					entity.pos += dir * (1. / (dis * dis)) * 0.1 * dt
 				}
@@ -182,10 +176,10 @@ main :: proc() {
 	}
 	defer delete(game.entities)
 
-	append(&game.entities, Entity{type = .PLAYER, pos = {50.0, 400.0}, hp = 10})
-	append(&game.entities, Entity{type = .ENEMY, pos = {50.0, 50.0}, hp = 1})
-	append(&game.entities, Entity{type = .ENEMY, pos = {100.0, 100.0}, hp = 1})
-	append(&game.entities, Entity{type = .ENEMY, pos = {200.0, 200.0}, hp = 1})
+	append(&game.entities, Entity{type = .PLAYER, pos = { 50.0, 400.0}, hp = 10})
+	append(&game.entities, Entity{type = .ENEMY , pos = { 50.0,  50.0}, hp =  1})
+	append(&game.entities, Entity{type = .ENEMY , pos = {100.0, 100.0}, hp =  1})
+	append(&game.entities, Entity{type = .ENEMY , pos = {200.0, 200.0}, hp =  1})
 
 	dt := 0.0
 
@@ -196,21 +190,25 @@ main :: proc() {
 			case .QUIT:
 				return
 			case .KEYDOWN:
-				if event.key.keysym.scancode == sdl2.SCANCODE_ESCAPE do return
+				if event.key.keysym.scancode == sdl2.SCANCODE_ESCAPE {
+					return
+				}
 			}
 		}
 
 		time := get_time()
 		dt += time - game.time
 
-		game.keyboard = transmute([]b8)sdl2.GetKeyboardStateAsSlice()
+		game.keyboard = sdl2.GetKeyboardStateAsSlice()
 		game.time = time
 
 		// Running on the same thread as rendering so in the end still limited by the rendering FPS.
 		for dt >= ticktime {
 			dt -= ticktime
 
-			for _, i in game.entities do update_entity(&game.entities[i], &game)
+			for _, i in game.entities {
+				update_entity(&game.entities[i], &game)
+			}
 
 			for i := 0; i < len(game.entities); {
 				if game.entities[i].hp <= 0 {
@@ -223,7 +221,9 @@ main :: proc() {
 
 		sdl2.SetRenderDrawColor(renderer, 0, 0, 0, 0)
 		sdl2.RenderClear(renderer)
-		for _, i in game.entities do render_entity(&game.entities[i], &game)
+		for _, i in game.entities {
+			render_entity(&game.entities[i], &game)
+		}
 		sdl2.RenderPresent(renderer)
 	}
 }
