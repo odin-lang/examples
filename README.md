@@ -13,9 +13,9 @@ Assets and third-party libraries are provided under their own license. If in dou
 ## By Example
 
 1) [Hellope](https://github.com/odin-lang/examples/tree/master/by_example/hellope)
-2) [Command Line Arguments](https://github.com/odin-lang/examples/tree/master/by_example/os_args)
-3) [Strings](https://github.com/odin-lang/examples/blob/master/by_example/strings/basic_string_example.odin)
-4) [Dynamic Arrays](https://github.com/odin-lang/examples/tree/master/dynamic_arrays)
+2) [Strings](https://github.com/odin-lang/examples/blob/master/by_example/strings/basic_string_example.odin)
+3) [Dynamic Arrays](https://github.com/odin-lang/examples/blob/master/by_example/dynamic_arrays/dynamic_arrays.odin)
+4) [Command Line Arguments](https://github.com/odin-lang/examples/tree/master/by_example/os_args)
 
 ## Formats
 
