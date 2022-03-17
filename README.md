@@ -35,3 +35,4 @@ Assets and third-party libraries are provided under their own license. If in dou
 ## Games
 
 * [Tetroid (Tetris-like Game) with Raylib](https://github.com/odin-lang/examples/tree/master/raylib/tetroid)
+* [Chase in Space with SDL2](https://github.com/odin-lang/examples/tree/master/sdl2/chase_in_space)
