@@ -6,10 +6,6 @@ The code examples are published in the hope they are found useful, and are in th
 
 Assets and third-party libraries are provided under their own license. If in doubt, check the `LICENSE*` and `COPYING*` file(s) in a particular directory for clarification.
 
-## Basics
-
-
-
 ## By Example
 
 1) [Hellope](https://github.com/odin-lang/examples/tree/master/by_example/hellope)
