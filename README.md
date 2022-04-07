@@ -34,3 +34,9 @@ Assets and third-party libraries are provided under their own license. If in dou
 
 * [Tetroid (Tetris-like Game) with Raylib](https://github.com/odin-lang/examples/tree/master/raylib/tetroid)
 * [Chase in Space with SDL2](https://github.com/odin-lang/examples/tree/master/sdl2/chase_in_space)
+
+## Learn Metal
+
+* [00-window](https://github.com/odin-lang/examples/tree/master/learn_metal/00-window)
+* [01-primitive](https://github.com/odin-lang/examples/tree/master/learn_metal/01-primitive)
+* [02-argbuffers](https://github.com/odin-lang/examples/tree/master/learn_metal/02-argbuffers)
