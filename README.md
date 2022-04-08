@@ -8,38 +8,39 @@ Assets and third-party libraries are provided under their own license. If in dou
 
 ## By Example
 
-1) [Hellope](https://github.com/odin-lang/examples/tree/master/by_example/hellope)
-2) [Strings](https://github.com/odin-lang/examples/blob/master/by_example/strings/basic_string_example.odin)
-3) [Dynamic Arrays](https://github.com/odin-lang/examples/blob/master/by_example/dynamic_arrays/dynamic_arrays.odin)
-4) [Command Line Arguments](https://github.com/odin-lang/examples/tree/master/by_example/os_args)
+1. [Hellope](by_example/hellope/)
+2. [Strings](by_example/strings/)
+3. [Dynamic Arrays](by_example/dynamic_arrays/)
+4. [Command Line Arguments](by_example/os_args/)
+5. [A guessing game](by_example/guessing_game/)
 
 ## Formats
 
-* [JSON](https://github.com/odin-lang/examples/tree/master/json/load_json)
+- [JSON](json/load_json/)
 
 ## Graphics
 
-* [D3D11 with SDL](https://github.com/odin-lang/examples/blob/master/sdl2/d3d11)
-* [Metal with SDL](https://github.com/odin-lang/examples/tree/master/sdl2/metal)
-* [OpenGL with SDL](https://github.com/odin-lang/examples/tree/master/sdl2/opengl)
-* [GLFW (Simple Window)](https://github.com/odin-lang/examples/tree/master/glfw/window)
-* [SDL with PNG loader using `core:image`](https://github.com/odin-lang/examples/tree/master/sdl2/hellope)
-* [MicroUI with SDL](https://github.com/odin-lang/examples/tree/master/sdl2/microui)
+- [D3D11 with SDL](sdl2/d3d11/)
+- [Metal with SDL](sdl2/metal/)
+- [OpenGL with SDL](sdl2/opengl/)
+- [GLFW (Simple Window)](glfw/window/)
+- [SDL with PNG loader using `core:image`](sdl2/hellope/)
+- [MicroUI with SDL](sdl2/microui/)
 
 ## Math
 
-* [Simplex Noise Generation](https://github.com/odin-lang/examples/tree/master/math/noise/draw_texture)
+- [Simplex Noise Generation](math/noise/draw_texture/)
 
 ## Games
 
-* [Tetroid (Tetris-like Game) with Raylib](https://github.com/odin-lang/examples/tree/master/raylib/tetroid)
-* [Chase in Space with SDL2](https://github.com/odin-lang/examples/tree/master/sdl2/chase_in_space)
+- [Tetroid (Tetris-like Game) with Raylib](raylib/tetroid/)
+- [Chase in Space with SDL2](sdl2/chase_in_space/)
 
 ## Learn Metal
 
-* [00-window](https://github.com/odin-lang/examples/tree/master/learn_metal/00-window)
-* [01-primitive](https://github.com/odin-lang/examples/tree/master/learn_metal/01-primitive)
-* [02-argbuffers](https://github.com/odin-lang/examples/tree/master/learn_metal/02-argbuffers)
-* [03-animation](https://github.com/odin-lang/examples/tree/master/learn_metal/03-animation)
-* [04-instancing](https://github.com/odin-lang/examples/tree/master/learn_metal/04-instancing)
-* [05-perspective](https://github.com/odin-lang/examples/tree/master/learn_metal/05-perspective)
+- [00-window](learn_metal/00-window/)
+- [01-primitive](learn_metal/01-primitive/)
+- [02-argbuffers](learn_metal/02-argbuffers/)
+- [03-animation](learn_metal/03-animation)
+- [04-instancing](learn_metal/04-instancing)
+- [05-perspective](learn_metal/05-perspective)
