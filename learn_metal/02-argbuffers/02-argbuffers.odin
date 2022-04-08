@@ -19,13 +19,13 @@ build_shaders :: proc(device: ^MTL.Device) -> (library: ^MTL.Library, pso: ^MTL.
 		half3 color;
 	};
 
-	struct VertexData {
+	struct Vertex_Data {
 		device packed_float3* positions [[id(0)]];
 		device packed_float3* colors    [[id(1)]];
 	};
 
-	v2f vertex vertex_main(device const VertexData* vertex_data [[buffer(0)]],
-	                       uint vertex_id                       [[vertex_id]]) {
+	v2f vertex vertex_main(device const Vertex_Data* vertex_data [[buffer(0)]],
+	                       uint vertex_id                        [[vertex_id]]) {
 		v2f o;
 		o.position = float4(vertex_data->positions[vertex_id], 1.0);
 		o.color = half3(vertex_data->colors[vertex_id]);
