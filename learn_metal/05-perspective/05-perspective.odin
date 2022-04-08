@@ -258,7 +258,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		render_encoder->setVertexBuffer(vertex_buffer,   0, 0)
 		render_encoder->setVertexBuffer(instance_buffer, 0, 1)
 		render_encoder->setVertexBuffer(camera_buffer,   0, 2)
-		render_encoder->drawIndexedPrimitivesWithInstanceCount(.Triangle, 6, .UInt16, index_buffer, 0, NUM_INSTANCES)
+		render_encoder->drawIndexedPrimitivesWithInstanceCount(.Triangle, 6*6, .UInt16, index_buffer, 0, NUM_INSTANCES)
 
 		render_encoder->endEncoding()
 
