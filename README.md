@@ -41,3 +41,6 @@ Assets and third-party libraries are provided under their own license. If in dou
 - [00-window](learn_metal/00-window/)
 - [01-primitive](learn_metal/01-primitive/)
 - [02-argbuffers](learn_metal/02-argbuffers/)
+- [03-animation](learn_metal/03-animation)
+- [04-instancing](learn_metal/04-instancing)
+

@@ -9,6 +9,11 @@ import SDL "vendor:sdl2"
 import "core:fmt"
 import "core:os"
 
+
+Frame_Data :: struct {
+	angle: f32,
+}
+
 build_shaders :: proc(device: ^MTL.Device) -> (library: ^MTL.Library, pso: ^MTL.RenderPipelineState, err: ^NS.Error) {
 	shader_src := `
 	#include <metal_stdlib>
@@ -24,10 +29,18 @@ build_shaders :: proc(device: ^MTL.Device) -> (library: ^MTL.Library, pso: ^MTL.
 		device packed_float3* colors    [[id(1)]];
 	};
 
+	struct Frame_Data {
+		float angle;
+	};
+
 	v2f vertex vertex_main(device const Vertex_Data* vertex_data [[buffer(0)]],
+	                       device const Frame_Data*  frame_data  [[buffer(1)]],
 	                       uint vertex_id                        [[vertex_id]]) {
+		float a = frame_data->angle;
+		float3x3 rotation_matrix = float3x3(sin(a), cos(a), 0.0, cos(a), -sin(a), 0.0, 0.0, 0.0, 1.0);
+		float3 position = float3(vertex_data->positions[vertex_id]);
 		v2f o;
-		o.position = float4(vertex_data->positions[vertex_id], 1.0);
+		o.position = float4(rotation_matrix * position, 1.0);
 		o.color = half3(vertex_data->colors[vertex_id]);
 		return o;
 	}
@@ -94,7 +107,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	SDL.Init({.VIDEO})
 	defer SDL.Quit()
 
-	window := SDL.CreateWindow("Metal in Odin - 02 argbuffers", 
+	window := SDL.CreateWindow("Metal in Odin - 03 animation", 
 		SDL.WINDOWPOS_CENTERED, SDL.WINDOWPOS_CENTERED, 
 		854, 480, 
 		{.ALLOW_HIGHDPI, .HIDDEN, .RESIZABLE},
@@ -131,6 +144,9 @@ metal_main :: proc() -> (err: ^NS.Error) {
 
 	vertex_positions_buffer, vertex_colors_buffer, arg_buffer := build_buffers(device, library)
 	defer arg_buffer->release()
+
+	frame_data_buffer := device->newBuffer(size_of(Frame_Data), {.StorageModeManaged})
+	defer frame_data_buffer->release()
 	
 	command_queue := device->newCommandQueue()
 	defer command_queue->release()
@@ -148,6 +164,12 @@ metal_main :: proc() -> (err: ^NS.Error) {
 			}
 		}
 
+		@static angle: f32
+		frame_data := (^Frame_Data)(frame_data_buffer->contentsPointer())
+		frame_data.angle = angle
+		angle += 0.01
+		frame_data_buffer->didModifyRange(NS.Range_Make(0, size_of(Frame_Data)))
+
 		drawable := swapchain->nextDrawable()
 		assert(drawable != nil)
 		defer drawable->release()
@@ -161,7 +183,6 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		color_attachment->setLoadAction(.Clear)
 		color_attachment->setStoreAction(.Store)
 		color_attachment->setTexture(drawable->texture())
-
 		
 		command_buffer := command_queue->commandBuffer()
 		defer command_buffer->release()
@@ -170,7 +191,8 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		defer render_encoder->release()
 
 		render_encoder->setRenderPipelineState(pso)
-		render_encoder->setVertexBuffer(arg_buffer, 0, 0)
+		render_encoder->setVertexBuffer(arg_buffer,        0, 0)
+		render_encoder->setVertexBuffer(frame_data_buffer, 0, 1)
 		render_encoder->useResource(vertex_positions_buffer, {.Read})
 		render_encoder->useResource(vertex_colors_buffer, {.Read})
 		render_encoder->drawPrimitives(.Triangle, 0, 3)

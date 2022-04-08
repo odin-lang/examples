@@ -8,6 +8,15 @@ import SDL "vendor:sdl2"
 
 import "core:fmt"
 import "core:os"
+import "core:math"
+
+
+Instance_Data :: struct #align 16 {
+	transform: matrix[4, 4]f32,
+	color:     [4]f32,
+}
+
+NUM_INSTANCES :: 32
 
 build_shaders :: proc(device: ^MTL.Device) -> (library: ^MTL.Library, pso: ^MTL.RenderPipelineState, err: ^NS.Error) {
 	shader_src := `
@@ -20,15 +29,22 @@ build_shaders :: proc(device: ^MTL.Device) -> (library: ^MTL.Library, pso: ^MTL.
 	};
 
 	struct Vertex_Data {
-		device packed_float3* positions [[id(0)]];
-		device packed_float3* colors    [[id(1)]];
+		packed_float3 position;
 	};
 
-	v2f vertex vertex_main(device const Vertex_Data* vertex_data [[buffer(0)]],
-	                       uint vertex_id                        [[vertex_id]]) {
+	struct Instance_Data {
+		float4x4 transform;
+		float4   color;
+	};
+
+	v2f vertex vertex_main(device const Vertex_Data*   vertex_data   [[buffer(0)]],
+	                       device const Instance_Data* instance_data [[buffer(1)]],
+	                       uint vertex_id                            [[vertex_id]],
+	                       uint instance_id                          [[instance_id]]) {
 		v2f o;
-		o.position = float4(vertex_data->positions[vertex_id], 1.0);
-		o.color = half3(vertex_data->colors[vertex_id]);
+		float4 pos = float4(vertex_data[vertex_id].position, 1.0);
+		o.position = instance_data[instance_id].transform * pos;
+		o.color = half3(instance_data[instance_id].color.rgb);
 		return o;
 	}
 
@@ -57,34 +73,22 @@ build_shaders :: proc(device: ^MTL.Device) -> (library: ^MTL.Library, pso: ^MTL.
 	return
 }
 
-build_buffers :: proc(device: ^MTL.Device, library: ^MTL.Library) -> (vertex_positions_buffer, vertex_colors_buffer, arg_buffer: ^MTL.Buffer) {
-	NUM_VERTICES :: 3
-	positions := [NUM_VERTICES][3]f32{
-		{-0.8,  0.8, 0.0},
-		{ 0.0, -0.8, 0.0},
-		{+0.8,  0.8, 0.0},
+build_buffers :: proc(device: ^MTL.Device) -> (vertex_buffer, index_buffer, instance_buffer: ^MTL.Buffer) {
+	s :: 0.5
+	positions := [][3]f32{
+		{-s, -s, +s},
+		{+s, -s, +s},
+		{+s, +s, +s},
+		{-s, +s, +s},
 	}
-	colors := [NUM_VERTICES][3]f32{
-		{1.0, 0.3, 0.2},
-		{0.8, 1.0, 0.0},
-		{0.8, 0.0, 1.0},
+	indices := []u16{
+		0, 1, 2,
+		2, 3, 0,
 	}
 
-	vertex_positions_buffer = device->newBufferWithSlice(positions[:], {.StorageModeManaged})
-	vertex_colors_buffer    = device->newBufferWithSlice(colors[:],    {.StorageModeManaged})
-
-	vertex_function := library->newFunctionWithName(NS.AT("vertex_main"))
-	defer vertex_function->release()
-
-	arg_encoder := vertex_function->newArgumentEncoder(0)
-	defer arg_encoder->release()
-
-	arg_buffer = device->newBuffer(arg_encoder->encodedLength(), {.StorageModeManaged})
-	arg_encoder->setArgumentBufferWithOffset(arg_buffer, 0)
-	arg_encoder->setBuffer(vertex_positions_buffer, 0, 0)
-	arg_encoder->setBuffer(vertex_colors_buffer,    0, 1)
-	arg_buffer->didModifyRange(NS.Range_Make(0, arg_buffer->length()))
-
+	vertex_buffer   = device->newBufferWithSlice(positions[:], {.StorageModeManaged})
+	index_buffer    = device->newBufferWithSlice(indices[:],   {.StorageModeManaged})
+	instance_buffer = device->newBuffer(NUM_INSTANCES*size_of(Instance_Data), {.StorageModeManaged})
 	return
 }
 
@@ -94,7 +98,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	SDL.Init({.VIDEO})
 	defer SDL.Quit()
 
-	window := SDL.CreateWindow("Metal in Odin - 02 argbuffers", 
+	window := SDL.CreateWindow("Metal in Odin - 04 instancing", 
 		SDL.WINDOWPOS_CENTERED, SDL.WINDOWPOS_CENTERED, 
 		854, 480, 
 		{.ALLOW_HIGHDPI, .HIDDEN, .RESIZABLE},
@@ -129,8 +133,10 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	defer library->release()
 	defer pso->release()
 
-	vertex_positions_buffer, vertex_colors_buffer, arg_buffer := build_buffers(device, library)
-	defer arg_buffer->release()
+	vertex_buffer, index_buffer, instance_buffer := build_buffers(device)
+	defer vertex_buffer->release()
+	defer index_buffer->release()
+	defer instance_buffer->release()
 	
 	command_queue := device->newCommandQueue()
 	defer command_queue->release()
@@ -148,6 +154,28 @@ metal_main :: proc() -> (err: ^NS.Error) {
 			}
 		}
 
+		{
+			@static angle: f32
+			angle += 0.01
+			instance_data := ([^]Instance_Data)(instance_buffer->contentsPointer())[:NUM_INSTANCES]
+			for instance, idx in &instance_data {
+				scl :: 0.1
+
+				i := f32(idx) / NUM_INSTANCES
+				xoff := (i*2 - 1) + (1.0/NUM_INSTANCES)
+				yoff := math.sin((i + angle) * math.TAU)
+				instance.transform = matrix[4, 4]f32{
+					scl * math.sin(angle),  scl * math.cos(angle), 0, xoff,
+					scl * math.cos(angle), -scl * math.sin(angle), 0, yoff,
+					                    0,                      0, 0,    0,
+					                    0,                      0, 0,    1,
+				}
+				instance.color = {i, 1-i, math.sin(math.TAU * i), 1}
+			}
+			sz := NS.UInteger(len(instance_data)*size_of(instance_data[0]))
+			instance_buffer->didModifyRange(NS.Range_Make(0, sz))
+		}
+
 		drawable := swapchain->nextDrawable()
 		assert(drawable != nil)
 		defer drawable->release()
@@ -161,7 +189,6 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		color_attachment->setLoadAction(.Clear)
 		color_attachment->setStoreAction(.Store)
 		color_attachment->setTexture(drawable->texture())
-
 		
 		command_buffer := command_queue->commandBuffer()
 		defer command_buffer->release()
@@ -170,10 +197,9 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		defer render_encoder->release()
 
 		render_encoder->setRenderPipelineState(pso)
-		render_encoder->setVertexBuffer(arg_buffer, 0, 0)
-		render_encoder->useResource(vertex_positions_buffer, {.Read})
-		render_encoder->useResource(vertex_colors_buffer, {.Read})
-		render_encoder->drawPrimitives(.Triangle, 0, 3)
+		render_encoder->setVertexBuffer(vertex_buffer,   0, 0)
+		render_encoder->setVertexBuffer(instance_buffer, 0, 1)
+		render_encoder->drawIndexedPrimitivesWithInstanceCount(.Triangle, 6, .UInt16, index_buffer, 0, NUM_INSTANCES)
 
 		render_encoder->endEncoding()
 
