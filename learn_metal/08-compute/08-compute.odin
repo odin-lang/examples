@@ -308,6 +308,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	defer camera_buffer->release()
 
 	depth_texture: ^MTL.Texture = nil
+	defer if depth_texture != nil do depth_texture->release()
 
 	compute_pso := build_compute_pipeline(device) or_return
 	defer compute_pso->release()
@@ -352,7 +353,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 
 			ix, iy, iz := 0, 0, 0
 
-			instance_data := ([^]Instance_Data)(instance_buffer->contentsPointer())[:NUM_INSTANCES]
+			instance_data := instance_buffer->contentsAsSlice([]Instance_Data)[:NUM_INSTANCES]
 			for instance, idx in &instance_data {
 				if ix == INSTANCE_WIDTH {
 					ix = 0
@@ -390,7 +391,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		}
 
 		{
-			camera_data := (^Camera_Data)(camera_buffer->contentsPointer())
+			camera_data := camera_buffer->contentsAsType(Camera_Data)
 			camera_data.perspective_transform = glm.mat4Perspective(glm.radians_f32(45), aspect_ratio, 0.03, 500)
 			camera_data.world_transform = 1
 			camera_data.world_normal_transform = glm.mat3(camera_data.world_transform)
