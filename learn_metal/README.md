@@ -18,6 +18,11 @@ import MTL "vendor:darwin/Metal"
 import CA  "vendor:darwin/QuartzCore"
 ```
 
+If you are using libraries for SDL2 from Homebrew, you may require adding some extra linker flags:
+```
+odin build . -extra-linker-flags:"-L/opt/homebrew/lib"
+```
+
 ## Package Documentation
 
 * https://pkg.odin-lang.org/vendor/darwin/Metal/
