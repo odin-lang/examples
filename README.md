@@ -43,3 +43,4 @@ Assets and third-party libraries are provided under their own license. If in dou
 * [03-animation](https://github.com/odin-lang/examples/tree/master/learn_metal/03-animation)
 * [04-instancing](https://github.com/odin-lang/examples/tree/master/learn_metal/04-instancing)
 * [05-perspective](https://github.com/odin-lang/examples/tree/master/learn_metal/05-perspective)
+* [06-lighting](https://github.com/odin-lang/examples/tree/master/learn_metal/06-lighting)
