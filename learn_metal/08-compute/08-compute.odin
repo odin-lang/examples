@@ -235,7 +235,10 @@ build_compute_pipeline :: proc(device: ^MTL.Device) -> (pso: ^MTL.ComputePipelin
 	return device->newComputePipelineStateWithFunction(mandelbrot_set)
 }
 
-generate_mandelbrot_texture :: proc(command_buffer: ^MTL.CommandBuffer, compute_pso: ^MTL.ComputePipelineState, texture: ^MTL.Texture) {
+generate_mandelbrot_texture :: proc(command_queue: ^MTL.CommandQueue, compute_pso: ^MTL.ComputePipelineState, texture: ^MTL.Texture) {
+	command_buffer := command_queue->commandBuffer()
+	defer command_buffer->release()
+	
 	compute_encoder := command_buffer->computeCommandEncoder()
 
 	compute_encoder->setComputePipelineState(compute_pso)
@@ -319,7 +322,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	texture := build_texture(device)
 	defer texture->release()
 
-	generate_mandelbrot_texture(command_queue->commandBuffer(), compute_pso, texture)
+	generate_mandelbrot_texture(command_queue, compute_pso, texture)
 
 	SDL.ShowWindow(window)
 	for quit := false; !quit;  {
