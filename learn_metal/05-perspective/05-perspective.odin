@@ -208,7 +208,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 			rt_inv := glm.mat4Translate(-object_position)
 			full_obj_rot := rt * rr * rt_inv
 
-			instance_data := ([^]Instance_Data)(instance_buffer->contentsPointer())[:NUM_INSTANCES]
+			instance_data := instance_buffer->contentsAsSlice([]Instance_Data)[:NUM_INSTANCES]
 			for instance, idx in &instance_data {
 				scl :: 0.1
 
@@ -229,7 +229,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		}
 
 		{
-			camera_data := (^Camera_Data)(camera_buffer->contentsPointer())
+			camera_data := camera_buffer->contentsAsType(Camera_Data)
 			camera_data.perspective_transform = glm.mat4Perspective(glm.radians_f32(45), aspect_ratio, 0.03, 500)
 			camera_data.world_transform = 1
 
