@@ -23,3 +23,33 @@ import CA  "vendor:darwin/QuartzCore"
 * https://pkg.odin-lang.org/vendor/darwin/Metal/
 * https://pkg.odin-lang.org/vendor/darwin/Foundation/
 * https://pkg.odin-lang.org/vendor/darwin/QuartzCore/
+
+## Examples
+
+### [00-window](https://github.com/odin-lang/examples/tree/master/learn_metal/00-window)
+
+![00-window](https://user-images.githubusercontent.com/3338141/163404425-9e41168c-8f7f-4fd7-b7d9-c1c44a1d3870.png)
+
+### [01-primitive](https://github.com/odin-lang/examples/tree/master/learn_metal/01-primitive)
+
+![01-primitive](https://user-images.githubusercontent.com/3338141/163404549-0ece2502-1890-4bf6-b816-c0de3bfff303.png)
+
+### [02-argbuffers](https://github.com/odin-lang/examples/tree/master/learn_metal/02-argbuffers)
+
+![02-argbuffers](https://user-images.githubusercontent.com/3338141/163404646-bbb50869-303a-44d3-b039-1cc2d14b976e.png)
+
+### [03-animation](https://github.com/odin-lang/examples/tree/master/learn_metal/03-animation)
+
+![03-animation](https://user-images.githubusercontent.com/3338141/163406377-9bffb411-b0e5-4c8f-b50f-a2fc20abfa55.mp4)
+
+### [04-instancing](https://github.com/odin-lang/examples/tree/master/learn_metal/04-instancing)
+
+![04-instancing](https://user-images.githubusercontent.com/3338141/163406745-e9e965a9-f187-4dbe-915e-096766a30e17.mp4)
+
+### [05-perspective](https://github.com/odin-lang/examples/tree/master/learn_metal/05-perspective)
+
+![05-perspective](https://user-images.githubusercontent.com/3338141/163406890-b6e96463-4754-4f7f-b223-95e4dde73be3.mp4)
+
+### [06-lighting](https://github.com/odin-lang/examples/tree/master/learn_metal/06-lighting)
+
+![06-lighting](https://user-images.githubusercontent.com/3338141/163407030-43389d2f-e4d7-4387-936f-c671722ee1cd.png)
