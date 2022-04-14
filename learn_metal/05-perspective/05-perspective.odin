@@ -82,6 +82,7 @@ build_shaders :: proc(device: ^MTL.Device) -> (library: ^MTL.Library, pso: ^MTL.
 	desc->setVertexFunction(vertex_function)
 	desc->setFragmentFunction(fragment_function)
 	desc->colorAttachments()->object(0)->setPixelFormat(.BGRA8Unorm_sRGB)
+	desc->setDepthAttachmentPixelFormat(.Depth16Unorm)
 
 	pso = device->newRenderPipelineState(desc) or_return
 	return
@@ -174,6 +175,8 @@ metal_main :: proc() -> (err: ^NS.Error) {
 
 	camera_buffer := device->newBuffer(size_of(Camera_Data), {.StorageModeManaged})
 	defer camera_buffer->release()
+
+	depth_texture: ^MTL.Texture = nil
 	
 	command_queue := device->newCommandQueue()
 	defer command_queue->release()
@@ -190,6 +193,10 @@ metal_main :: proc() -> (err: ^NS.Error) {
 				}
 			}
 		}
+
+		w, h: i32
+		SDL.GetWindowSize(window, &w, &h)
+		aspect_ratio := f32(w)/max(f32(h), 1)
 
 		{
 			@static angle: f32
@@ -222,16 +229,33 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		}
 
 		{
-			w, h: i32
-			SDL.GetWindowSize(window, &w, &h)
-			aspect_ratio := f32(w)/max(f32(h), 1)
-
 			camera_data := (^Camera_Data)(camera_buffer->contentsPointer())
 			camera_data.perspective_transform = glm.mat4Perspective(glm.radians_f32(45), aspect_ratio, 0.03, 500)
 			camera_data.world_transform = 1
 
 			camera_buffer->didModifyRange(NS.Range_Make(0, size_of(Camera_Data)))
 
+		}
+
+		if depth_texture == nil ||
+		   depth_texture->width() != NS.UInteger(w) ||
+		   depth_texture->height() != NS.UInteger(h) {
+			desc := MTL.TextureDescriptor.texture2DDescriptorWithPixelFormat(
+				pixelFormat = .Depth16Unorm,
+				width = NS.UInteger(w),
+				height = NS.UInteger(h),
+				mipmapped = false,
+			)
+			defer desc->release()
+
+			desc->setUsage({.RenderTarget})
+			desc->setStorageMode(.Private)
+
+			if depth_texture != nil {
+				depth_texture->release()
+			}
+
+			depth_texture = device->newTexture(desc)
 		}
 
 		drawable := swapchain->nextDrawable()
@@ -247,6 +271,12 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		color_attachment->setLoadAction(.Clear)
 		color_attachment->setStoreAction(.Store)
 		color_attachment->setTexture(drawable->texture())
+
+		depth_attachment := pass->depthAttachment()
+		depth_attachment->setTexture(depth_texture)
+		depth_attachment->setClearDepth(1.0)
+		depth_attachment->setLoadAction(.Clear)
+		depth_attachment->setStoreAction(.Store)
 		
 		command_buffer := command_queue->commandBuffer()
 		defer command_buffer->release()
