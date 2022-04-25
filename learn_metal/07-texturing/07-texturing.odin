@@ -123,7 +123,7 @@ build_shaders :: proc(device: ^MTL.Device) -> (library: ^MTL.Library, pso: ^MTL.
 	desc->colorAttachments()->object(0)->setPixelFormat(.BGRA8Unorm_sRGB)
 	desc->setDepthAttachmentPixelFormat(.Depth16Unorm)
 
-	pso = device->newRenderPipelineState(desc) or_return
+	pso = device->newRenderPipelineStateWithDescriptor(desc) or_return
 	return
 }
 
@@ -189,7 +189,7 @@ build_texture :: proc(device: ^MTL.Device) -> ^MTL.Texture {
 	desc->setStorageMode(.Managed)
 	desc->setUsage({.ShaderRead})
 
-	texture := device->newTexture(desc)
+	texture := device->newTextureWithDescriptor(desc)
 
 	texture_data := make([][4]u8, tw*th, context.temp_allocator)
 	for y in 0..<th {
@@ -369,7 +369,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 				depth_texture->release()
 			}
 
-			depth_texture = device->newTexture(desc)
+			depth_texture = device->newTextureWithDescriptor(desc)
 		}
 
 
