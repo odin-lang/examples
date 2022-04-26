@@ -44,3 +44,6 @@ Assets and third-party libraries are provided under their own license. If in dou
 * [04-instancing](https://github.com/odin-lang/examples/tree/master/learn_metal/04-instancing)
 * [05-perspective](https://github.com/odin-lang/examples/tree/master/learn_metal/05-perspective)
 * [06-lighting](https://github.com/odin-lang/examples/tree/master/learn_metal/06-lighting)
+* [07-texturing](https://github.com/odin-lang/examples/tree/master/learn_metal/07-texturing)
+* [08-compute](https://github.com/odin-lang/examples/tree/master/learn_metal/08-compute)
+* [09-compute-to-render](https://github.com/odin-lang/examples/tree/master/learn_metal/09-compute-to-render)
