@@ -3,7 +3,7 @@ package main
 import NS "vendor:darwin/Foundation"
 import MTL "vendor:darwin/Metal"
 import CA "vendor:darwin/QuartzCore"
-	
+
 import SDL "vendor:sdl2"
 
 import "core:fmt"
@@ -15,9 +15,9 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	SDL.Init({.VIDEO})
 	defer SDL.Quit()
 
-	window := SDL.CreateWindow("Metal in Odin - 00 window", 
-		SDL.WINDOWPOS_CENTERED, SDL.WINDOWPOS_CENTERED, 
-		854, 480, 
+	window := SDL.CreateWindow("Metal in Odin - 00 window",
+		SDL.WINDOWPOS_CENTERED, SDL.WINDOWPOS_CENTERED,
+		854, 480,
 		{.ALLOW_HIGHDPI, .HIDDEN, .RESIZABLE},
 	)
 	defer SDL.DestroyWindow(window)
@@ -53,7 +53,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	for quit := false; !quit;  {
 		for e: SDL.Event; SDL.PollEvent(&e) != 0; {
 			#partial switch e.type {
-			case .QUIT: 
+			case .QUIT:
 				quit = true
 			case .KEYDOWN:
 				if e.key.keysym.sym == .ESCAPE {
@@ -77,7 +77,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		color_attachment->setStoreAction(.Store)
 		color_attachment->setTexture(drawable->texture())
 
-		
+
 		command_buffer := command_queue->commandBuffer()
 		defer command_buffer->release()
 

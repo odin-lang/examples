@@ -3,7 +3,7 @@ package main
 import NS "vendor:darwin/Foundation"
 import MTL "vendor:darwin/Metal"
 import CA "vendor:darwin/QuartzCore"
-	
+
 import SDL "vendor:sdl2"
 
 import "core:fmt"
@@ -126,7 +126,7 @@ build_shaders :: proc(device: ^MTL.Device) -> (library: ^MTL.Library, pso: ^MTL.
 	desc->colorAttachments()->object(0)->setPixelFormat(.BGRA8Unorm_sRGB)
 	desc->setDepthAttachmentPixelFormat(.Depth16Unorm)
 
-	pso = device->newRenderPipelineState(desc) or_return
+	pso = device->newRenderPipelineStateWithDescriptor(desc) or_return
 	return
 }
 
@@ -190,7 +190,7 @@ build_texture :: proc(device: ^MTL.Device) -> ^MTL.Texture {
 	desc->setStorageMode(.Managed)
 	desc->setUsage({.ShaderRead, .ShaderWrite})
 
-	return device->newTexture(desc)
+	return device->newTextureWithDescriptor(desc)
 }
 
 build_compute_pipeline :: proc(device: ^MTL.Device) -> (pso: ^MTL.ComputePipelineState, err: ^NS.Error) {
@@ -221,7 +221,7 @@ build_compute_pipeline :: proc(device: ^MTL.Device) -> (pso: ^MTL.ComputePipelin
 		// Convert iteration result to colors
 		half color = (0.5 + 0.5 * cos(3.0 + iteration * 0.15));
 		tex.write(half4(color, color, color, 1.0), index, 0);
-	}`	
+	}`
 
 	kernel_src_str := NS.String.alloc()->initWithOdinString(kernel_src)
 	defer kernel_src_str->release()
@@ -238,7 +238,7 @@ build_compute_pipeline :: proc(device: ^MTL.Device) -> (pso: ^MTL.ComputePipelin
 generate_mandelbrot_texture :: proc(command_queue: ^MTL.CommandQueue, compute_pso: ^MTL.ComputePipelineState, texture: ^MTL.Texture) {
 	command_buffer := command_queue->commandBuffer()
 	defer command_buffer->release()
-	
+
 	compute_encoder := command_buffer->computeCommandEncoder()
 
 	compute_encoder->setComputePipelineState(compute_pso)
@@ -259,9 +259,9 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	SDL.Init({.VIDEO})
 	defer SDL.Quit()
 
-	window := SDL.CreateWindow("Metal in Odin - 08 Compute", 
-		SDL.WINDOWPOS_CENTERED, SDL.WINDOWPOS_CENTERED, 
-		1024, 1024, 
+	window := SDL.CreateWindow("Metal in Odin - 08 Compute",
+		SDL.WINDOWPOS_CENTERED, SDL.WINDOWPOS_CENTERED,
+		1024, 1024,
 		{.ALLOW_HIGHDPI, .HIDDEN, .RESIZABLE},
 	)
 	defer SDL.DestroyWindow(window)
@@ -280,7 +280,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 
 	swapchain := CA.MetalLayer.layer()
 	defer swapchain->release()
-	
+
 	swapchain->setDevice(device)
 	swapchain->setPixelFormat(.BGRA8Unorm_sRGB)
 	swapchain->setFramebufferOnly(true)
@@ -315,7 +315,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 
 	compute_pso := build_compute_pipeline(device) or_return
 	defer compute_pso->release()
-	
+
 	command_queue := device->newCommandQueue()
 	defer command_queue->release()
 
@@ -328,7 +328,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	for quit := false; !quit;  {
 		for e: SDL.Event; SDL.PollEvent(&e) != 0; {
 			#partial switch e.type {
-			case .QUIT: 
+			case .QUIT:
 				quit = true
 			case .KEYDOWN:
 				if e.key.keysym.sym == .ESCAPE {
@@ -381,7 +381,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 				}
 
 				translate := glm.mat4Translate(object_position + pos)
-				
+
 				instance.transform = full_obj_rot * translate * yrot * zrot * scale
 				instance.normal_transform = glm.mat3(instance.transform)
 
@@ -420,7 +420,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 				depth_texture->release()
 			}
 
-			depth_texture = device->newTexture(desc)
+			depth_texture = device->newTextureWithDescriptor(desc)
 		}
 
 

@@ -3,7 +3,7 @@ package main
 import NS "vendor:darwin/Foundation"
 import MTL "vendor:darwin/Metal"
 import CA "vendor:darwin/QuartzCore"
-	
+
 import SDL "vendor:sdl2"
 
 import "core:fmt"
@@ -84,7 +84,7 @@ build_shaders :: proc(device: ^MTL.Device) -> (library: ^MTL.Library, pso: ^MTL.
 	desc->colorAttachments()->object(0)->setPixelFormat(.BGRA8Unorm_sRGB)
 	desc->setDepthAttachmentPixelFormat(.Depth16Unorm)
 
-	pso = device->newRenderPipelineState(desc) or_return
+	pso = device->newRenderPipelineStateWithDescriptor(desc) or_return
 	return
 }
 
@@ -133,9 +133,9 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	SDL.Init({.VIDEO})
 	defer SDL.Quit()
 
-	window := SDL.CreateWindow("Metal in Odin - 05 perspective", 
-		SDL.WINDOWPOS_CENTERED, SDL.WINDOWPOS_CENTERED, 
-		854, 480, 
+	window := SDL.CreateWindow("Metal in Odin - 05 perspective",
+		SDL.WINDOWPOS_CENTERED, SDL.WINDOWPOS_CENTERED,
+		854, 480,
 		{.ALLOW_HIGHDPI, .HIDDEN, .RESIZABLE},
 	)
 	defer SDL.DestroyWindow(window)
@@ -154,7 +154,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 
 	swapchain := CA.MetalLayer.layer()
 	defer swapchain->release()
-	
+
 	swapchain->setDevice(device)
 	swapchain->setPixelFormat(.BGRA8Unorm_sRGB)
 	swapchain->setFramebufferOnly(true)
@@ -177,7 +177,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	defer camera_buffer->release()
 
 	depth_texture: ^MTL.Texture = nil
-	
+
 	command_queue := device->newCommandQueue()
 	defer command_queue->release()
 
@@ -185,7 +185,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	for quit := false; !quit;  {
 		for e: SDL.Event; SDL.PollEvent(&e) != 0; {
 			#partial switch e.type {
-			case .QUIT: 
+			case .QUIT:
 				quit = true
 			case .KEYDOWN:
 				if e.key.keysym.sym == .ESCAPE {
@@ -255,7 +255,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 				depth_texture->release()
 			}
 
-			depth_texture = device->newTexture(desc)
+			depth_texture = device->newTextureWithDescriptor(desc)
 		}
 
 		drawable := swapchain->nextDrawable()
@@ -277,7 +277,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		depth_attachment->setClearDepth(1.0)
 		depth_attachment->setLoadAction(.Clear)
 		depth_attachment->setStoreAction(.Store)
-		
+
 		command_buffer := command_queue->commandBuffer()
 		defer command_buffer->release()
 
