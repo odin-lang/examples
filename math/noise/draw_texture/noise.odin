@@ -6,6 +6,8 @@ import "core:math/noise"
 import gl "vendor:OpenGL"
 import "vendor:glfw"
 import "core:mem"
+import "core:c"
+import "core:runtime"
 
 WIDTH  :: 400
 HEIGHT :: 400
@@ -13,7 +15,7 @@ TITLE  :: cstring("Open Simplex 2 Texture!")
 
 // @note You might need to lower this to 3.3 depending on how old your graphics card is.
 GL_MAJOR_VERSION :: 4
-GL_MINOR_VERSION :: 5
+GL_MINOR_VERSION :: 1
 
 Adjust_Noise :: struct {
 	seed:       i64,
@@ -26,19 +28,19 @@ Vertices :: [16]f32
 create_vertices :: proc(x, y, width, height: f32) -> Vertices {
 
 	/**
-	
+
 	0 - x,y
 	1 - x, y + height
 	2 - x + width, y
 	3 - x + width, y + height
-	
+
 	0      2
 	|-----/|
 	|   /  |
 	|  /   |
 	|/-----|
 	1      3
-	
+
 	**/
 
 	vertices: Vertices = {
@@ -72,15 +74,15 @@ create_texture_noise :: proc(texture_id: u32, adjust_noise: Adjust_Noise) {
 	pixels := mem.slice_data_cast([]Pixel, texture_data)
 
 	for x := 0; x < WIDTH; x += 1 {
-		
+
 		for y := 0; y < HEIGHT; y += 1 {
-			
+
 			using adjust_noise := adjust_noise
 
 			noise_val: f32
 
 			{
-				
+
 				for i := 0; i < int(octaves); i += 1 {
 					noise_val += 0.4 * ((noise.noise_2d(seed, {f64(x) / frequency / 2, f64(y) / frequency / 2}) + 1.0) / 2.0)
 					noise_val += 0.6 * ((noise.noise_2d(seed, {f64(x) / frequency * 2 ,f64(y) / frequency * 2}) + 1.0) / 2.0)
@@ -90,17 +92,17 @@ create_texture_noise :: proc(texture_id: u32, adjust_noise: Adjust_Noise) {
 			}
 
 			val := glsl.distance_vec2({f32(x), f32(y)}, gradient_location)
-			val /= f32(HEIGHT / 2)		
+			val /= f32(HEIGHT / 2)
 
 			noise_val = noise_val - val
-			
+
 			if noise_val < 0.0 {
 				noise_val = 0
 			}
 
 			val = glsl.clamp(val, 0.0, 1.0)
 			color := u8((noise_val) * 255.0)
-			
+
 			switch {
 			case color <  20:
 				// Water
@@ -135,7 +137,7 @@ create_texture_noise :: proc(texture_id: u32, adjust_noise: Adjust_Noise) {
 				noise_val = glsl.pow(noise_val, 2)
 
 				pixels[0] = {u8(205 * noise_val), u8(221 * noise_val), u8(246 * noise_val), 255}
-			}			
+			}
 			pixels = pixels[1:]
 		}
 	}
@@ -150,9 +152,15 @@ main :: proc() {
 		return
 	}
 
+	glfw.SetErrorCallback(proc "c" (error: c.int, description: cstring) {
+		context = runtime.default_context()
+		fmt.println(description)
+	})
+
 	glfw.WindowHint(glfw.CONTEXT_VERSION_MAJOR, GL_MAJOR_VERSION)
 	glfw.WindowHint(glfw.CONTEXT_VERSION_MINOR, GL_MINOR_VERSION)
 	glfw.WindowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
+	glfw.WindowHint(glfw.OPENGL_FORWARD_COMPAT, 1)
 
 	window_handle := glfw.CreateWindow(WIDTH, HEIGHT, TITLE, nil, nil)
 
@@ -183,7 +191,7 @@ main :: proc() {
 	gl.GenBuffers(1, &ebo)
 	defer gl.DeleteBuffers(1, &vbo)
 	defer gl.DeleteBuffers(1, &ebo)
-	
+
 	gl.BindVertexArray(vao)
 	gl.BindBuffer(gl.ARRAY_BUFFER, vbo)
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo)
@@ -191,7 +199,7 @@ main :: proc() {
 	vertices := create_vertices(x = 0, y = 0, width = WIDTH, height = HEIGHT)
 
 	/**
-	
+
 	0      2
 	|-----/|
 	|   /  |
@@ -214,14 +222,14 @@ main :: proc() {
 
 	gl.BufferData(gl.ARRAY_BUFFER,         len(vertices) * size_of(f32), raw_data(vertices[:]), gl.STATIC_DRAW)
 	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)  * size_of(u32), raw_data(indices[:]),  gl.STATIC_DRAW)
-	
+
 	program_id: u32; ok: bool
 	if program_id, ok = gl.load_shaders("./shader.vert", "./shader.frag"); !ok {
 		fmt.println("Failed to load shaders.")
 		return
 	}
 	defer gl.DeleteProgram(program_id)
-	
+
 	texture_id : u32
 	gl.GenTextures(1, &texture_id)
 	defer gl.DeleteTextures(1, &texture_id)
@@ -256,7 +264,7 @@ main :: proc() {
 		} else if glfw.GetKey(window_handle, glfw.KEY_COMMA) == glfw.PRESS {
 			adjust_noise.frequency += 5.0
 			create_texture_noise(texture_id, adjust_noise)
-		} 
+		}
 
 		if glfw.GetKey(window_handle, glfw.KEY_PERIOD) == glfw.PRESS && glfw.GetKey(window_handle, glfw.KEY_LEFT_SHIFT) == glfw.PRESS {
 			adjust_noise.octaves -= 1.0
@@ -265,7 +273,7 @@ main :: proc() {
 		} else if glfw.GetKey(window_handle, glfw.KEY_PERIOD) == glfw.PRESS {
 			adjust_noise.octaves += 1.0
 			create_texture_noise(texture_id, adjust_noise)
-		} 
+		}
 
 		gl.ClearColor(0.5, 0.0, 1.0, 1.0)
 		gl.Clear(gl.COLOR_BUFFER_BIT)
@@ -280,6 +288,6 @@ main :: proc() {
 		gl.DrawElements(gl.TRIANGLES, i32(len(indices)), gl.UNSIGNED_INT, nil)
 
 		glfw.SwapBuffers(window_handle)
-	
+
 	}
 }
