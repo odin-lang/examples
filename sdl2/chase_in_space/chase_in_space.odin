@@ -185,7 +185,7 @@ main :: proc() {
 
 	for {
 		event: sdl2.Event
-		for sdl2.PollEvent(&event) > 0 {
+		for sdl2.PollEvent(&event) {
 			#partial switch event.type {
 			case .QUIT:
 				return
