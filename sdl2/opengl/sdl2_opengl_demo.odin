@@ -93,7 +93,7 @@ main :: proc() {
 		
 		// event polling
 		event: SDL.Event
-		for SDL.PollEvent(&event) != 0 {
+		for SDL.PollEvent(&event) {
 			// #partial switch tells the compiler not to error if every case is not present
 			#partial switch event.type {
 			case .KEYDOWN:
