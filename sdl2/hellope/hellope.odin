@@ -243,7 +243,7 @@ cleanup :: proc() {
 process_input :: proc() {
 	e: sdl2.Event
 
-	for sdl2.PollEvent(&e) != 0 {
+	for sdl2.PollEvent(&e) {
 		#partial switch(e.type) {
 		case .QUIT:
 			ctx.should_close = true
