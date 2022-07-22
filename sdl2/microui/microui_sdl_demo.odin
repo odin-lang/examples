@@ -80,7 +80,7 @@ main :: proc() {
 	ctx.text_height = mu.default_atlas_text_height
 		
 	main_loop: for {
-		for e: SDL.Event; SDL.PollEvent(&e) != 0; /**/ {
+		for e: SDL.Event; SDL.PollEvent(&e); /**/ {
 			#partial switch e.type {
 			case .QUIT: 
 				break main_loop
