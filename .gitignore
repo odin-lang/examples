@@ -1,3 +1,6 @@
 *.exe
 *.ll
 *.obj
+
+**.exp
+tetroid.lib
