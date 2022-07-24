@@ -64,7 +64,7 @@ main :: proc() {
 	quit := false
 
 	for !quit {
-		for e: SDL.Event; SDL.PollEvent(&e) != 0; {
+		for e: SDL.Event; SDL.PollEvent(&e); {
 			#partial switch e.type {
 			case .QUIT: quit = true
 			case .KEYDOWN:
