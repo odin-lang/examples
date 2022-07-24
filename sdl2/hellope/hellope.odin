@@ -124,7 +124,7 @@ init_sdl :: proc() -> (ok: bool) {
 	}
 
 	ctx.renderer = sdl2.CreateRenderer(ctx.window, -1, {.ACCELERATED, .PRESENTVSYNC})
-	if ctx.surface == nil {
+	if ctx.renderer == nil {
 		log.errorf("sdl2.CreateRenderer failed.")
 		return false
 	}
