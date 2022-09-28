@@ -6,8 +6,8 @@ import "core:os"
 main :: proc() {
 	buf: [256]byte
 	fmt.println("Please enter some text:")
-	n, err := io.read(buf[:])
-	if err != nil {
+	n, err := os.read(os.stdin, buf[:])
+	if err < 0 {
 		// Handle error
 		return
 	}
