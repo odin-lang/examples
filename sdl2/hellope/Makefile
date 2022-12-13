@@ -1,4 +1,4 @@
 all: run
 
 run:
-	odin run hellope.odin -show-timings -vet -out:hellope
+	odin run . -show-timings -vet -out:hellope
