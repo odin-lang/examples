@@ -60,7 +60,7 @@ main :: proc() {
 			Count   = 1,
 			Quality = 0,
 		},
-		BufferUsage = .RENDER_TARGET_OUTPUT,
+		BufferUsage = {.RENDER_TARGET_OUTPUT},
 		BufferCount = 2,
 		Scaling     = .STRETCH,
 		SwapEffect  = .DISCARD,
@@ -80,7 +80,7 @@ main :: proc() {
 	depth_buffer_desc: D3D11.TEXTURE2D_DESC
 	framebuffer->GetDesc(&depth_buffer_desc)
 	depth_buffer_desc.Format = .D24_UNORM_S8_UINT
-	depth_buffer_desc.BindFlags = .DEPTH_STENCIL
+	depth_buffer_desc.BindFlags = {.DEPTH_STENCIL}
 
 	depth_buffer: ^D3D11.ITexture2D
 	device->CreateTexture2D(&depth_buffer_desc, nil, &depth_buffer)
@@ -152,8 +152,8 @@ main :: proc() {
 	constant_buffer_desc := D3D11.BUFFER_DESC{
 		ByteWidth      = size_of(Constants),
 		Usage          = .DYNAMIC,
-		BindFlags      = .CONSTANT_BUFFER,
-		CPUAccessFlags = .WRITE,
+		BindFlags      = {.CONSTANT_BUFFER},
+		CPUAccessFlags = {.WRITE},
 	}
 	constant_buffer: ^D3D11.IBuffer
 	device->CreateBuffer(&constant_buffer_desc, nil, &constant_buffer)
@@ -161,7 +161,7 @@ main :: proc() {
 	vertex_buffer_desc := D3D11.BUFFER_DESC{
 		ByteWidth = size_of(vertex_data),
 		Usage     = .IMMUTABLE,
-		BindFlags = .VERTEX_BUFFER,
+		BindFlags = {.VERTEX_BUFFER},
 	}
 	vertex_buffer: ^D3D11.IBuffer
 	device->CreateBuffer(&vertex_buffer_desc, &D3D11.SUBRESOURCE_DATA{pSysMem = &vertex_data[0], SysMemPitch = size_of(vertex_data)}, &vertex_buffer)
@@ -169,7 +169,7 @@ main :: proc() {
 	index_buffer_desc := D3D11.BUFFER_DESC{
 		ByteWidth = size_of(index_data),
 		Usage     = .IMMUTABLE,
-		BindFlags = .INDEX_BUFFER,
+		BindFlags = {.INDEX_BUFFER},
 	}
 	index_buffer: ^D3D11.IBuffer
 	device->CreateBuffer(&index_buffer_desc, &D3D11.SUBRESOURCE_DATA{pSysMem = &index_data[0], SysMemPitch = size_of(index_data)}, &index_buffer)
@@ -184,7 +184,7 @@ main :: proc() {
 		Format     = .R8G8B8A8_UNORM_SRGB,
 		SampleDesc = {Count = 1},
 		Usage      = .IMMUTABLE,
-		BindFlags  = .SHADER_RESOURCE,
+		BindFlags  = {.SHADER_RESOURCE},
 	}
 
 	texture_data := D3D11.SUBRESOURCE_DATA{
@@ -240,7 +240,7 @@ main :: proc() {
 		model_rotation.z += 0.001
 
 		mapped_subresource: D3D11.MAPPED_SUBRESOURCE
-		device_context->Map(constant_buffer, 0, .WRITE_DISCARD, 0, &mapped_subresource)
+		device_context->Map(constant_buffer, 0, .WRITE_DISCARD, {}, &mapped_subresource)
 		{
 			constants := (^Constants)(mapped_subresource.pData)
 			constants.transform = translate * rotate_z * rotate_y * rotate_x
@@ -258,7 +258,7 @@ main :: proc() {
 		///////////////////////////////////////////////////////////////////////////////////////////////
 
 		device_context->ClearRenderTargetView(framebuffer_view, &[4]f32{0.25, 0.5, 1.0, 1.0})
-		device_context->ClearDepthStencilView(depth_buffer_view, .DEPTH, 1, 0)
+		device_context->ClearDepthStencilView(depth_buffer_view, {.DEPTH}, 1, 0)
 
 		device_context->IASetPrimitiveTopology(.TRIANGLELIST)
 		device_context->IASetInputLayout(input_layout)
