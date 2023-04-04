@@ -18,46 +18,45 @@ package game_of_life;
 **********************************************************************/
 
 
-import fmt  "core:fmt"
 import time "core:time"
 import rl   "vendor:raylib"
 
 
 Window :: struct { 
-    name          : cstring,
-    width         : i32, 
-    height        : i32,
-    fps           : i32,
-    control_flags : rl.ConfigFlags,
+    name:          cstring,
+    width:         i32, 
+    height:        i32,
+    fps:           i32,
+    control_flags: rl.ConfigFlags,
 }
 
 Game :: struct {
-    tick_rate : time.Duration,
-    last_tick : time.Time,
-    pause     : bool,
-    colors    : []rl.Color,
-    width     : i32,
-    height    : i32,
+    tick_rate: time.Duration,
+    last_tick: time.Time,
+    pause:     bool,
+    colors:    []rl.Color,
+    width:     i32,
+    height:    i32,
 }
 
 World :: struct {
-    width  :  i32,
-    height :  i32,
-    alive  : []u8,
+    width:   i32,
+    height:  i32,
+    alive:   []u8,
 }
 
 Cell :: struct { 
-    width  : f32,
-    height : f32,
+    width:  f32,
+    height: f32,
 }
 
-UserInput :: struct {
-    left_mouse_clicked   : bool,
-    right_mouse_clicked  : bool,
-    toggle_pause         : bool,
-    mouse_world_position : i32,
-    mouse_tile_x         : i32,
-    mouse_tile_y         : i32,
+User_Input :: struct {
+    left_mouse_clicked:   bool,
+    right_mouse_clicked:  bool,
+    toggle_pause:         bool,
+    mouse_world_position: i32,
+    mouse_tile_x:         i32,
+    mouse_tile_y:         i32,
 }
 
 
@@ -138,7 +137,7 @@ draw_world :: #force_inline proc(world: ^World, cell:Cell, colors: []rl.Color) {
 /*
  draws a yellow cell where the mouse points to.
 */
-draw_cursor :: proc(user_input: UserInput, cell: Cell) {
+draw_cursor :: proc(user_input: User_Input, cell: Cell) {
 
     rect := rl.Rectangle{
         x      = f32(user_input.mouse_tile_x) * cell.width,
@@ -153,12 +152,12 @@ draw_cursor :: proc(user_input: UserInput, cell: Cell) {
  The user input is processed such that the rest of the code does not need
  to know anything about what the user input was. (You could process a controller here)
 **/
-process_user_input :: proc(user_input: ^UserInput, window: Window, world: World) {
+process_user_input :: proc(user_input: ^User_Input, window: Window, world: World) {
     m_pos := rl.GetMousePosition()
     mouse_x := i32((m_pos[0] / f32(window.width)) * f32(world.width))
     mouse_y := i32((m_pos[1] / f32(window.height)) * f32(world.height))
 
-    user_input^ = UserInput{
+    user_input^ = User_Input{
         left_mouse_clicked    = rl.IsMouseButtonPressed(.LEFT),
         right_mouse_clicked   = rl.IsMouseButtonPressed(.RIGHT),
         toggle_pause          = rl.IsKeyPressed(.SPACE),
@@ -190,7 +189,7 @@ main :: proc() {
         height = f32(window.height) / f32(world.width),
     }
 
-    user_input : UserInput
+    user_input : User_Input
     
     rl.InitWindow(window.width, window.height, window.name)
     rl.SetWindowState( window.control_flags )
