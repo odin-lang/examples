@@ -158,8 +158,8 @@ process_user_input :: proc(user_input: ^User_Input, window: Window, world: World
     mouse_y := i32((m_pos[1] / f32(window.height)) * f32(world.height))
 
     user_input^ = User_Input{
-        left_mouse_clicked    = rl.IsMouseButtonPressed(.LEFT),
-        right_mouse_clicked   = rl.IsMouseButtonPressed(.RIGHT),
+        left_mouse_clicked    = rl.IsMouseButtonDown(.LEFT),
+        right_mouse_clicked   = rl.IsMouseButtonDown(.RIGHT),
         toggle_pause          = rl.IsKeyPressed(.SPACE),
         mouse_world_position  = i32(mouse_y * world.width + mouse_x),
         mouse_tile_x          = mouse_x,
