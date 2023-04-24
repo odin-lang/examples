@@ -26,7 +26,7 @@ main :: proc() {
 		fmt.println("The names do not match!")
 	}
 
-	// contains_rune will return the index of the rune or -1 if it does not contain the rune.
+	// contains_rune will return the index of the rune or false if it does not contain the rune.
 	name1_index := strings.contains_rune(name1, 'A')
 	if name1_index == false {
 		fmt.println("name_1 does not contain the rune!")
