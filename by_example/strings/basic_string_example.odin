@@ -26,12 +26,20 @@ main :: proc() {
 		fmt.println("The names do not match!")
 	}
 
-	// contains_rune will return the index of the rune or -1 if it does not contain the rune.
-	name1_index := strings.contains_rune(name1, 'A')
-	if name1_index == -1 {
+	// contains_rune will return true if the rune is present, false otherwise.
+	contains_A := strings.contains_rune(name1, 'A')
+	if contains_A {
 		fmt.println("name_1 does not contain the rune!")
 	} else {
-		fmt.println("name_1 contains the rune and is located at index:", name1_index)
+		fmt.println("name_1 contains the rune!")
+	}
+
+	// index will return the index of the needle, or -1 if not present
+	index_of_A := strings.index(name1, "A")
+	if index_of_A == -1 {
+		fmt.println("name_1 does not contain the needle!")
+	} else {
+		fmt.println("name_1 contains the needle and is located at index:", index_of_A)
 	}
 	
 	fmt.println("name1 is", strings.rune_count(name1), "rune(s) long.")
