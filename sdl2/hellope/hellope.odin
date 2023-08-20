@@ -12,14 +12,18 @@
 
 package hellope
 
-import "vendor:sdl2"
-import "core:log"
-import "core:os"
 import core_img "core:image"
-import "core:math"
-import "core:strings"
-import sdl_img "vendor:sdl2/image"
 import "core:image/png"
+import "core:log"
+import "core:math"
+import "core:os"
+import "core:strings"
+import "vendor:sdl2"
+import sdl_img "vendor:sdl2/image"
+
+_ :: sdl_img // Silence -vet if it goes unused because of the USE_SDL2_IMAGE choice
+_ :: strings // Silence -vet if it goes unused because of the USE_SDL2_IMAGE choice
+
 
 USE_SDL2_IMAGE :: #config(USE_SDL2_IMAGE, false)
 
