@@ -17,15 +17,11 @@ import "core:log"
 import "core:os"
 import core_img "core:image"
 import "core:math"
+import "core:strings"
+import sdl_img "vendor:sdl2/image"
+import "core:image/png"
 
 USE_SDL2_IMAGE :: #config(USE_SDL2_IMAGE, false)
-
-when USE_SDL2_IMAGE {
-	import "core:strings"
-	import sdl_img "vendor:sdl2/image"
-} else {
-	import "core:image/png"
-}
 
 WINDOW_TITLE  :: "Hellope World!"
 WINDOW_X      := i32(400)
