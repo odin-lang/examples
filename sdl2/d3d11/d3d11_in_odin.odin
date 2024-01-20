@@ -65,7 +65,7 @@ main :: proc() {
 		Scaling     = .STRETCH,
 		SwapEffect  = .DISCARD,
 		AlphaMode   = .UNSPECIFIED,
-		Flags       = 0,
+		Flags       = {},
 	}
 
 	swapchain: ^DXGI.ISwapChain1
@@ -143,7 +143,7 @@ main :: proc() {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	Constants :: struct #align 16 {
+	Constants :: struct #align (16) {
 		transform:    glm.mat4,
 		projection:   glm.mat4,
 		light_vector: glm.vec3,
@@ -283,7 +283,7 @@ main :: proc() {
 
 		device_context->DrawIndexed(len(index_data), 0, 0)
 
-		swapchain->Present(1, 0)
+		swapchain->Present(1, {})
 	}
 }
 
