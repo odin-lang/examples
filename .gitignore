@@ -1,6 +1,7 @@
 *.exe
 *.ll
 *.obj
+*.pdb
 
 **.exp
 tetroid.lib

@@ -26,6 +26,7 @@ Assets and third-party libraries are provided under their own license. If in dou
 * [GLFW (Simple Window)](https://github.com/odin-lang/examples/tree/master/glfw/window)
 * [SDL with PNG loader using `core:image`](https://github.com/odin-lang/examples/tree/master/sdl2/hellope)
 * [MicroUI with SDL](https://github.com/odin-lang/examples/tree/master/sdl2/microui)
+* [MicroUI with Raylib](https://github.com/odin-lang/examples/tree/master/raylib/microui)
 
 ## Math
 
