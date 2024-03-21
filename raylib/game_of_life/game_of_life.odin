@@ -157,6 +157,12 @@ process_user_input :: proc(user_input: ^User_Input, window: Window, world: World
     mouse_x := i32((m_pos[0] / f32(window.width)) * f32(world.width))
     mouse_y := i32((m_pos[1] / f32(window.height)) * f32(world.height))
 
+    //Keep in bounds while painting with torus wrapping
+    if user_input.left_mouse_clicked || user_input.right_mouse_clicked {
+        mouse_x %%= world.width
+        mouse_y %%= world.height
+    }
+
     user_input^ = User_Input{
         left_mouse_clicked    = rl.IsMouseButtonDown(.LEFT),
         right_mouse_clicked   = rl.IsMouseButtonDown(.RIGHT),
