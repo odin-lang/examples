@@ -1,8 +1,8 @@
 package main
 
-import NS "vendor:darwin/Foundation"
+import NS  "core:sys/darwin/Foundation"
 import MTL "vendor:darwin/Metal"
-import CA "vendor:darwin/QuartzCore"
+import CA  "vendor:darwin/QuartzCore"
 
 import SDL "vendor:sdl2"
 
@@ -11,7 +11,7 @@ import "core:os"
 import "core:math"
 
 
-Instance_Data :: struct #align 16 {
+Instance_Data :: struct #align(16) {
 	transform: matrix[4, 4]f32,
 	color:     [4]f32,
 }

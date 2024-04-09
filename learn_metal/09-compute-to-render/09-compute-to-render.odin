@@ -1,8 +1,8 @@
 package main
 
-import NS "vendor:darwin/Foundation"
+import NS  "core:sys/darwin/Foundation"
 import MTL "vendor:darwin/Metal"
-import CA "vendor:darwin/QuartzCore"
+import CA  "vendor:darwin/QuartzCore"
 
 import SDL "vendor:sdl2"
 
@@ -18,7 +18,7 @@ Vertex_Data :: struct {
 	texcoord: glm.vec2,
 }
 
-Instance_Data :: struct #align 16 {
+Instance_Data :: struct #align(16) {
 	transform:        glm.mat4,
 	color:            glm.vec4,
 	normal_transform: glm.mat3,
@@ -32,7 +32,7 @@ NUM_INSTANCES   :: INSTANCE_WIDTH*INSTANCE_HEIGHT*INSTANCE_DEPTH
 TEXTURE_WIDTH  :: 128
 TEXTURE_HEIGHT :: 128
 
-Camera_Data :: struct #align 16 {
+Camera_Data :: struct #align(16) {
 	perspective_transform:  glm.mat4,
 	world_transform:        glm.mat4,
 	world_normal_transform: glm.mat3,

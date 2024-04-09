@@ -1,8 +1,8 @@
 package main
 
-import NS "vendor:darwin/Foundation"
+import NS  "core:sys/darwin/Foundation"
 import MTL "vendor:darwin/Metal"
-import CA "vendor:darwin/QuartzCore"
+import CA  "vendor:darwin/QuartzCore"
 
 import SDL "vendor:sdl2"
 
@@ -12,7 +12,7 @@ import "core:math"
 import glm "core:math/linalg/glsl"
 
 
-Instance_Data :: struct #align 16 {
+Instance_Data :: struct #align(16) {
 	transform: glm.mat4,
 	color:     glm.vec4,
 }
