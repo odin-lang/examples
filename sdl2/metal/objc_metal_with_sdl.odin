@@ -1,8 +1,8 @@
 package objc_test
 
-import NS "core:sys/darwin/Foundation"
-import MTL "core:sys/darwin/Metal"
-import CA "core:sys/darwin/QuartzCore"
+import NS  "core:sys/darwin/Foundation"
+import MTL "vendor:darwin/Metal"
+import CA  "vendor:darwin/QuartzCore"
 	
 import SDL "vendor:sdl2"
 
@@ -34,7 +34,7 @@ main :: proc() {
 
 		device = MTL.CreateSystemDefaultDevice()
 
-		name := device->name()->OdinString()
+		name := device->name()->odinString()
 		fmt.println(name)
 
 		swapchain = CA.MetalLayer.layer()
