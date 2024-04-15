@@ -1,7 +1,6 @@
 package microui_sdl
 
 import "core:fmt"
-import "core:c/libc"
 import SDL "vendor:sdl2"
 import mu "vendor:microui"
 
