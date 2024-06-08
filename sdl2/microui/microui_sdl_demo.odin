@@ -76,7 +76,7 @@ main :: proc() {
 
 	ctx := &state.mu_ctx
 	mu.init(ctx,
-	        set_clipboard = proc(user_data: rawptr, text: string) -> (ok: bool) {
+		set_clipboard = proc(user_data: rawptr, text: string) -> (ok: bool) {
 			cstr := strings.clone_to_cstring(text)
 			SDL.SetClipboardText(cstr)
 			delete(cstr)
@@ -112,6 +112,8 @@ main :: proc() {
 	})
 
 	main_loop: for {
+		free_all(context.temp_allocator)
+
 		for e: SDL.Event; SDL.PollEvent(&e); /**/ {
 			#partial switch e.type {
 			case .QUIT:
@@ -315,7 +317,7 @@ all_windows :: proc(ctx: ^mu.Context) {
 				"Lorem ipsum dolor sit amet, consectetur adipiscing "+
 				"elit. Maecenas lacinia, sem eu lacinia molestie, mi risus faucibus "+
 				"ipsum, eu varius magna felis a nulla.",
-		        )
+			)
 			mu.layout_end_column(ctx)
 		}
 
