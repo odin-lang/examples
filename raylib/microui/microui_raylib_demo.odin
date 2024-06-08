@@ -1,8 +1,9 @@
 package microui_raylib
 
-import c "core:c/libc"
+import "core:c"
 import "core:fmt"
-import u "core:unicode/utf8"
+import "core:strings"
+import "core:unicode/utf8"
 
 import rl "vendor:raylib"
 import mu "vendor:microui"
@@ -18,164 +19,199 @@ state := struct{
 	screen_width: c.int,
 	screen_height: c.int,
 
-	previous_keys: [dynamic]rl.KeyboardKey,
-
+	screen_texture: rl.RenderTexture2D,
 }{
 	screen_width = 960,
 	screen_height = 540,
 	bg = {90, 95, 100, 255},
 }
 
-screen_texture: rl.RenderTexture2D
+mouse_buttons_map := [mu.Mouse]rl.MouseButton{
+	.LEFT    = .LEFT,
+	.RIGHT   = .RIGHT,
+	.MIDDLE  = .MIDDLE,
+}
 
-current_keys: [dynamic]rl.KeyboardKey
+key_map := [mu.Key][2]rl.KeyboardKey{
+	.SHIFT     = {.LEFT_SHIFT,   .RIGHT_SHIFT},
+	.CTRL      = {.LEFT_CONTROL, .RIGHT_CONTROL},
+	.ALT       = {.LEFT_ALT,     .RIGHT_ALT},
+	.BACKSPACE = {.BACKSPACE,    .KEY_NULL},
+	.DELETE    = {.DELETE,       .KEY_NULL},
+	.RETURN    = {.ENTER,        .KP_ENTER},
+	.LEFT      = {.LEFT,         .KEY_NULL},
+	.RIGHT     = {.RIGHT,        .KEY_NULL},
+	.HOME      = {.HOME,         .KEY_NULL},
+	.END       = {.END,          .KEY_NULL},
+	.A         = {.A,            .KEY_NULL},
+	.X         = {.X,            .KEY_NULL},
+	.C         = {.C,            .KEY_NULL},
+	.V         = {.V,            .KEY_NULL},
+}
+
 
 main :: proc() {
-	ctx := &state.mu_ctx
+	rl.InitWindow(state.screen_width, state.screen_height, "microui-raylib-odin")
+	defer rl.CloseWindow()
+	rl.SetTargetFPS(60)
 
-	mu.init(ctx)
+	ctx := &state.mu_ctx
+	mu.init(ctx,
+		set_clipboard = proc(user_data: rawptr, text: string) -> (ok: bool) {
+			cstr := strings.clone_to_cstring(text)
+			rl.SetClipboardText(cstr)
+			delete(cstr)
+			return true
+		},
+		get_clipboard = proc(user_data: rawptr) -> (text: string, ok: bool) {
+			cstr := rl.GetClipboardText()
+			if cstr != nil {
+				text = string(cstr)
+				ok = true
+			}
+			return
+		},
+	)
 
 	ctx.text_width = mu.default_atlas_text_width
 	ctx.text_height = mu.default_atlas_text_height
 
-	rl.InitWindow(state.screen_width, state.screen_height, "microui-raylib-odin")
-	rl.SetTargetFPS(60);
-
 	state.atlas_texture = rl.LoadRenderTexture(c.int(mu.DEFAULT_ATLAS_WIDTH), c.int(mu.DEFAULT_ATLAS_HEIGHT))
+	defer rl.UnloadRenderTexture(state.atlas_texture)
 
-	// Create a texture from the default atlas data
-	image: rl.Image = rl.GenImageColor(c.int(mu.DEFAULT_ATLAS_WIDTH), c.int(mu.DEFAULT_ATLAS_HEIGHT), rl.Color{0, 0, 0, 0})
+	image := rl.GenImageColor(c.int(mu.DEFAULT_ATLAS_WIDTH), c.int(mu.DEFAULT_ATLAS_HEIGHT), rl.Color{0, 0, 0, 0})
+	defer rl.UnloadImage(image)
 
 	for alpha, i in mu.default_atlas_alpha {
-		x:= c.int(i % mu.DEFAULT_ATLAS_WIDTH)
-		y:= c.int(i / mu.DEFAULT_ATLAS_WIDTH)
-		color:= rl.Color{255, 255, 255, alpha}
-		rl.ImageDrawPixel(&image, x, y, color)
+		x := i % mu.DEFAULT_ATLAS_WIDTH
+		y := i / mu.DEFAULT_ATLAS_WIDTH
+		color := rl.Color{255, 255, 255, alpha}
+		rl.ImageDrawPixel(&image, c.int(x), c.int(y), color)
 	}
 
 	rl.BeginTextureMode(state.atlas_texture)
-	{
-		rl.UpdateTexture(state.atlas_texture.texture, rl.LoadImageColors(image))
-	}
+	rl.UpdateTexture(state.atlas_texture.texture, rl.LoadImageColors(image))
 	rl.EndTextureMode()
 
-	// Create texture for screen
-	screen_texture = rl.LoadRenderTexture(state.screen_width, state.screen_height)
+	state.screen_texture = rl.LoadRenderTexture(state.screen_width, state.screen_height)
+	defer rl.UnloadRenderTexture(state.screen_texture)
 
-	main_loop: for !rl.WindowShouldClose() {
-		//// Handle mouse input
-		mouse_pos : rl.Vector2 = rl.GetMousePosition()
-		mu.input_mouse_move(ctx, i32(mouse_pos.x), i32(mouse_pos.y))
+	for !rl.WindowShouldClose() {
+		free_all(context.temp_allocator)
 
-		mouse_wheel_pos : rl.Vector2 = rl.GetMouseWheelMoveV()
+		mouse_pos := rl.GetMousePosition()
+		mouse_x, mouse_y := i32(mouse_pos.x), i32(mouse_pos.y)
+		mu.input_mouse_move(ctx, mouse_x, mouse_y)
+
+		mouse_wheel_pos := rl.GetMouseWheelMoveV()
 		mu.input_scroll(ctx, i32(mouse_wheel_pos.x) * 30, i32(mouse_wheel_pos.y) * -30)
 
-		if rl.IsMouseButtonPressed(rl.MouseButton.LEFT) {
-			mu.input_mouse_down(ctx, i32(mouse_pos.x), i32(mouse_pos.y), .LEFT)
-		}
-		if rl.IsMouseButtonReleased(rl.MouseButton.LEFT) {
-			mu.input_mouse_up(ctx, i32(mouse_pos.x), i32(mouse_pos.y), .LEFT)
-		}
-
-		if rl.IsMouseButtonPressed(rl.MouseButton.MIDDLE) {
-			mu.input_mouse_down(ctx, i32(mouse_pos.x), i32(mouse_pos.y), .MIDDLE)
-		}
-		if rl.IsMouseButtonReleased(rl.MouseButton.MIDDLE) {
-			mu.input_mouse_up(ctx, i32(mouse_pos.x), i32(mouse_pos.y), .MIDDLE)
-		}
-
-		if rl.IsMouseButtonPressed(rl.MouseButton.RIGHT) {
-			mu.input_mouse_down(ctx, i32(mouse_pos.x), i32(mouse_pos.y), .RIGHT)
-		}
-		if rl.IsMouseButtonReleased(rl.MouseButton.RIGHT) {
-			mu.input_mouse_up(ctx, i32(mouse_pos.x), i32(mouse_pos.y), .RIGHT)
-		}
-
-		//// Handle Keyboard input
-		// info: This tries to imitate the behaviour of the SDL version.
-
-		get_pressed_keys ::proc() -> [dynamic]rl.KeyboardKey {
-			pressed_keys : [dynamic]rl.KeyboardKey
-
-			for key := rl.GetKeyPressed(); key != .KEY_NULL; key = rl.GetKeyPressed() {
-				append(&pressed_keys, key)
+		for button_rl, button_mu in mouse_buttons_map {
+			switch {
+			case rl.IsMouseButtonPressed(button_rl):
+				mu.input_mouse_down(ctx, mouse_x, mouse_y, button_mu)
+			case rl.IsMouseButtonReleased(button_rl):
+				mu.input_mouse_up  (ctx, mouse_x, mouse_y, button_mu)
 			}
-
-			return pressed_keys
 		}
 
-		current_keys = get_pressed_keys() 
-
-		// Check which keys aren't being pressed anymore
-		for i: uint = 0; i < len(state.previous_keys); i += 1 {
-			key:= state.previous_keys[i]
-			if array_key_pos(&current_keys, key) == -1 {
-				#partial switch key {
-					case rl.KeyboardKey.LEFT_SHIFT: mu.input_key_up(ctx, .SHIFT)
-					case rl.KeyboardKey.RIGHT_SHIFT: mu.input_key_up(ctx, .SHIFT)
-					case rl.KeyboardKey.LEFT_CONTROL: mu.input_key_up(ctx, .CTRL)
-					case rl.KeyboardKey.RIGHT_CONTROL: mu.input_key_up(ctx, .CTRL)
-					case rl.KeyboardKey.LEFT_ALT: mu.input_key_up(ctx, .ALT)
-					case rl.KeyboardKey.RIGHT_ALT: mu.input_key_up(ctx, .ALT)
-					case rl.KeyboardKey.ENTER: mu.input_key_up(ctx, .RETURN)
-					case rl.KeyboardKey.KP_ENTER: mu.input_key_up(ctx, .RETURN)
-					case rl.KeyboardKey.BACKSPACE: mu.input_key_up(ctx, .BACKSPACE)
-					case: // other cases are handled in section "handle_text_input"
+		for keys_rl, key_mu in key_map {
+			for key_rl in keys_rl {
+				switch {
+				case key_rl == .KEY_NULL:
+					// ignore
+				case rl.IsKeyPressed(key_rl):
+					mu.input_key_down(ctx, key_mu)
+				case rl.IsKeyReleased(key_rl):
+					mu.input_key_up  (ctx, key_mu)
 				}
 			}
 		}
 
-		// Check, which keys are newly being pressed
-		for i: uint = 0; i < len(current_keys); i += 1 {
-			key := current_keys[i]
-			
-			if array_key_pos(&state.previous_keys, key) == -1 {
-				#partial switch key {
-					case rl.KeyboardKey.ESCAPE: break main_loop
-					case rl.KeyboardKey.LEFT_SHIFT: mu.input_key_down(ctx, .SHIFT)
-					case rl.KeyboardKey.RIGHT_SHIFT: mu.input_key_down(ctx, .SHIFT)
-					case rl.KeyboardKey.LEFT_CONTROL: mu.input_key_down(ctx, .CTRL)
-					case rl.KeyboardKey.RIGHT_CONTROL: mu.input_key_down(ctx, .CTRL)
-					case rl.KeyboardKey.LEFT_ALT: mu.input_key_down(ctx, .ALT)
-					case rl.KeyboardKey.RIGHT_ALT: mu.input_key_down(ctx, .ALT)
-					case rl.KeyboardKey.ENTER: mu.input_key_down(ctx, .RETURN)
-					case rl.KeyboardKey.KP_ENTER: mu.input_key_down(ctx, .RETURN)
-					case rl.KeyboardKey.BACKSPACE: mu.input_key_down(ctx, .BACKSPACE)
-					case: // other cases are handled in section "handle_text_input"
-				}			
-			}
-		}
-
-		// This handles text input
-		handle_text_input: {
-			ra := make([]rune, 1)
-			ra[0] = rl.GetCharPressed()
-
-			if ra[0] != 0 {
-				str:= u.runes_to_string(ra)
-				mu.input_text(ctx, str)
-			}
-		}
-
-		delete(state.previous_keys)
-		state.previous_keys = current_keys
-
-		//// microui code
-		mu.begin(ctx)
 		{
-			all_windows(ctx)
+			buf: [512]byte
+			n: int
+			for n < len(buf) {
+				c := rl.GetCharPressed()
+				if c == 0 {
+					break
+				}
+				b, w := utf8.encode_rune(c)
+				n += copy(buf[n:], b[:w])
+			}
+			mu.input_text(ctx, string(buf[:n]))
 		}
+
+		mu.begin(ctx)
+		all_windows(ctx)
 		mu.end(ctx)
 
-		//// raylib rendering
 		render(ctx)
 	}
+}
 
+render :: proc "contextless" (ctx: ^mu.Context) {
+	render_texture :: proc "contextless" (renderer: rl.RenderTexture2D, dst: ^rl.Rectangle, src: mu.Rect, color: rl.Color) {
+		dst.width = f32(src.w)
+		dst.height = f32(src.h)
 
-	defer rl.UnloadRenderTexture(screen_texture)
-	defer rl.UnloadRenderTexture(state.atlas_texture)
+		rl.BeginTextureMode(renderer)
+		rl.DrawTextureRec(
+			texture  = state.atlas_texture.texture,
+			source   = {f32(src.x), f32(src.y), f32(src.w), f32(src.h)},
+			position = {dst.x, dst.y},
+			tint     = color,
+		)
+		rl.EndTextureMode()
+	}
 
-	defer rl.CloseWindow()
+	to_rl_color :: proc "contextless" (in_color: mu.Color) -> (out_color: rl.Color) {
+		return {in_color.r, in_color.g, in_color.b, in_color.a}
+	}
+
+	rl.BeginTextureMode(state.screen_texture)
+	rl.EndScissorMode()
+	rl.ClearBackground(to_rl_color(state.bg))
+	rl.EndTextureMode()
+
+	command_backing: ^mu.Command
+	for variant in mu.next_command_iterator(ctx, &command_backing) {
+		switch cmd in variant {
+		case ^mu.Command_Text:
+			dst := rl.Rectangle{f32(cmd.pos.x), f32(cmd.pos.y), 0, 0}
+			for ch in cmd.str do if ch&0xc0 != 0x80 {
+				r := min(int(ch), 127)
+				src := mu.default_atlas[mu.DEFAULT_ATLAS_FONT + r]
+				render_texture(state.screen_texture, &dst, src, to_rl_color(cmd.color))
+				dst.x += dst.width
+			}
+		case ^mu.Command_Rect:
+			rl.BeginTextureMode(state.screen_texture)
+			rl.DrawRectangle(cmd.rect.x, cmd.rect.y, cmd.rect.w, cmd.rect.h, to_rl_color(cmd.color))
+			rl.EndTextureMode()
+		case ^mu.Command_Icon:
+			src := mu.default_atlas[cmd.id]
+			x := cmd.rect.x + (cmd.rect.w - src.w)/2
+			y := cmd.rect.y + (cmd.rect.h - src.h)/2
+			render_texture(state.screen_texture, &rl.Rectangle {f32(x), f32(y), 0, 0}, src, to_rl_color(cmd.color))
+		case ^mu.Command_Clip:
+			rl.BeginTextureMode(state.screen_texture)
+			rl.BeginScissorMode(cmd.rect.x, cmd.rect.y, cmd.rect.w, cmd.rect.h)
+			rl.EndTextureMode()
+		case ^mu.Command_Jump:
+			unreachable()
+		}
+	}
+
+	rl.BeginDrawing()
+	rl.ClearBackground(rl.RAYWHITE)
+	rl.DrawTextureRec(
+		texture  = state.screen_texture.texture,
+		source   = {0, 0, f32(state.screen_width), -f32(state.screen_height)},
+		position = {0, 0},
+		tint     = rl.WHITE,
+	)
+	rl.EndDrawing()
 }
 
 u8_slider :: proc(ctx: ^mu.Context, val: ^u8, lo, hi: u8) -> (res: mu.Result_Set) {
@@ -277,7 +313,7 @@ all_windows :: proc(ctx: ^mu.Context)
 				"Lorem ipsum dolor sit amet, consectetur adipiscing "+
 				"elit. Maecenas lacinia, sem eu lacinia molestie, mi risus faucibus "+
 				"ipsum, eu varius magna felis a nulla.",
-		        )
+			)
 			mu.layout_end_column(ctx)
 		}
 
@@ -297,7 +333,7 @@ all_windows :: proc(ctx: ^mu.Context)
 			mu.draw_box(ctx, mu.expand_rect(r, 1), ctx.style.colors[.BORDER])
 			mu.draw_control_text(ctx, fmt.tprintf("#%02x%02x%02x", state.bg.r, state.bg.g, state.bg.b), r, .TEXT, {.ALIGN_CENTER})
 		}
-	}	
+	}
 
 
 
@@ -346,6 +382,7 @@ all_windows :: proc(ctx: ^mu.Context)
 			.BASE_FOCUS   = "base focus",
 			.SCROLL_BASE  = "scroll base",
 			.SCROLL_THUMB = "scroll thumb",
+			.SELECTION_BG = "selection bg",
 		}
 
 		sw := i32(f32(mu.get_current_container(ctx).body.w) * 0.14)
@@ -358,86 +395,5 @@ all_windows :: proc(ctx: ^mu.Context)
 			u8_slider(ctx, &ctx.style.colors[col].a, 0, 255)
 			mu.draw_rect(ctx, mu.layout_next(ctx), ctx.style.colors[col])
 		}
-	}	
+	}
 }
-	
-render :: proc(ctx: ^mu.Context) {
-	render_texture :: proc(renderer: ^rl.RenderTexture2D, dst: ^rl.Rectangle, src: mu.Rect, color: rl.Color) {
-		dst.width = f32(src.w)
-		dst.height = f32(src.h)
-
-		rl.BeginTextureMode(renderer^)
-		{
-			rl.DrawTextureRec(state.atlas_texture.texture, mu_to_rl_Rect(src), rl.Vector2{dst.x, dst.y}, color)
-		}
-		rl.EndTextureMode()
-	}
-
-	command_backing: ^mu.Command
-
-	rl.BeginTextureMode(screen_texture)
-	{
-		rl.EndScissorMode()
-		rl.ClearBackground(mu_to_rl_color(state.bg))
-	}
-	rl.EndTextureMode()		
-
-	for variant in mu.next_command_iterator(ctx, &command_backing) {		
-		switch cmd in variant {
-			case ^mu.Command_Text:
-				dst := rl.Rectangle{f32(cmd.pos.x), f32(cmd.pos.y), 0, 0}
-				for ch in cmd.str do if ch&0xc0 != 0x80 {
-					r := min(int(ch), 127)
-					src := mu.default_atlas[mu.DEFAULT_ATLAS_FONT + r]
-					render_texture(&screen_texture, &dst, src, mu_to_rl_color(cmd.color))
-					dst.x += dst.width					
-				}
-			case ^mu.Command_Rect:
-				rl.BeginTextureMode(screen_texture)
-				{
-					rl.DrawRectangle(cmd.rect.x, cmd.rect.y, cmd.rect.w, cmd.rect.h, mu_to_rl_color(cmd.color))
-				}
-				rl.EndTextureMode()	
-			case ^mu.Command_Icon:
-				src := mu.default_atlas[cmd.id]
-				x := cmd.rect.x + (cmd.rect.w - src.w)/2
-				y := cmd.rect.y + (cmd.rect.h - src.h)/2
-				render_texture(&screen_texture, &rl.Rectangle {f32(x), f32(y), 0, 0}, src, mu_to_rl_color(cmd.color))
-			case ^mu.Command_Clip:
-				rl.BeginTextureMode(screen_texture)
-				{
-					rl.BeginScissorMode(cmd.rect.x, cmd.rect.y, cmd.rect.w, cmd.rect.h)
-				}
-				rl.EndTextureMode()
-			case ^mu.Command_Jump:
-				unreachable()
-		}
-	}
-
-	rl.BeginDrawing()
-	{
-		rl.ClearBackground(rl.RAYWHITE)
-		rl.DrawTextureRec(screen_texture.texture, rl.Rectangle {0, 0, f32(state.screen_width), -f32(state.screen_height)}, rl.Vector2 {0,0}, rl.WHITE)
-	}
-	rl.EndDrawing()
-}
-
-//// Helper functions
-
-// finds the key pos in a key array
-array_key_pos :: proc(key_array: ^[dynamic]rl.KeyboardKey, key: rl.KeyboardKey) -> int {
-	for i:= len(key_array)-1; i >=0; i -= 1 {
-		if key_array[i] == key {return i}
-	}
-	return -1
-}
-
-// convert microui color to raylib color
-mu_to_rl_color :: proc(in_color: mu.Color) -> (out_color: rl.Color) {
-	return {in_color.r, in_color.g, in_color.b, in_color.a}
-}
-
-// convert microui Rect to raylib Rectangle
-mu_to_rl_Rect :: proc(in_rect : mu.Rect) -> (out_rect: rl.Rectangle) {
-	return {f32(in_rect.x), f32(in_rect.y), f32(in_rect.w), f32(in_rect.h)}
-} 
