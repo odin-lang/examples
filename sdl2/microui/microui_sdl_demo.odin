@@ -1,6 +1,8 @@
 package microui_sdl
 
+import "core:c"
 import "core:fmt"
+import "core:strings"
 import SDL "vendor:sdl2"
 import mu "vendor:microui"
 
@@ -54,7 +56,7 @@ main :: proc() {
 	}
 	defer SDL.DestroyRenderer(renderer)
 
-	state.atlas_texture = SDL.CreateTexture(renderer, u32(SDL.PixelFormatEnum.RGBA32), .TARGET, mu.DEFAULT_ATLAS_WIDTH, mu.DEFAULT_ATLAS_HEIGHT)
+	state.atlas_texture = SDL.CreateTexture(renderer, .RGBA32, .TARGET, mu.DEFAULT_ATLAS_WIDTH, mu.DEFAULT_ATLAS_HEIGHT)
 	assert(state.atlas_texture != nil)
 	if err := SDL.SetTextureBlendMode(state.atlas_texture, .BLEND); err != 0 {
 		fmt.eprintln("SDL.SetTextureBlendMode:", err)
@@ -73,10 +75,41 @@ main :: proc() {
 	}
 
 	ctx := &state.mu_ctx
-	mu.init(ctx)
+	mu.init(ctx,
+	        set_clipboard = proc(user_data: rawptr, text: string) -> (ok: bool) {
+			cstr := strings.clone_to_cstring(text)
+			SDL.SetClipboardText(cstr)
+			delete(cstr)
+			return true
+		},
+		get_clipboard = proc(user_data: rawptr) -> (text: string, ok: bool) {
+			if SDL.HasClipboardText() {
+				text = string(SDL.GetClipboardText())
+				ok = true
+			}
+			return
+		},
+	)
 
 	ctx.text_width = mu.default_atlas_text_width
 	ctx.text_height = mu.default_atlas_text_height
+
+
+	// NOTE: This allows for continuous rendering as the window resizes rather than waiting for the resize to finish
+	Resize_Data :: struct {
+		ctx:      ^mu.Context,
+		renderer: ^SDL.Renderer,
+	}
+	SDL.AddEventWatch(proc "c" (data: rawptr, event: ^SDL.Event) -> c.int {
+		if event.type == .WINDOWEVENT && event.window.event == .RESIZED {
+			resize_data := (^Resize_Data)(data)
+			render(resize_data.ctx, resize_data.renderer)
+		}
+		return 0
+	}, &Resize_Data{
+		ctx = ctx,
+		renderer = renderer,
+	})
 
 	main_loop: for {
 		for e: SDL.Event; SDL.PollEvent(&e); /**/ {
@@ -115,6 +148,15 @@ main :: proc() {
 				case .RETURN:    fn(ctx, .RETURN)
 				case .KP_ENTER:  fn(ctx, .RETURN)
 				case .BACKSPACE: fn(ctx, .BACKSPACE)
+
+				case .LEFT:  fn(ctx, .LEFT)
+				case .RIGHT: fn(ctx, .RIGHT)
+				case .HOME:  fn(ctx, .HOME)
+				case .END:   fn(ctx, .END)
+				case .A:     fn(ctx, .A)
+				case .X:     fn(ctx, .X)
+				case .C:     fn(ctx, .C)
+				case .V:     fn(ctx, .V)
 				}
 			}
 		}
@@ -127,8 +169,9 @@ main :: proc() {
 	}
 }
 
-render :: proc(ctx: ^mu.Context, renderer: ^SDL.Renderer) {
-	render_texture :: proc(renderer: ^SDL.Renderer, dst: ^SDL.Rect, src: mu.Rect, color: mu.Color) {
+// NOTE: This is marked as "contextless" so that the 'context' does need to be set up in the `SDL.AddEventWatch` callback
+render :: proc "contextless" (ctx: ^mu.Context, renderer: ^SDL.Renderer) {
+	render_texture :: proc "contextless" (renderer: ^SDL.Renderer, dst: ^SDL.Rect, src: mu.Rect, color: mu.Color) {
 		dst.w = src.w
 		dst.h = src.h
 
@@ -339,6 +382,7 @@ all_windows :: proc(ctx: ^mu.Context) {
 			.BASE_FOCUS   = "base focus",
 			.SCROLL_BASE  = "scroll base",
 			.SCROLL_THUMB = "scroll thumb",
+			.SELECTION_BG = "selection bg",
 		}
 
 		sw := i32(f32(mu.get_current_container(ctx).body.w) * 0.14)
