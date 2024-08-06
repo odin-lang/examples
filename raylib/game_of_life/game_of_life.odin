@@ -94,22 +94,22 @@ count_neighbors :: #force_inline proc(w: ^World, x: i32, y: i32) -> u8 {
 	up    := (y - 1) %% w.height
 	down  := (y + 1) %% w.height
 
-	top_left  := w.alive[up * w.width + left]
-	top       := w.alive[up * w.width + x]
-	top_right := w.alive[up * w.width + right]
+	top_left     := w.alive[up   * w.width + left ]
+	top          := w.alive[up   * w.width + x    ]
+	top_right    := w.alive[up   * w.width + right]
 
-	mid_left  := w.alive[y * w.width + left]
-	mid_right := w.alive[y * w.width + right]
+	mid_left     := w.alive[y    * w.width + left ]
+	mid_right    := w.alive[y    * w.width + right]
 
-	bottom_left  := w.alive[down * w.width + left]
-	bottom       := w.alive[down * w.width + x]
+	bottom_left  := w.alive[down * w.width + left ]
+	bottom       := w.alive[down * w.width + x    ]
 	bottom_right := w.alive[down * w.width + right]
 
-	top_row    := top_left + top + top_right
-	mid_row    := mid_left + mid_right
-	bottom_row := bottom_left + bottom + bottom_right
+	top_row    := top_left    + top     + top_right
+	mid_row    := mid_left              + mid_right
+	bottom_row := bottom_left + bottom  + bottom_right
 
-	total := top_row + mid_row + bottom_row
+	total      := top_row     + mid_row + bottom_row
 	return total
 }
 
