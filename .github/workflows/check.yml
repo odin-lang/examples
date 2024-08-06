@@ -1,0 +1,78 @@
+name: Check everything
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 20 * * *
+
+env:
+  FORCE_COLOR: "1"
+
+jobs:
+  checks:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Dependencies
+        run: |
+          brew install llvm@18
+          echo "/opt/homebrew/opt/llvm@18/bin" >> "$GITHUB_PATH"
+
+      - name: Set up Odin
+        run: |
+          git clone https://github.com/odin-lang/Odin.git --depth 1 --single-branch --branch=master
+          cd Odin
+          make
+          echo "$(pwd)" >> "$GITHUB_PATH"
+          ./odin report
+
+      - name: Check everything
+        run: |
+          FLAGS="-vet -strict-style -vet-tabs -disallow-do -warnings-as-errors"
+          
+          odin check by_example/dir_info $FLAGS
+          odin check by_example/dynamic_arrays $FLAGS
+          odin check by_example/hellope $FLAGS
+          odin check by_example/os_args $FLAGS
+          odin check by_example/read_console_input $FLAGS
+          odin check by_example/strings $FLAGS
+
+          odin check glfw/window $FLAGS
+
+          odin check json/load_json $FLAGS
+
+          odin check learn_metal/00-window $FLAGS
+          odin check learn_metal/01-primitive $FLAGS
+          odin check learn_metal/02-argbuffers $FLAGS
+          odin check learn_metal/03-animation $FLAGS
+          odin check learn_metal/04-instancing $FLAGS
+          odin check learn_metal/05-perspective $FLAGS
+          odin check learn_metal/06-lighting $FLAGS
+          odin check learn_metal/07-texturing $FLAGS
+          odin check learn_metal/08-compute $FLAGS
+          odin check learn_metal/09-compute-to-render $FLAGS
+
+          odin check math/noise/draw_texture $FLAGS
+
+          odin check raylib/game_of_life $FLAGS 
+          odin check raylib/microui $FLAGS
+          odin check raylib/ports/shaders/shaders_mesh_instancing.odin -file $FLAGS
+          odin check raylib/ports/shapes/shapes_basic_shapes.odin -file $FLAGS
+          odin check raylib/ports/shapes/shapes_bouncing_ball.odin -file $FLAGS
+          odin check raylib/ports/shapes/shapes_colors_palette.odin -file $FLAGS
+          odin check raylib/ports/shapes/shapes_logo_raylib_anim.odin -file $FLAGS
+          odin check raylib/ports/text/text_codepoints_loading.odin -file $FLAGS
+          odin check raylib/ports/textures/textures_gif_player.odin -file $FLAGS
+          odin check raylib/tetroid $FLAGS
+
+          odin check sdl2/chase_in_space $FLAGS
+          odin check sdl2/d3d11 -target:windows_amd64 $FLAGS
+          odin check sdl2/hellope $FLAGS
+          odin check sdl2/metal $FLAGS
+          odin check sdl2/microui $FLAGS
+          odin check sdl2/opengl $FLAGS
+
+          odin check wgpu/microui -target:windows_amd64 $FLAGS

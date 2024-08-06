@@ -155,21 +155,21 @@ when USE_SDL2_IMAGE {
 		/*
 			Convert it into an SDL2 Surface.
 		*/
-  		rmask := u32(0x000000ff)
-  		gmask := u32(0x0000ff00)
-  		bmask := u32(0x00ff0000)
-  		amask := u32(0xff000000) if res_img.channels == 4 else u32(0x0)
+		rmask := u32(0x000000ff)
+		gmask := u32(0x0000ff00)
+		bmask := u32(0x00ff0000)
+		amask := u32(0xff000000) if res_img.channels == 4 else u32(0x0)
 
-  		depth := i32(res_img.depth) * i32(res_img.channels)
-  		pitch := i32(res_img.width) * i32(res_img.channels)
+		depth := i32(res_img.depth) * i32(res_img.channels)
+		pitch := i32(res_img.width) * i32(res_img.channels)
 
-  		surface.surf = sdl2.CreateRGBSurfaceFrom(
-  			raw_data(res_img.pixels.buf),
-  			i32(res_img.width), i32(res_img.height), depth, pitch,
-  			rmask, gmask, bmask, amask,
-  		)
+		surface.surf = sdl2.CreateRGBSurfaceFrom(
+			raw_data(res_img.pixels.buf),
+			i32(res_img.width), i32(res_img.height), depth, pitch,
+			rmask, gmask, bmask, amask,
+		)
 
-  		return
+		return
 	}
 }
 
@@ -214,18 +214,18 @@ init_resources :: proc() -> (ok: bool) {
 }
 
 draw :: proc() {
-  	sdl2.SetRenderDrawColor(ctx.renderer, 255, 142, 27, 0xff)
-  	sdl2.RenderClear(ctx.renderer)
+	sdl2.SetRenderDrawColor(ctx.renderer, 255, 142, 27, 0xff)
+	sdl2.RenderClear(ctx.renderer)
 
-  	tex := ctx.textures[0]
+	tex := ctx.textures[0]
 	r := sdl2.Rect{
 		x = (WINDOW_WIDTH  / 2) - i32(f32(tex.w) * tex.scale * tex.pivot.x),
 		y = (WINDOW_HEIGHT / 2) - i32(f32(tex.h) * tex.scale * tex.pivot.y),
 		w = i32(f32(tex.w) * tex.scale),
 		h = i32(f32(tex.h) * tex.scale),
 	}
-    sdl2.RenderCopy(ctx.renderer, tex.tex, nil, &r)
-  	sdl2.RenderPresent(ctx.renderer)
+	sdl2.RenderCopy(ctx.renderer, tex.tex, nil, &r)
+	sdl2.RenderPresent(ctx.renderer)
 }
 
 cleanup :: proc() {

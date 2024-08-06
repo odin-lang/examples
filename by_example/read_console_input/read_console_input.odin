@@ -7,8 +7,8 @@ main :: proc() {
 	buf: [256]byte
 	fmt.println("Please enter some text:")
 	n, err := os.read(os.stdin, buf[:])
-	if err < 0 {
-		// Handle error
+	if err != nil {
+		fmt.eprintln("Error reading: ", err)
 		return
 	}
 	str := string(buf[:n])

@@ -222,7 +222,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	defer camera_buffer->release()
 
 	depth_texture: ^MTL.Texture = nil
-	defer if depth_texture != nil do depth_texture->release()
+	defer if depth_texture != nil { depth_texture->release() }
 
 	command_queue := device->newCommandQueue()
 	defer command_queue->release()
@@ -260,7 +260,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 			ix, iy, iz := 0, 0, 0
 
 			instance_data := instance_buffer->contentsAsSlice([]Instance_Data)[:NUM_INSTANCES]
-			for instance, idx in &instance_data {
+			for &instance, idx in instance_data {
 				if ix == INSTANCE_WIDTH {
 					ix = 0
 					iy += 1

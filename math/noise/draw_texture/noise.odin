@@ -1,13 +1,15 @@
 package draw_texture
 
+import "base:runtime"
+
+import "core:c"
 import "core:fmt"
 import "core:math/linalg/glsl"
 import "core:math/noise"
-import gl "vendor:OpenGL"
-import "vendor:glfw"
 import "core:mem"
-import "core:c"
-import "core:runtime"
+
+import    "vendor:glfw"
+import gl "vendor:OpenGL"
 
 WIDTH  :: 400
 HEIGHT :: 400

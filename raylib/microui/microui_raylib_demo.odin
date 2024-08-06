@@ -179,11 +179,13 @@ render :: proc "contextless" (ctx: ^mu.Context) {
 		switch cmd in variant {
 		case ^mu.Command_Text:
 			dst := rl.Rectangle{f32(cmd.pos.x), f32(cmd.pos.y), 0, 0}
-			for ch in cmd.str do if ch&0xc0 != 0x80 {
-				r := min(int(ch), 127)
-				src := mu.default_atlas[mu.DEFAULT_ATLAS_FONT + r]
-				render_texture(state.screen_texture, &dst, src, to_rl_color(cmd.color))
-				dst.x += dst.width
+			for ch in cmd.str {
+				if ch&0xc0 != 0x80 {
+					r := min(int(ch), 127)
+					src := mu.default_atlas[mu.DEFAULT_ATLAS_FONT + r]
+					render_texture(state.screen_texture, &dst, src, to_rl_color(cmd.color))
+					dst.x += dst.width
+				}
 			}
 		case ^mu.Command_Rect:
 			rl.BeginTextureMode(state.screen_texture)
@@ -240,8 +242,7 @@ reset_log :: proc() {
 }
 
 
-all_windows :: proc(ctx: ^mu.Context)
-{
+all_windows :: proc(ctx: ^mu.Context) {
 	@static opts := mu.Options{.NO_CLOSE}
 
 	if mu.window(ctx, "Demo Window", {40, 40, 300, 450}, opts) {

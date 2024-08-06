@@ -72,10 +72,10 @@ update_entity :: proc(entity: ^Entity, game: ^Game) {
 	switch entity.type {
 	case .PLAYER:
 		dir := [2]f32{0, 0}
-		if b8(game.keyboard[sdl2.SCANCODE_UP   ]) | b8(game.keyboard[sdl2.SCANCODE_W]) do dir.y -= 1
-		if b8(game.keyboard[sdl2.SCANCODE_DOWN ]) | b8(game.keyboard[sdl2.SCANCODE_S]) do dir.y += 1
-		if b8(game.keyboard[sdl2.SCANCODE_LEFT ]) | b8(game.keyboard[sdl2.SCANCODE_A]) do dir.x -= 1
-		if b8(game.keyboard[sdl2.SCANCODE_RIGHT]) | b8(game.keyboard[sdl2.SCANCODE_D]) do dir.x += 1
+		if b8(game.keyboard[sdl2.SCANCODE_UP   ]) | b8(game.keyboard[sdl2.SCANCODE_W]) { dir.y -= 1 }
+		if b8(game.keyboard[sdl2.SCANCODE_DOWN ]) | b8(game.keyboard[sdl2.SCANCODE_S]) { dir.y += 1 }
+		if b8(game.keyboard[sdl2.SCANCODE_LEFT ]) | b8(game.keyboard[sdl2.SCANCODE_A]) { dir.x -= 1 }
+		if b8(game.keyboard[sdl2.SCANCODE_RIGHT]) | b8(game.keyboard[sdl2.SCANCODE_D]) { dir.x += 1 }
 		dir = linalg.normalize0(dir)
 		entity.pos += dir * 0.2 * dt
 		// Dash
@@ -93,17 +93,17 @@ update_entity :: proc(entity: ^Entity, game: ^Game) {
 	case .ENEMY:
 		// Towards player
 		player := find_entity(.PLAYER, game)
-		if player == nil do return
+		if player == nil { return }
 		dir := player.pos - entity.pos
 		dir = linalg.normalize0(dir)
 		entity.pos += dir * 0.12 * dt
 		// Away from other enemies
 		for _, i in game.entities {
 			if game.entities[i].type == .ENEMY && entity != &game.entities[i] {
-				dir := entity.pos - game.entities[i].pos
-				dis := linalg.length(dir)
+				edir := entity.pos - game.entities[i].pos
+				dis  := linalg.length(edir)
 				if dis > 0 {
-					entity.pos += dir * (1. / (dis * dis)) * 0.1 * dt
+					entity.pos += edir * (1. / (dis * dis)) * 0.1 * dt
 				}
 			}
 		}
@@ -130,7 +130,7 @@ update_entity :: proc(entity: ^Entity, game: ^Game) {
 			entity.hp = 0
 		} else {
 			player := find_entity(.PLAYER, game)
-			if player == nil do return
+			if player == nil { return }
 			if player.pos.x < entity.pos.x && entity.pos.x < player.pos.x + 10 && player.pos.y < entity.pos.y &&
 			   entity.pos.y < player.pos.y + 10 {
 				player.hp -= 1

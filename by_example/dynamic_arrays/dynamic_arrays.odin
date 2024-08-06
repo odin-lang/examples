@@ -18,9 +18,11 @@ main :: proc() {
 
 	// Remove the last element.
 	last_element := pop(&dyn)
+	fmt.println(last_element)
 
 	// Remove the first element.
 	first_element := pop_front(&dyn)
+	fmt.println(first_element)
 	// dyn = [0, 0, 0, 0, 1]
 
 	// Add an array to the dynamic array.
