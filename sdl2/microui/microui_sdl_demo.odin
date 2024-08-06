@@ -194,11 +194,13 @@ render :: proc "contextless" (ctx: ^mu.Context, renderer: ^SDL.Renderer) {
 		switch cmd in variant {
 		case ^mu.Command_Text:
 			dst := SDL.Rect{cmd.pos.x, cmd.pos.y, 0, 0}
-			for ch in cmd.str do if ch&0xc0 != 0x80 {
-				r := min(int(ch), 127)
-				src := mu.default_atlas[mu.DEFAULT_ATLAS_FONT + r]
-				render_texture(renderer, &dst, src, cmd.color)
-				dst.x += dst.w
+			for ch in cmd.str {
+				if ch&0xc0 != 0x80 {
+					r := min(int(ch), 127)
+					src := mu.default_atlas[mu.DEFAULT_ATLAS_FONT + r]
+					render_texture(renderer, &dst, src, cmd.color)
+					dst.x += dst.w
+				}
 			}
 		case ^mu.Command_Rect:
 			SDL.SetRenderDrawColor(renderer, cmd.color.r, cmd.color.g, cmd.color.b, cmd.color.a)
