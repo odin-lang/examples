@@ -76,9 +76,9 @@ update_world :: #force_inline proc(world: ^World, next_world: ^World) {
 			index := y * world.width + x
 
 			switch neighbors {
-			case 2: {next_world.alive[index] = world.alive[index]}
-			case 3: {next_world.alive[index] = 1}
-			case:   {next_world.alive[index] = 0}
+			case 2: next_world.alive[index] = world.alive[index]
+			case 3: next_world.alive[index] = 1
+			case:   next_world.alive[index] = 0
 			}
 		}
 	}
