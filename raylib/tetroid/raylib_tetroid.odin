@@ -76,7 +76,7 @@ inverse_gravity_speed := 30
 main :: proc() {
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Tetroid")
 	defer rl.CloseWindow()   
-	
+
 	init_game()
 
 	rl.SetTargetFPS(60)      
@@ -120,8 +120,8 @@ init_game :: proc() {
 		for j in 0..<GRID_VERTICAL_SIZE {
 			switch {
 			case j == GRID_VERTICAL_SIZE - 1,
-			     i == GRID_HORIZONTAL_SIZE - 1,
-			     i == 0:
+				i == GRID_HORIZONTAL_SIZE - 1,
+				i == 0:
 				grid[i][j] = .Block
 			}
 		}
@@ -136,35 +136,35 @@ update_game :: proc() {
 		}
 		return
 	}
-	
+
 	if rl.IsKeyPressed(.P) {
 		pause = !pause
 	}
-	
+
 	if pause {
 		return
 	}
-	
+
 	if line_to_delete {
 		fade_line_counter += 1
-		
+
 		if fade_line_counter % 8 < 4 {
 			fading_color = rl.MAROON
 		} else {
 			fading_color = rl.GRAY
 		}
-		
+
 		if fade_line_counter >= FADING_TIME {
 			delete_complete_lines()
 			fade_line_counter = 0
 			line_to_delete = false
-			
+
 			lines += 1
 		}
 		return
 	}
-	
-	
+
+
 	if !piece_active {
 		piece_active = create_piece()
 		fast_fall_movement_counter = 0
@@ -173,7 +173,7 @@ update_game :: proc() {
 		gravity_movement_counter   += 1
 		lateral_movement_counter   += 1
 		turn_movement_counter      += 1
-		
+
 		// We make sure to move if we've pressed the key this frame
 		if rl.IsKeyPressed(.LEFT) || rl.IsKeyPressed(.RIGHT) {
 			lateral_movement_counter = LATERAL_SPEED
@@ -181,7 +181,7 @@ update_game :: proc() {
 		if rl.IsKeyPressed(.UP) {
 			turn_movement_counter = TURNING_SPEED
 		}
-		
+
 		// Fall down
 		if rl.IsKeyDown(.DOWN) && fast_fall_movement_counter >= FAST_FALL_AWAIT_COUNTER {
 			// We make sure the piece is going to fall this frame
@@ -216,7 +216,7 @@ update_game :: proc() {
 				turn_movement_counter = 0
 			}
 		}
-		
+
 		for j in 0..<2 {
 			for i in 1..<GRID_HORIZONTAL_SIZE-1 {
 				if grid[i][j] == .Full {
@@ -230,24 +230,24 @@ update_game :: proc() {
 draw_game :: proc() {
 	rl.BeginDrawing()
 	defer rl.EndDrawing()
-	
+
 	rl.ClearBackground(rl.RAYWHITE)
-	
+
 	if game_over {
 		text :: "PRESS [ENTER] TO PLAY AGAIN"
 		rl.DrawText(text, rl.GetScreenWidth()/2 - rl.MeasureText(text, 20)/2, rl.GetScreenHeight()/2 - 50, 20, rl.GRAY)
 		return
 	}
-	
+
 	offset := [2]i32{
 		SCREEN_WIDTH/2 - (GRID_HORIZONTAL_SIZE*SQUARE_SIZE/2) - 50,
 		SCREEN_HEIGHT/2 - ((GRID_VERTICAL_SIZE-1)*SQUARE_SIZE/2) + SQUARE_SIZE*2,
 	}
-	
+
 	offset.y -= 50
-	
+
 	controller := offset.x
-	
+
 	for j in 0..<GRID_VERTICAL_SIZE {
 		for i in 0..<GRID_HORIZONTAL_SIZE {
 			switch grid[i][j] {
@@ -267,15 +267,15 @@ draw_game :: proc() {
 			}
 			offset.x += SQUARE_SIZE
 		}
-		
+
 		offset.x = controller
 		offset.y += SQUARE_SIZE
 	}
-	
+
 	offset = {500, 45}
-	
+
 	controller = offset.x
-	
+
 	for j in 0..<4 {
 		for i in 0..<4 {
 			#partial switch incoming_piece[i][j] {
@@ -290,14 +290,14 @@ draw_game :: proc() {
 				offset.x += SQUARE_SIZE
 			}
 		}
-		
+
 		offset.x = controller
 		offset.y += SQUARE_SIZE
 	}
-	
+
 	rl.DrawText("INCOMING:", offset.x, offset.y - 100, 10, rl.GRAY)
 	rl.DrawText(rl.TextFormat("LINES:      %04i", lines), offset.x, offset.y + 20, 10, rl.GRAY)
-	
+
 	if pause {
 		text :: "GAME PAUSED"
 		rl.DrawText(text, SCREEN_WIDTH/2 - rl.MeasureText(text, 40)/2, SCREEN_WIDTH/2 - 40, 40, rl.GRAY)
@@ -335,9 +335,9 @@ create_piece :: proc() -> bool {
 
 get_random_piece :: proc() {
 	random := rl.GetRandomValue(0, 6)
-	
+
 	incoming_piece = {}
-	
+
 	switch random {
 	case 0: incoming_piece[1][1] = .Moving; incoming_piece[2][1] = .Moving; incoming_piece[1][2] = .Moving; incoming_piece[2][2] = .Moving //Cube
 	case 1: incoming_piece[1][0] = .Moving; incoming_piece[1][1] = .Moving; incoming_piece[1][2] = .Moving; incoming_piece[2][2] = .Moving //L
@@ -357,7 +357,7 @@ delete_complete_lines :: proc() {
 			for i := 1; i < GRID_HORIZONTAL_SIZE-1; i += 1 {
 				grid[i][j] = .Empty
 			}
-			
+
 			for j2 := j-1; j2 >= 0; j2 -= 1 {
 				for i2 := 1; i2 < GRID_HORIZONTAL_SIZE-1; i2 += 1 {
 					#partial switch grid[i2][j2] {
@@ -371,7 +371,7 @@ delete_complete_lines :: proc() {
 				}
 			}
 		}
-		
+
 	}
 }
 
@@ -405,7 +405,7 @@ resolve_falling_movement :: proc(detection: ^bool, piece_active: ^bool) {
 				}
 			}
 		}
-		
+
 		piece_position.y += 1
 	}
 }
@@ -417,11 +417,11 @@ check_completion :: proc(line_to_delete: ^bool) {
 			if grid[i][j] == .Full {
 				calculator += 1
 			}
-			
+
 			if calculator == GRID_HORIZONTAL_SIZE-2 {
 				line_to_delete^ = true
 				calculator = 0
-				
+
 				for z in 1..<GRID_HORIZONTAL_SIZE-1 {
 					grid[z][j] = .Fading
 				}
@@ -443,9 +443,9 @@ resolve_lateral_movement :: proc() -> (collision: bool) {
 				}
 			}
 		}
-		
+
 		if !collision {
-			 for j := GRID_VERTICAL_SIZE-2; j >= 0; j -= 1 {
+			for j := GRID_VERTICAL_SIZE-2; j >= 0; j -= 1 {
 				for i := 1; i < GRID_HORIZONTAL_SIZE-1; i += 1 {
 					if grid[i][j] == .Moving {
 						if grid[i][j] == .Moving {
@@ -455,11 +455,11 @@ resolve_lateral_movement :: proc() -> (collision: bool) {
 					}
 				}
 			}
-			
+
 			piece_position.x -= 1
 		}
-		
-		
+
+
 	case rl.IsKeyDown(.RIGHT):
 		right_collision_loop: for j := GRID_VERTICAL_SIZE-2; j >= 0; j -= 1 {
 			for i := 1; i < GRID_HORIZONTAL_SIZE-1; i += 1 {
@@ -471,11 +471,11 @@ resolve_lateral_movement :: proc() -> (collision: bool) {
 				}
 			}
 		}
-		
-		
+
+
 		if !collision {
-			 for j := GRID_VERTICAL_SIZE-2; j >= 0; j -= 1 {
-			 	for i := GRID_HORIZONTAL_SIZE-1; i >= 1; i -= 1 {
+			for j := GRID_VERTICAL_SIZE-2; j >= 0; j -= 1 {
+				for i := GRID_HORIZONTAL_SIZE-1; i >= 1; i -= 1 {
 					if grid[i][j] == .Moving {
 						if grid[i][j] == .Moving {
 							grid[i+1][j] = .Moving
@@ -484,13 +484,13 @@ resolve_lateral_movement :: proc() -> (collision: bool) {
 					}
 				}
 			}
-			
-			
+
+
 			piece_position.x += 1
 		}
-		
+
 	}
-	
+
 	return
 }
 
