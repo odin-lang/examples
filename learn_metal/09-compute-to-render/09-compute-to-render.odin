@@ -335,7 +335,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	defer camera_buffer->release()
 
 	depth_texture: ^MTL.Texture = nil
-	defer if depth_texture != nil do depth_texture->release()
+	defer if depth_texture != nil { depth_texture->release() }
 
 	compute_pso := build_compute_pipeline(device) or_return
 	defer compute_pso->release()
