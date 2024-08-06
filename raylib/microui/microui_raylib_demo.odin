@@ -155,14 +155,12 @@ render :: proc "contextless" (ctx: ^mu.Context) {
 		dst.width = f32(src.w)
 		dst.height = f32(src.h)
 
-		rl.BeginTextureMode(renderer)
 		rl.DrawTextureRec(
 			texture  = state.atlas_texture.texture,
 			source   = {f32(src.x), f32(src.y), f32(src.w), f32(src.h)},
 			position = {dst.x, dst.y},
 			tint     = color,
 		)
-		rl.EndTextureMode()
 	}
 
 	to_rl_color :: proc "contextless" (in_color: mu.Color) -> (out_color: rl.Color) {
@@ -172,7 +170,6 @@ render :: proc "contextless" (ctx: ^mu.Context) {
 	rl.BeginTextureMode(state.screen_texture)
 	rl.EndScissorMode()
 	rl.ClearBackground(to_rl_color(state.bg))
-	rl.EndTextureMode()
 
 	command_backing: ^mu.Command
 	for variant in mu.next_command_iterator(ctx, &command_backing) {
@@ -188,23 +185,19 @@ render :: proc "contextless" (ctx: ^mu.Context) {
 				}
 			}
 		case ^mu.Command_Rect:
-			rl.BeginTextureMode(state.screen_texture)
 			rl.DrawRectangle(cmd.rect.x, cmd.rect.y, cmd.rect.w, cmd.rect.h, to_rl_color(cmd.color))
-			rl.EndTextureMode()
 		case ^mu.Command_Icon:
 			src := mu.default_atlas[cmd.id]
 			x := cmd.rect.x + (cmd.rect.w - src.w)/2
 			y := cmd.rect.y + (cmd.rect.h - src.h)/2
 			render_texture(state.screen_texture, &rl.Rectangle {f32(x), f32(y), 0, 0}, src, to_rl_color(cmd.color))
 		case ^mu.Command_Clip:
-			rl.BeginTextureMode(state.screen_texture)
 			rl.BeginScissorMode(cmd.rect.x, cmd.rect.y, cmd.rect.w, cmd.rect.h)
-			rl.EndTextureMode()
 		case ^mu.Command_Jump:
 			unreachable()
 		}
 	}
-
+	rl.EndTextureMode()
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.RAYWHITE)
 	rl.DrawTextureRec(
