@@ -120,7 +120,7 @@ main :: proc() {
 				switch {
 				case key_rl == .KEY_NULL:
 					// ignore
-				case rl.IsKeyPressed(key_rl):
+				case rl.IsKeyPressed(key_rl), rl.IsKeyPressedRepeat(key_rl):
 					mu.input_key_down(ctx, key_mu)
 				case rl.IsKeyReleased(key_rl):
 					mu.input_key_up  (ctx, key_mu)
