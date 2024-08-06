@@ -158,7 +158,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 			@static angle: f32
 			angle += 0.01
 			instance_data := instance_buffer->contentsAsSlice([]Instance_Data)[:NUM_INSTANCES]
-			for instance, idx in &instance_data {
+			for &instance, idx in instance_data {
 				scl :: 0.1
 
 				i := f32(idx) / NUM_INSTANCES
