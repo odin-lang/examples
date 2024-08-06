@@ -209,7 +209,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 			full_obj_rot := rt * rr * rt_inv
 
 			instance_data := instance_buffer->contentsAsSlice([]Instance_Data)[:NUM_INSTANCES]
-			for instance, idx in &instance_data {
+			for &instance, idx in instance_data {
 				scl :: 0.1
 
 				i := f32(idx) / NUM_INSTANCES
