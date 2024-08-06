@@ -167,6 +167,8 @@ render :: proc "contextless" (ctx: ^mu.Context) {
 		return {in_color.r, in_color.g, in_color.b, in_color.a}
 	}
 
+	height := rl.GetScreenHeight()
+
 	rl.BeginTextureMode(state.screen_texture)
 	rl.EndScissorMode()
 	rl.ClearBackground(to_rl_color(state.bg))
@@ -192,7 +194,7 @@ render :: proc "contextless" (ctx: ^mu.Context) {
 			y := cmd.rect.y + (cmd.rect.h - src.h)/2
 			render_texture(state.screen_texture, &rl.Rectangle {f32(x), f32(y), 0, 0}, src, to_rl_color(cmd.color))
 		case ^mu.Command_Clip:
-			rl.BeginScissorMode(cmd.rect.x, cmd.rect.y, cmd.rect.w, cmd.rect.h)
+			rl.BeginScissorMode(cmd.rect.x, height - (cmd.rect.y + cmd.rect.h), cmd.rect.w, cmd.rect.h)
 		case ^mu.Command_Jump:
 			unreachable()
 		}
