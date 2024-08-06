@@ -203,11 +203,6 @@ main :: proc() {
 
 	// Infinite game loop. Breaks on pressing <Esc>
 	for !rl.WindowShouldClose() {
-		// all the values in game used to be separate variables and were
-		// moved into a single Game struct. `using game` is a quick fix
-		// to get the program back to running. Comment this line to see
-		// where the variables were used and updated.
-		using game
 
 		// If the user resized the window, we adjust the cell size to keep drawing over the entire window.
 		if rl.IsWindowResized() {
@@ -230,14 +225,14 @@ main :: proc() {
 			world.alive[user_input.mouse_world_position] = 0
 		}
 		if user_input.toggle_pause {
-			pause = !pause
+			game.pause = !game.pause
 		}
 
 		// Step 2: update the world state
 		// There is always a current state of the world that we read from
 		// and a future state of the world that we write to.
-		if !pause && time.since(last_tick) > tick_rate {
-			last_tick = time.now()
+		if !game.pause && time.since(game.last_tick) > game.tick_rate {
+			game.last_tick = time.now()
 			update_world(&world, &next_world)
 
 			// this is how you swap 2 variables in ODIN! 
@@ -249,7 +244,7 @@ main :: proc() {
 		// to see if there was any pixel missed.
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.PINK)
-		draw_world(&world, cell, colors)
+		draw_world(&world, cell, game.colors)
 		draw_cursor(user_input, cell)
 
 		rl.EndDrawing()
