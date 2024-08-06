@@ -91,7 +91,7 @@ key_callback :: proc "c" (window: glfw.WindowHandle, key, scancode, action, mods
 	mu_key: mu.Key; switch key {
 	case glfw.KEY_LEFT_SHIFT, glfw.KEY_RIGHT_SHIFT:     mu_key = .ALT
 	case glfw.KEY_LEFT_CONTROL, glfw.KEY_RIGHT_CONTROL,
-		glfw.KEY_LEFT_SUPER, glfw.KEY_RIGHT_SUPER:      mu_key = .CTRL
+	     glfw.KEY_LEFT_SUPER, glfw.KEY_RIGHT_SUPER:     mu_key = .CTRL
 	case glfw.KEY_LEFT_ALT, glfw.KEY_RIGHT_ALT:         mu_key = .ALT
 	case glfw.KEY_BACKSPACE:                            mu_key = .BACKSPACE
 	case glfw.KEY_DELETE:                               mu_key = .DELETE
