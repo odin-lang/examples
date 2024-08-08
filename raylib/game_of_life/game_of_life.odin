@@ -2,7 +2,7 @@ package game_of_life
 
 /*********************************************************************
                             GAME  OF  LIFE
-                            (using raylib)       
+                            (using raylib)
 
  This example shows a simple setup for a game with Input processing,
  updating game state and drawing game state to the screen.
@@ -13,7 +13,7 @@ package game_of_life
  * Press <Space> to (un)pause the game
  * Press <Esc> to close the game
 
- The game starts paused. 
+ The game starts paused.
 
 **********************************************************************/
 
@@ -60,7 +60,6 @@ User_Input :: struct {
 }
 
 
-
 /*
  Game Of Life rules:
  * (1) A cell with 2 alive neighbors stays alive/dead
@@ -85,7 +84,7 @@ update_world :: #force_inline proc(world: ^World, next_world: ^World) {
 }
 
 /*
- Just a branch-less version of adding adding all neighbors together 
+ Just a branch-less version of adding adding all neighbors together
 */
 count_neighbors :: #force_inline proc(w: ^World, x: i32, y: i32) -> u8 {
 	// our world is a torus!
