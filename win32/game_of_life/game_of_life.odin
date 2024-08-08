@@ -30,26 +30,15 @@ import win32 "core:sys/windows"
 import "core:time"
 
 // aliases
-wstring :: win32.wstring
 L :: intrinsics.constant_utf16_cstring
-utf8_to_wstring :: win32.utf8_to_wstring
-wstring_to_utf8 :: win32.wstring_to_utf8
 color :: [4]u8
 int2 :: [2]i32
-
-HWND :: win32.HWND
-LPARAM :: win32.LPARAM
-WPARAM :: win32.WPARAM
-LRESULT :: win32.LRESULT
 
 // constants
 TITLE :: "Game Of Life"
 WORLD_SIZE: int2 : {128, 64}
 ZOOM :: 12 // pixel size
 FPS :: 20
-FADE :: false
-
-ALIVE :: 1
 
 BLACK :: color{0, 0, 0, 255}
 WHITE :: color{255, 255, 255, 255}
@@ -79,7 +68,7 @@ ConfigFlag :: enum u32 {
 ConfigFlags :: distinct bit_set[ConfigFlag;u32]
 
 Window :: struct {
-	name:          wstring,
+	name:          win32.wstring,
 	size:          int2,
 	fps:           i32,
 	control_flags: ConfigFlags,
@@ -236,7 +225,7 @@ WM_CREATE :: proc(hwnd: win32.HWND, lparam: win32.LPARAM) -> win32.LRESULT {
 	return 0
 }
 
-WM_DESTROY :: proc(hwnd: HWND) -> LRESULT {
+WM_DESTROY :: proc(hwnd: win32.HWND) -> win32.LRESULT {
 	app := get_app(hwnd)
 	if app == nil {show_error_and_panic("Missing app!")}
 	if app.timer_id != 0 {
@@ -256,7 +245,7 @@ WM_DESTROY :: proc(hwnd: HWND) -> LRESULT {
 	return 0
 }
 
-WM_PAINT :: proc(hwnd: HWND) -> LRESULT {
+WM_PAINT :: proc(hwnd: win32.HWND) -> win32.LRESULT {
 	app := get_app(hwnd)
 	if app == nil {return 0}
 
@@ -349,7 +338,7 @@ register_class :: proc(instance: win32.HINSTANCE) -> win32.ATOM {
 	icon: win32.HICON = win32.LoadIconW(instance, win32.MAKEINTRESOURCEW(1))
 	if icon == nil {icon = win32.LoadIconW(nil, win32.wstring(win32._IDI_APPLICATION))}
 	if icon == nil {show_error_and_panic("Missing icon")}
-	cursor := win32.LoadCursorW(nil, wstring(win32._IDC_ARROW))
+	cursor := win32.LoadCursorW(nil, win32.wstring(win32._IDC_ARROW))
 	if cursor == nil {show_error_and_panic("Missing cursor")}
 	wcx := win32.WNDCLASSW {
 		style         = win32.CS_HREDRAW | win32.CS_VREDRAW | win32.CS_OWNDC,
