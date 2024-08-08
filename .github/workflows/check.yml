@@ -43,6 +43,7 @@ jobs:
           odin check glfw/window $FLAGS
 
           odin check json/load_json $FLAGS
+          odin check json/odin_info $FLAGS
 
           odin check learn_metal/00-window $FLAGS
           odin check learn_metal/01-primitive $FLAGS
