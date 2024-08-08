@@ -335,13 +335,13 @@ WM_CHAR :: proc(hwnd: win32.HWND, wparam: win32.WPARAM, lparam: win32.LPARAM) ->
 wndproc :: proc "system" (hwnd: win32.HWND, msg: win32.UINT, wparam: win32.WPARAM, lparam: win32.LPARAM) -> win32.LRESULT {
 	context = runtime.default_context()
 	switch msg {
-	case win32.WM_CREATE:		return WM_CREATE(hwnd, lparam)
-	case win32.WM_DESTROY:		return WM_DESTROY(hwnd)
-	case win32.WM_ERASEBKGND:	return 1 // paint should fill out the client area so no need to erase the background
-	case win32.WM_PAINT:		return WM_PAINT(hwnd)
-	case win32.WM_CHAR:			return WM_CHAR(hwnd, wparam, lparam)
-	case win32.WM_TIMER:		return WM_TIMER(hwnd, wparam, lparam)
-	case:						return win32.DefWindowProcW(hwnd, msg, wparam, lparam)
+	case win32.WM_CREATE:     return WM_CREATE(hwnd, lparam)
+	case win32.WM_DESTROY:    return WM_DESTROY(hwnd)
+	case win32.WM_ERASEBKGND: return 1 // paint should fill out the client area so no need to erase the background
+	case win32.WM_PAINT:      return WM_PAINT(hwnd)
+	case win32.WM_CHAR:       return WM_CHAR(hwnd, wparam, lparam)
+	case win32.WM_TIMER:      return WM_TIMER(hwnd, wparam, lparam)
+	case:                     return win32.DefWindowProcW(hwnd, msg, wparam, lparam)
 	}
 }
 
