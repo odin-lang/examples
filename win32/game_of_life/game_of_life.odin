@@ -78,7 +78,7 @@ Game :: struct {
 	tick_rate:         time.Duration,
 	last_tick:         time.Time,
 	pause:             bool,
-	colors:            [palette_count]color,
+	colors:            color_palette,
 	size:              int2,
 	zoom:              i32,
 	world, next_world: ^World,
