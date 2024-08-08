@@ -335,7 +335,7 @@ wndproc :: proc "system" (hwnd: win32.HWND, msg: win32.UINT, wparam: win32.WPARA
 }
 
 register_class :: proc(instance: win32.HINSTANCE) -> win32.ATOM {
-	icon: win32.HICON = win32.LoadIconW(instance, win32.MAKEINTRESOURCEW(1))
+	icon: win32.HICON = win32.LoadIconW(instance, win32.MAKEINTRESOURCEW(101))
 	if icon == nil {icon = win32.LoadIconW(nil, win32.wstring(win32._IDI_APPLICATION))}
 	if icon == nil {show_error_and_panic("Missing icon")}
 	cursor := win32.LoadCursorW(nil, win32.wstring(win32._IDC_ARROW))
