@@ -136,7 +136,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	defer command_queue->release()
 
 	SDL.ShowWindow(window)
-	for quit := false; !quit;  {
+	for quit := false; !quit; {
 		for e: SDL.Event; SDL.PollEvent(&e); {
 			#partial switch e.type {
 			case .QUIT:

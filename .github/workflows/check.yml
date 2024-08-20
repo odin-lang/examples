@@ -32,7 +32,7 @@ jobs:
       - name: Check everything
         run: |
           FLAGS="-vet -strict-style -vet-tabs -disallow-do -warnings-as-errors"
-          
+
           odin check by_example/dir_info $FLAGS
           odin check by_example/dynamic_arrays $FLAGS
           odin check by_example/hellope $FLAGS
@@ -47,6 +47,7 @@ jobs:
           odin check learn_metal/00-window $FLAGS
           odin check learn_metal/01-primitive $FLAGS
           odin check learn_metal/02-argbuffers $FLAGS
+          odin check learn_metal/02-argbuffers-no-sdl $FLAGS
           odin check learn_metal/03-animation $FLAGS
           odin check learn_metal/04-instancing $FLAGS
           odin check learn_metal/05-perspective $FLAGS
@@ -57,7 +58,7 @@ jobs:
 
           odin check math/noise/draw_texture $FLAGS
 
-          odin check raylib/game_of_life $FLAGS 
+          odin check raylib/game_of_life $FLAGS
           odin check raylib/microui $FLAGS
           odin check raylib/ports/shaders/shaders_mesh_instancing.odin -file $FLAGS
           odin check raylib/ports/shapes/shapes_basic_shapes.odin -file $FLAGS
