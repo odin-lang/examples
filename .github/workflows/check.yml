@@ -76,3 +76,6 @@ jobs:
           odin check sdl2/opengl $FLAGS
 
           odin check wgpu/microui -target:windows_amd64 $FLAGS
+
+          odin check nanovg/example.odin $FLAGS
+          odin check nanovg/fbo.odin $FLAGS
