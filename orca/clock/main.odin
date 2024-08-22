@@ -9,7 +9,6 @@ Can be run using in the local folder
 3. orca_output\bin\orca_output.exe
 */
 
-import "base:runtime"
 import "core:math"
 import oc "core:sys/orca"
 
@@ -77,7 +76,7 @@ mod_f64 :: proc "contextless" (x, y: f64) -> (n: f64) {
 
 @(export)
 oc_on_frame_refresh :: proc "c" () {
-	context = runtime.default_context()
+	// context = runtime.default_context()
 
 	oc.canvas_context_select(canvas)
 	oc.set_color_rgba(.05, .05, .05, 1)
@@ -92,12 +91,12 @@ oc_on_frame_refresh :: proc "c" () {
 	if lastSeconds != math.floor(secs) {
 		lastSeconds = math.floor(secs)
 
-		oc.log_infof(
-			"current time: %.0f:%.0f:%.0f",
-			math.floor(hours),
-			math.floor(minutes),
-			math.floor(secs),
-		)
+		// oc.log_infof(
+		// 	"current time: %.0f:%.0f:%.0f",
+		// 	math.floor(hours),
+		// 	math.floor(minutes),
+		// 	math.floor(secs),
+		// )
 	}
 
 	secondsRotation := (math.PI * 2) * (secs / 60.0) - (math.PI / 2)

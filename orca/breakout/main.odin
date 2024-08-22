@@ -216,7 +216,6 @@ check_collision :: proc "contextless" (block: oc.rect) -> int {
 	// We assume significant tunneling can't happen.
 
 	ballCenter := oc.vec2{ball.x + ball.w / 2, ball.y + ball.h / 2}
-	blockCenter := oc.vec2{block.x + block.w / 2, block.y + block.h / 2}
 
 	// Moving right
 	if velocity.x > 0 {
@@ -322,7 +321,6 @@ oc_on_frame_refresh :: proc "c" () {
 	context = runtime.default_context()
 	scratch := oc.scratch_begin()
 	defer oc.scratch_end(scratch)
-	aspect := frameSize.x / frameSize.y
 
 	if leftDown {
 		paddle.x -= 10

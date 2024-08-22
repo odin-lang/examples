@@ -11,7 +11,6 @@ Can be run using in the local folder
 
 import "base:runtime"
 import "core:fmt"
-import "core:math"
 import oc "core:sys/orca"
 
 frameSize := oc.vec2{1200, 838}
@@ -338,7 +337,7 @@ oc_on_frame_refresh :: proc "c" () {
 							hSliderLogTime := f64(0)
 							oc.ui_style_next({size = {{.PIXELS, 130, 0, 0}, {}}}, {.SIZE_WIDTH})
 							oc.ui_slider("h_slider", &hSliderValue)
-							now := oc.clock_time(.MONOTONIC)
+							now = oc.clock_time(.MONOTONIC)
 							if (now - hSliderLogTime) >= 0.2 &&
 							   hSliderValue != hSliderLoggedValue {
 								log_pushf("Slider moved to %f", hSliderValue)
