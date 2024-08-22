@@ -1347,7 +1347,7 @@ flipHorizontal :: proc(image: []byte, w, h, stride: int) {
 
 saveScreenshot :: proc(w, h: int, premult: bool, name: cstring) {
 	image := make([]byte, w * h * 4)
- 	defer delete(image)
+	defer delete(image)
 
 	gl.ReadPixels(0, 0, i32(w), i32(h), gl.RGBA, gl.UNSIGNED_BYTE, raw_data(image))
 	if premult {
@@ -1356,7 +1356,7 @@ saveScreenshot :: proc(w, h: int, premult: bool, name: cstring) {
 		setAlpha(image, w, h, w*4, 255)
 	}
 	flipHorizontal(image, w, h, w*4)
- 	stbi.write_png(name, i32(w), i32(h), 4, raw_data(image), i32(w) * 4)
+	stbi.write_png(name, i32(w), i32(h), 4, raw_data(image), i32(w) * 4)
 }
 
 GRAPH_HISTORY_COUNT :: 100
@@ -1401,7 +1401,9 @@ renderGraph :: proc(ctx: ^nvg.Context, x, y: f32, fps: ^PerfGraph) {
 		case .FPS: {
 			for i in 0..<GRAPH_HISTORY_COUNT {
 				v := 1.0 / (0.00001 + fps.values[(fps.head+i) % GRAPH_HISTORY_COUNT])
-				if v > 80.0 do v = 80.0
+				if v > 80.0 {
+					v = 80.0
+				}
 				vx := x + (f32(i) / (GRAPH_HISTORY_COUNT-1)) * w
 				vy := y + h - ((v / 80.0) * h)
 				nvg.LineTo(ctx, vx, vy)
@@ -1411,7 +1413,9 @@ renderGraph :: proc(ctx: ^nvg.Context, x, y: f32, fps: ^PerfGraph) {
 		case .PERCENT: {
 			for i in 0..<GRAPH_HISTORY_COUNT {
 				v := fps.values[(fps.head+i) % GRAPH_HISTORY_COUNT] * 1.0
-				if v > 100.0 do v = 100.0
+				if v > 100.0 {
+					v = 100.0
+				}
 				vx := x + (f32(i) / (GRAPH_HISTORY_COUNT-1)) * w
 				vy := y + h - ((v / 100.0) * h)
 				nvg.LineTo(ctx, vx, vy)
@@ -1421,7 +1425,9 @@ renderGraph :: proc(ctx: ^nvg.Context, x, y: f32, fps: ^PerfGraph) {
 		case .MS: {
 			for i in 0..<GRAPH_HISTORY_COUNT {
 				v := fps.values[(fps.head+i) % GRAPH_HISTORY_COUNT] * 1000.0
-				if v > 20.0 do v = 20.0
+				if v > 20.0 { 
+					v = 20.0
+				}
 				vx := x + (f32(i) / (GRAPH_HISTORY_COUNT-1)) * w
 				vy := y + h - ((v / 20.0) * h)
 				nvg.LineTo(ctx, vx, vy)
