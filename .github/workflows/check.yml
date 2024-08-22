@@ -77,6 +77,9 @@ jobs:
 
           odin check wgpu/microui -target:windows_amd64 $FLAGS
 
+          odin check nanovg/example.odin -file $FLAGS
+          odin check nanovg/fbo.odin -file $FLAGS
+
           odin check orca/breakout -target:orca_wasm32 $FLAGS
           odin check orca/clock -target:orca_wasm32 $FLAGS
           odin check orca/ui -target:orca_wasm32 $FLAGS
