@@ -9,9 +9,12 @@ Can be run using in the local folder
 3. orca_output\bin\orca_output.exe
 */
 
+import "core:log"
 import "base:runtime"
 import "core:fmt"
 import oc "core:sys/orca"
+
+ctx: runtime.Context
 
 frameSize := oc.vec2{1200, 838}
 
@@ -37,7 +40,9 @@ cmd :: enum {
 command := cmd.NONE
 
 main :: proc() {
-	context = runtime.default_context()
+	context.logger = oc.create_odin_logger()
+	ctx = context
+
 	oc.window_set_title("Orca UI Demo")
 	oc.window_set_size(frameSize)
 
@@ -53,7 +58,7 @@ main :: proc() {
 
 		file := oc.file_open(fontNames[i], {.READ}, {})
 		if oc.file_last_error(file) != .OK {
-			oc.log_errorf("Couldn't open file %s\n", fontNames[i])
+			log.errorf("Couldn't open file %s\n", fontNames[i])
 		}
 		size := oc.file_size(file)
 		buffer := cast([^]byte)oc.arena_push(scratch.arena, size)
@@ -171,7 +176,8 @@ labeled_slider :: proc(label: string, value: ^f32) {
 
 @(export)
 oc_on_frame_refresh :: proc "c" () {
-	context = runtime.default_context()
+	context = ctx
+
 	scratch := oc.scratch_begin()
 
 	#partial switch command {

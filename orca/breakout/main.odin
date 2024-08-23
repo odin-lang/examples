@@ -10,9 +10,12 @@ Can be run using in the local folder
 */
 
 import "base:runtime"
+import "core:log"
 import "core:fmt"
 import "core:math"
 import oc "core:sys/orca"
+
+ctx: runtime.Context
 
 NUM_BLOCKS_PER_ROW :: 7
 NUM_BLOCKS :: 42 // 7 * 6
@@ -102,6 +105,9 @@ flip_y_at :: proc "contextless" (pos: oc.vec2) -> oc.mat2x3 {
 }
 
 main :: proc() {
+	context.logger = oc.create_odin_logger()
+	ctx = context
+
 	oc.window_set_title("Breakout")
 
 	renderer = oc.canvas_renderer_create()
@@ -144,8 +150,8 @@ main :: proc() {
 
 @(export)
 oc_on_resize :: proc "c" (width, height: u32) {
-	context = runtime.default_context()
-	oc.log_infof("frame resize %u, %u", width, height)
+	context = ctx
+	log.infof("frame resize %v, %v", width, height)
 	frameSize.x = f32(width)
 	frameSize.y = f32(height)
 }
@@ -318,7 +324,8 @@ check_collision :: proc "contextless" (block: oc.rect) -> int {
 
 @(export)
 oc_on_frame_refresh :: proc "c" () {
-	context = runtime.default_context()
+	context = ctx
+
 	scratch := oc.scratch_begin()
 	defer oc.scratch_end(scratch)
 
@@ -370,7 +377,7 @@ oc_on_frame_refresh :: proc "c" () {
 		r := block_rect(i)
 		result := check_collision(r)
 		if result != 0 {
-			oc.log_infof("Collision! direction=%d", result)
+			log.infof("Collision! direction=%v", result)
 			blockHealth[i] -= 1
 
 			if blockHealth[i] == 0 {
