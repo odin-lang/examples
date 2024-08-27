@@ -350,6 +350,7 @@ r_clear :: proc(color: mu.Color) -> bool {
 				loadOp = .Clear,
 				storeOp = .Store,
 				clearValue = {f64(color.r)/255, f64(color.g)/255, f64(color.b)/255, f64(color.a)/255},
+				depthSlice = wgpu.DEPTH_SLICE_UNDEFINED,
 			},
 		}),
 	})
@@ -413,12 +414,12 @@ r_submit :: proc() {
 	wgpu.QueueWriteBuffer(r.queue, r.index_buffer,  0, &r.index_buf, uint(r.buf_idx*6*size_of(u32)))
 
 	wgpu.RenderPassEncoderEnd(r.curr_pass)
+	wgpu.RenderPassEncoderRelease(r.curr_pass)
 
 	command_buffer := wgpu.CommandEncoderFinish(r.curr_encoder, nil)
 	wgpu.QueueSubmit(r.queue, { command_buffer })
 
 	wgpu.CommandBufferRelease(command_buffer)
-	wgpu.RenderPassEncoderRelease(r.curr_pass)
 	wgpu.CommandEncoderRelease(r.curr_encoder)
 }
 
