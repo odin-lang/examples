@@ -11,12 +11,9 @@ import "core:os"
 import "core:strings"
 
 main :: proc() {
-	fmt.println("Odin builtin constants")
+	fmt.println("Some of Odin's builtin constants")
 
-	path: string = len(os.args) > 1 ? os.args[1] : "odin_info.json"
-
-	builder := strings.builder_make()
-	defer strings.builder_destroy(&builder)
+	path := len(os.args) > 1 ? os.args[1] : "odin_info.json"
 
 	info: struct {
 		ODIN_OS:      runtime.Odin_OS_Type,
@@ -28,23 +25,26 @@ main :: proc() {
 		ODIN_DEBUG:   bool,
 	} = {ODIN_OS, ODIN_ARCH, ODIN_ENDIAN, ODIN_VENDOR, ODIN_VERSION, ODIN_ROOT, ODIN_DEBUG}
 
-	fmt.println("Odin")
+	fmt.println("Odin:")
 	fmt.printfln("%#v", info)
 
-	fmt.println("Json")
-	mo: json.Marshal_Options = {
+	fmt.println("JSON:")
+	json_data, err := json.marshal(info, {
 		pretty         = true,
 		use_enum_names = true,
-	}
-	err := json.marshal_to_builder(&builder, info, &mo)
-	assert(err == json.Marshal_Data_Error.None)
-	if len(builder.buf) != 0 {
-		json_data := builder.buf[:]
-		fmt.printfln("%s", json_data)
-		fmt.printfln("Writing: %s", path)
-		ok := os.write_entire_file(path, json_data)
-		if !ok {fmt.eprintln("Unable to write file")}
+	})
+	if err != nil {
+		fmt.eprintfln("Unable to marshal JSON: %v", err)
+		os.exit(1)
 	}
 
-	fmt.println("Done.")
+	fmt.printfln("%s", json_data)
+	fmt.printfln("Writing: %s", path)
+	werr := os.write_entire_file_or_err(path, json_data)
+	if werr != nil {
+		fmt.eprintfln("Unable to write file: %v", werr)
+		os.exit(1)
+	}
+
+	fmt.println("Done")
 }
