@@ -8,7 +8,6 @@ import "base:runtime"
 import "core:encoding/json"
 import "core:fmt"
 import "core:os"
-import "core:strings"
 
 main :: proc() {
 	fmt.println("Some of Odin's builtin constants")
