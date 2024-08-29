@@ -6,3 +6,8 @@
 **.exp
 tetroid.lib
 build.bat
+
+# orca samples
+
+orca_output
+module.wasm

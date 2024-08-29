@@ -43,6 +43,7 @@ jobs:
           odin check glfw/window $FLAGS
 
           odin check json/load_json $FLAGS
+          odin check json/odin_info $FLAGS
 
           odin check learn_metal/00-window $FLAGS
           odin check learn_metal/01-primitive $FLAGS
@@ -78,3 +79,10 @@ jobs:
           odin check wgpu/microui -target:windows_amd64 $FLAGS
 
           odin check win32/game_of_life -target:windows_amd64 $FLAGS
+
+          odin check nanovg/example.odin -file $FLAGS
+          odin check nanovg/fbo.odin -file $FLAGS
+
+          odin check orca/breakout -target:orca_wasm32 $FLAGS
+          odin check orca/clock -target:orca_wasm32 $FLAGS
+          odin check orca/ui -target:orca_wasm32 $FLAGS
