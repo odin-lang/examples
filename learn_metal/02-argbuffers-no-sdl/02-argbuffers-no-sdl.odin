@@ -50,10 +50,8 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	}, "CustomWindowDelegate", context))
 	window->setTitle(NS.MakeConstantString("Use left/right arrow keys to rotate the triangle"))
 	window->setIsVisible(true)
-	// window->makeKeyAndOrderFront(nil)
 
-
-	app->finishLaunching()
+	app->activateIgnoringOtherApps(true)
 
 
 	device := MTL.CreateSystemDefaultDevice()
