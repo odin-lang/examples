@@ -91,10 +91,9 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	for !quit {
 		{
 			NS.scoped_autoreleasepool()
+			// Use `NS.Date.distantFuture()` for `expiration` param, so that we idle without wasting any CPU while waiting for events.
 			event := app->nextEventMatchingMask(NS.EventMaskAny, NS.Date.distantFuture(), NS.DefaultRunLoopMode, true)
-			for {
-				if event == nil { break }
-
+			for event != nil {
 				event_type := event->type()
 				#partial switch event_type {
 				case .KeyDown, .KeyUp:
@@ -113,11 +112,11 @@ metal_main :: proc() -> (err: ^NS.Error) {
 				}
 				app->sendEvent(event)
 
+				// Once we wake up from idle, process all events in the queue before we can idle again.
 				event = app->nextEventMatchingMask(NS.EventMaskAny, nil, NS.DefaultRunLoopMode, true)
 			}
 			app->updateWindows()
 		}
-		fmt.println("-----------------------")
 
 		frame_data := (^Frame_Data)(frame_data_buffer->contentsPointer())
 		frame_data.angle = angle
