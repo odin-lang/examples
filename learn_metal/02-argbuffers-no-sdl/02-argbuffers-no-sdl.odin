@@ -36,8 +36,8 @@ metal_main :: proc() -> (err: ^NS.Error) {
 
 	CustomWindowClass := NS.objc_allocateClassPair(intrinsics.objc_find_class("NSWindow"), "CustomWindow", 0)
 	assert(CustomWindowClass != nil)
-	keyDown :: proc "c" (event: ^NS.Event) { /* ignore key down events */ }
-	NS.class_addMethod(CustomWindowClass, intrinsics.objc_find_selector("keyDown:"), auto_cast keyDown, "v@:@")
+	keyDown :: proc "c" (self: NS.id, sel: NS.SEL, event: ^NS.Event) { /* ignore key down events */ }
+	NS.class_addMethod(CustomWindowClass, intrinsics.objc_find_selector("keyDown:"), NS.IMP(keyDown), "v@:@")
 	NS.objc_registerClassPair(CustomWindowClass)
 	window := cast(^NS.Window)(NS.class_createInstance(CustomWindowClass, size_of(NS.Window)))
 	defer window->release()
