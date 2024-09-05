@@ -53,39 +53,39 @@ IDT_TIMER1: win32.UINT_PTR : 10001
 
 color_bits :: 1
 palette_count :: 1 << color_bits
-color_palette :: [palette_count]color
+Color_Palette :: [palette_count]color
 
-bitmap_info :: struct {
+Bitmap_Info :: struct {
 	bmiHeader: win32.BITMAPINFOHEADER,
-	bmiColors: color_palette,
+	bmiColors: Color_Palette,
 }
 
-screen_buffer :: [^]u8
+Screen_Buffer :: [^]u8
 
-ConfigFlag :: enum u32 {
+Config_Flag :: enum u32 {
 	CENTER = 1,
 }
-ConfigFlags :: distinct bit_set[ConfigFlag;u32]
+Config_Flags :: distinct bit_set[Config_Flag;u32]
 
 Window :: struct {
 	name:          win32.wstring,
 	size:          int2,
 	fps:           i32,
-	control_flags: ConfigFlags,
+	control_flags: Config_Flags,
 }
 
 Game :: struct {
 	tick_rate:         time.Duration,
 	last_tick:         time.Time,
 	pause:             bool,
-	colors:            color_palette,
+	colors:            Color_Palette,
 	size:              int2,
 	zoom:              i32,
 	world, next_world: ^World,
 	timer_id:          win32.UINT_PTR,
 	tick:              u32,
 	hbitmap:           win32.HBITMAP,
-	pvBits:            screen_buffer,
+	pvBits:            Screen_Buffer,
 	window:            Window,
 }
 
@@ -203,7 +203,7 @@ WM_CREATE :: proc(hwnd: win32.HWND, lparam: win32.LPARAM) -> win32.LRESULT {
 	hdc := win32.GetDC(hwnd)
 	defer win32.ReleaseDC(hwnd, hdc)
 
-	bitmap_info := bitmap_info {
+	bitmap_info := Bitmap_Info {
 		bmiHeader = win32.BITMAPINFOHEADER {
 			biSize        = size_of(win32.BITMAPINFOHEADER),
 			biWidth       = app.size.x,
