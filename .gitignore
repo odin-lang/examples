@@ -6,6 +6,10 @@
 **.exp
 tetroid.lib
 build.bat
+ols.json
+
+.vscode
+.idea
 
 # orca samples
 

@@ -48,6 +48,7 @@ jobs:
           odin check learn_metal/00-window $FLAGS
           odin check learn_metal/01-primitive $FLAGS
           odin check learn_metal/02-argbuffers $FLAGS
+          odin check learn_metal/02-argbuffers-no-sdl $FLAGS
           odin check learn_metal/03-animation $FLAGS
           odin check learn_metal/04-instancing $FLAGS
           odin check learn_metal/05-perspective $FLAGS
