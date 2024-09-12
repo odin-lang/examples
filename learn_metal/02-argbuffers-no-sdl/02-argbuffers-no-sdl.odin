@@ -22,8 +22,9 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	@static quit := false
 
 	app := NS.Application.sharedApplication()
-	app->setActivationPolicy(.Regular) // without this window is not brought to foreground on launch
 	defer app->release()
+	app->setActivationPolicy(.Regular) // without this window is not brought to foreground on launch
+	app->finishLaunching()
 
 	create_main_menu(app)
 
@@ -41,8 +42,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	NS.objc_registerClassPair(CustomWindowClass)
 	window := cast(^NS.Window)(NS.class_createInstance(CustomWindowClass, size_of(NS.Window)))
 	defer window->release()
-
-	window->initWithContentRect({window_origin, window_size}, { .Resizable, .Closable, .Titled, .Miniaturizable }, .Buffered, false)
+	window->initWithContentRect({window_origin, window_size}, { .Resizable, .Closable, .Titled, .Miniaturizable }, .Buffered, NS.NO)
 	window->setDelegate(NS.window_delegate_register_and_alloc({
 		windowWillClose = proc(^NS.Notification) {
 			quit = true
