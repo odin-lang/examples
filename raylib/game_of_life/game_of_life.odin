@@ -64,7 +64,7 @@ User_Input :: struct {
  Game Of Life rules:
  * (1) A cell with 2 alive neighbors stays alive/dead
  * (2) A cell with 3 alive neighbors stays/becomes alive
- * (3) Otherwise: the cell dies/stays dead.
+ * (3) Otherwise: the cell dies/stays dead
 
  reads from world, writes into next_world
 */
@@ -84,7 +84,7 @@ update_world :: #force_inline proc(world: ^World, next_world: ^World) {
 }
 
 /*
- Just a branch-less version of adding adding all neighbors together
+ Just a branch-less version of adding all neighbors together
 */
 count_neighbors :: #force_inline proc(w: ^World, x: i32, y: i32) -> u8 {
 	// our world is a torus!
@@ -113,7 +113,7 @@ count_neighbors :: #force_inline proc(w: ^World, x: i32, y: i32) -> u8 {
 }
 
 /*
- draws all the tiles of world. 
+ Draws all the tiles of world
 */
 draw_world :: #force_inline proc(world: ^World, cell: Cell, colors: []rl.Color) {
 	x, y: i32
@@ -134,7 +134,7 @@ draw_world :: #force_inline proc(world: ^World, cell: Cell, colors: []rl.Color) 
 }
 
 /*
- draws a yellow cell where the mouse points to.
+ Draws a yellow cell where the mouse points to
 */
 draw_cursor :: proc(user_input: User_Input, cell: Cell) {
 
@@ -203,7 +203,7 @@ main :: proc() {
 	// Infinite game loop. Breaks on pressing <Esc>
 	for !rl.WindowShouldClose() {
 
-		// If the user resized the window, we adjust the cell size to keep drawing over the entire window.
+		// If the user resized the window, we adjust the cell size to keep drawing over the entire window
 		if rl.IsWindowResized() {
 			window.width = rl.GetScreenWidth()
 			window.height = rl.GetScreenHeight()
@@ -212,9 +212,9 @@ main :: proc() {
 			cell.height = f32(window.height) / f32(world.width)
 		}
 
-		// Step 1:  process user input
+		// Step 1: Process user input
 		// First the user input gets translated into meaninngful attribute names
-		// Then we use those to taken action based on them.
+		// Then we use those to taken action based on them
 		process_user_input(&user_input, window, world)
 
 		if user_input.left_mouse_clicked {
@@ -227,9 +227,9 @@ main :: proc() {
 			game.pause = !game.pause
 		}
 
-		// Step 2: update the world state
+		// Step 2: Update the world state
 		// There is always a current state of the world that we read from
-		// and a future state of the world that we write to.
+		// and a future state of the world that we write to
 		if !game.pause && time.since(game.last_tick) > game.tick_rate {
 			game.last_tick = time.now()
 			update_world(&world, &next_world)
@@ -240,7 +240,7 @@ main :: proc() {
 
 		// Step 3: Draw the world
 		// The background gets cleared to a high contrast color, so it's easy
-		// to see if there was any pixel missed.
+		// to see if there was any pixel missed
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.PINK)
 		draw_world(&world, cell, game.colors)
