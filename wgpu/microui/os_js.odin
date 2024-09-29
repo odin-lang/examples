@@ -1,10 +1,10 @@
 package vendor_wgpu_example_microui
 
+import    "core:sys/wasm/js"
 import    "core:unicode"
 import    "core:unicode/utf8"
 
 import    "vendor:wgpu"
-import    "vendor:wasm/js"
 import mu "vendor:microui"
 
 OS :: struct {

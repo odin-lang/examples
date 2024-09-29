@@ -10,4 +10,4 @@ call odin.exe build . -target:js_wasm32 -out:web/microui.wasm -o:size -extra-lin
 
 for /f "delims=" %%i in ('odin.exe root') do set "ODIN_ROOT=%%i"
 copy "%ODIN_ROOT%\vendor\wgpu\wgpu.js" "web\wgpu.js"
-copy "%ODIN_ROOT%\vendor\wasm\js\runtime.js" "web\runtime.js"
+copy "%ODIN_ROOT%\core\sys\wasm\js\odin.js" "web\odin.js"

@@ -9,7 +9,7 @@ INITIAL_MEMORY_BYTES := $(shell expr $(INITIAL_MEMORY_PAGES) \* $(PAGE_SIZE))
 MAX_MEMORY_BYTES     := $(shell expr $(MAX_MEMORY_PAGES) \* $(PAGE_SIZE))
 
 WGPU_JS    := $(shell odin root)/vendor/wgpu/wgpu.js
-RUNTIME_JS := $(shell odin root)/vendor/wasm/js/runtime.js
+ODIN_JS    := $(shell odin root)/core/sys/wasm/js/odin.js
 
 web/microui.wasm: $(FILES) $(WGPU_JS) $(RUNTIME_JS)
 	odin build . \
@@ -17,4 +17,4 @@ web/microui.wasm: $(FILES) $(WGPU_JS) $(RUNTIME_JS)
         -extra-linker-flags:"--export-table --import-memory --initial-memory=$(INITIAL_MEMORY_BYTES) --max-memory=$(MAX_MEMORY_BYTES)"
 
 	cp $(WGPU_JS) web/wgpu.js
-	cp $(RUNTIME_JS) web/runtime.js
+	cp $(ODIN_JS) web/odin.js
