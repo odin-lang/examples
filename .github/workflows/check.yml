@@ -81,6 +81,7 @@ jobs:
           odin check wgpu/microui -target:windows_amd64 $FLAGS
 
           odin check win32/game_of_life -target:windows_amd64 $FLAGS
+          odin check win32/hellope_winapp -target:windows_amd64 $FLAGS
 
           odin check nanovg/example.odin -file $FLAGS
           odin check nanovg/fbo.odin -file $FLAGS
