@@ -37,6 +37,8 @@ jobs:
           odin check by_example/dynamic_arrays $FLAGS
           odin check by_example/hellope $FLAGS
           odin check by_example/os_args $FLAGS
+          odin check by_example/raw_console $FLAGS
+          odin check by_example/raw_console -target:windows_amd64 $FLAGS
           odin check by_example/read_console_input $FLAGS
           odin check by_example/strings $FLAGS
 
