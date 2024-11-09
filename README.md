@@ -13,6 +13,7 @@ Assets and third-party libraries are provided under their own license. If in dou
 3) [Dynamic Arrays](https://github.com/odin-lang/examples/blob/master/by_example/dynamic_arrays/dynamic_arrays.odin)
 4) [Command Line Arguments](https://github.com/odin-lang/examples/tree/master/by_example/os_args)
 5) [Read Console Input](https://github.com/odin-lang/examples/tree/master/by_example/read_console_input)
+6) [Directory Info](https://github.com/odin-lang/examples/tree/master/by_example/dir_info)
 
 ## Formats
 
