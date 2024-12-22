@@ -1,6 +1,6 @@
 package game
 
-import "common:common"
+import "../common"
 
 import "core:fmt"
 import glm "core:math/linalg/glsl"
@@ -106,7 +106,7 @@ update :: proc(platform_window: rawptr, session_game_memory: ^common.Game_Memory
 	// matrix types in Odin are stored in column-major format but written as you'd normal write them
 	gl.UniformMatrix4fv(uniforms["u_transform"].location, 1, false, &u_transform[0, 0])
 
-	gl.ClearColor(0.0, 0.7, 1.0, 1.0)
+	gl.ClearColor(0.7, 0.0, 1.0, 1.0)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 	
 	gl.DrawElements(gl.TRIANGLES, i32(len(indices)), gl.UNSIGNED_SHORT, nil)

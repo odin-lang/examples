@@ -7,7 +7,7 @@ import "core:dynlib"
 import "core:os"
 import "core:c/libc"
 
-import "common:common"
+import "../common"
 
 import SDL "vendor:sdl2"
 import gl "vendor:OpenGL"
