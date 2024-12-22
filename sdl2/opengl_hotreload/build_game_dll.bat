@@ -1,0 +1,1 @@
+odin build game -build-mode:shared -out:game.dll -debug -collection:common=%cd%
