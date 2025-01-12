@@ -1,0 +1,13 @@
+{
+  
+  "window_width": 1920,
+  "window_height": 1080,
+  "window_title": "My Game!",
+
+  "rendering_api": "opengl",
+  "renderer_settings": {
+    "msaa": false,
+    "depth_testing": true
+  }
+
+}
