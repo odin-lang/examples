@@ -74,8 +74,9 @@ jobs:
           odin check raylib/ports/textures/textures_gif_player.odin -file $FLAGS
           odin check raylib/tetroid $FLAGS
 
+          odin check directx/d3d11 -target:windows_amd64 $FLAGS
+
           odin check sdl2/chase_in_space $FLAGS
-          odin check sdl2/d3d11 -target:windows_amd64 $FLAGS
           odin check sdl2/hellope $FLAGS
           odin check sdl2/metal $FLAGS
           odin check sdl2/microui $FLAGS
