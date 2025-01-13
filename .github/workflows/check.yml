@@ -92,3 +92,6 @@ jobs:
           odin check orca/breakout -target:orca_wasm32 $FLAGS
           odin check orca/clock -target:orca_wasm32 $FLAGS
           odin check orca/ui -target:orca_wasm32 $FLAGS
+
+          odin check tcp/echo-server/server.odin -file $FLAGS
+          odin check tcp/echo-server/client.odin -file $FLAGS
