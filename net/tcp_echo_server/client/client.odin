@@ -1,10 +1,10 @@
-package main
+ package main
 
 import "core:fmt"
 import "core:net"
 import "core:os"
 
-tcp_cli :: proc(ip: string, port: int) {
+tcp_echo_client :: proc(ip: string, port: int) {
 	local_addr, ok := net.parse_ip4_address(ip)
 	if !ok {
 		fmt.println("Failed to parse IP address")
@@ -15,33 +15,32 @@ tcp_cli :: proc(ip: string, port: int) {
 		fmt.println("Failed to connect to server")
 		return
 	}
-	for true {
-		buf: [256]u8
-		n, err_read := os.read(os.stdin, buf[:])
+	buffer: [256]u8
+	for {
+		n, err_read := os.read(os.stdin, buffer[:])
 		if err_read != nil {
 			fmt.println("Failed to read data")
 			break
 		}
-		if (n == 0 || (n == 1 && buf[0] == '\n')) {
+		if n == 0 || (n == 1 && buffer[0] == '\n') {
 			break
 		}
-		bytes_sent, err_send := net.send_tcp(sock, buf[:n])
+		bytes_sent, err_send := net.send_tcp(sock, buffer[:n])
 		if err_send != nil {
 			fmt.println("Failed to send data")
 			break
 		}
-		fmt.println("Client sent [", bytes_sent, "bytes ]: ", string(buf[:n]))
-		bytes_recv, err_recv := net.recv_tcp(sock, buf[:])
+		fmt.printfln("Client sent [ %d bytes ]: %s", bytes_sent, buffer[:n])
+		bytes_recv, err_recv := net.recv_tcp(sock, buffer[:])
 		if err_recv != nil {
 			fmt.println("Failed to receive data")
 			break
 		}
-		fmt.println("Client received [", bytes_recv, "bytes ]: ", string(buf[:bytes_recv]))
+		fmt.printfln("Client received [ %d bytes ]: %s", bytes_recv, buffer[:bytes_recv])
 	}
 	net.close(sock)
 }
 
 main :: proc() {
-	tcp_cli("127.0.0.1", 8080)
+	tcp_echo_client("127.0.0.1", 8080)
 }
-

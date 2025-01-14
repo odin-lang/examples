@@ -11,11 +11,11 @@ An Echo Server is a simple network server that sends back to the client whatever
 
 1. Run the server:
     ```bash
-    odin run server.odin -file
+    odin run server
     ```
 2. Run one or more clients:
     ```bash
-    odin run client.odin -file
+    odin run client
     ```
 3. Or use `telnet`:
     ```bash
