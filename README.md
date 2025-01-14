@@ -7,6 +7,8 @@ Learn [Odin](https://github.com/odin-lang/Odin) through idiomatic examples that 
 
 The examples are meant to be well written while following Odin best practices.
 
+Also check out [demo.odin](https://github.com/odin-lang/Odin/blob/master/examples/demo/demo.odin) and the [overview](https://odin-lang.org/docs/overview/).
+
 ## Running the examples
 
 Clone this repository. Most examples can be run by navigating into the folder and executing: `odin run .`
