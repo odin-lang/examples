@@ -69,6 +69,8 @@ jobs:
 
           odin check opengl/minimal_sdl2 $FLAGS
 
+          odin check vulkan/triangle_glfw $FLAGS
+
           odin check metal/minimal_sdl2 $FLAGS
 
           odin check metal/learn_metal/00-window $FLAGS
