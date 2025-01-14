@@ -9,17 +9,17 @@ package basics
 import "core:fmt"
 
 // This is a procedure. A procedure contains code that can be executed. This
-// procedure is special: The program always starts in the procedure called
+// procedure is special: By default, the program starts in the procedure called
 // `main`.
 main :: proc() {
-	// The `println` procedure is part of the package `fmt`. It prints text to
-	// the standard output stream, which often means:
+	// The `fmt.println` procedure is part of the `core:fmt` package. It prints
+	// text to the "standard output stream", which could mean:
 	// - Terminal
 	// - Command prompt
 	// - Code editor output window
 	//
 	// You'll find `println` in `<odin>/core/fmt/fmt_os.odin`.
-	fmt.println("Hellope!")
+	fmt.println("Hellope!") // Prints "Hellope!" to the console
 
 	// This runs another procedure called `variables`. But there is no such
 	// procedure in this file! Where is it? All files within this folder are
@@ -30,5 +30,5 @@ main :: proc() {
 
 	// When the `variables` procedure finishes running the program will continue
 	// with the next line:
-	
+
 }
