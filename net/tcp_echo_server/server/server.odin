@@ -4,22 +4,21 @@ import "core:fmt"
 import "core:net"
 import "core:thread"
 
-is_ctrl_d :: proc(bytes: []u8, bytes_read: int) -> bool {
-	return bytes_read == 1 && bytes[0] == 4
+is_ctrl_d :: proc(bytes: []u8) -> bool {
+	return len(bytes) == 1 && bytes[0] == 4
 }
 
-// checks if ends with \r\n or \n
-is_empty :: proc(bytes: []u8, bytes_read: int) -> bool {
+is_empty :: proc(bytes: []u8) -> bool {
 	return(
-		(bytes_read == 2 && bytes[0] == 13 && bytes[1] == 10) ||
-		(bytes_read == 1 && bytes[0] == 10) \
+		(len(bytes) == 2 && bytes[0] == '\r' && bytes[1] == '\n') ||
+		(len(bytes) == 1 && bytes[0] == '\n') \
 	)
 }
 
-is_telnet_ctrl_c :: proc(bytes: []u8, bytes_read: int) -> bool {
+is_telnet_ctrl_c :: proc(bytes: []u8) -> bool {
 	return(
-		(bytes_read == 3 && bytes[0] == 255 && bytes[1] == 251 && bytes[2] == 6) ||
-		(bytes_read == 5 &&
+		(len(bytes) == 3 && bytes[0] == 255 && bytes[1] == 251 && bytes[2] == 6) ||
+		(len(bytes) == 5 &&
 				bytes[0] == 255 &&
 				bytes[1] == 244 &&
 				bytes[2] == 255 &&
@@ -29,26 +28,27 @@ is_telnet_ctrl_c :: proc(bytes: []u8, bytes_read: int) -> bool {
 }
 
 handle_msg :: proc(sock: net.TCP_Socket) {
-	buffer_backing: [256]u8
-	buffer := buffer_backing[:]
+	buffer: [256]u8
 	for {
 		bytes_recv, err_recv := net.recv_tcp(sock, buffer[:])
 		if err_recv != nil {
 			fmt.println("Failed to receive data")
 		}
-		if bytes_recv == 0 ||
-		   is_ctrl_d(buffer, bytes_recv) ||
-		   is_empty(buffer, bytes_recv) ||
-		   is_telnet_ctrl_c(buffer, bytes_recv) {
+		received := buffer[:bytes_recv]
+		if len(received) == 0 ||
+		   is_ctrl_d(received) ||
+		   is_empty(received) ||
+		   is_telnet_ctrl_c(received) {
 			fmt.println("Disconnecting client")
 			break
 		}
-		fmt.printfln("Server received [ %d bytes ]: %s", bytes_recv, buffer[:bytes_recv])
-		bytes_sent, err_send := net.send_tcp(sock, buffer[:bytes_recv])
+		fmt.printfln("Server received [ %d bytes ]: %s", len(received), received)
+		bytes_sent, err_send := net.send_tcp(sock, received)
 		if err_send != nil {
 			fmt.println("Failed to send data")
 		}
-		fmt.printfln("Server sent [ %d bytes ]: %s", bytes_sent, buffer[:bytes_sent])
+		sent := received[:bytes_sent]
+		fmt.printfln("Server sent [ %d bytes ]: %s", len(sent), sent)
 	}
 	net.close(sock)
 }

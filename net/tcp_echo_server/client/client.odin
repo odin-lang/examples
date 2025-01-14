@@ -1,4 +1,4 @@
- package main
+package main
 
 import "core:fmt"
 import "core:net"
@@ -25,18 +25,21 @@ tcp_echo_client :: proc(ip: string, port: int) {
 		if n == 0 || (n == 1 && buffer[0] == '\n') {
 			break
 		}
-		bytes_sent, err_send := net.send_tcp(sock, buffer[:n])
+		data := buffer[:n]
+		bytes_sent, err_send := net.send_tcp(sock, data)
 		if err_send != nil {
 			fmt.println("Failed to send data")
 			break
 		}
-		fmt.printfln("Client sent [ %d bytes ]: %s", bytes_sent, buffer[:n])
+		sent := data[:bytes_sent]
+		fmt.printfln("Client sent [ %d bytes ]: %s", len(sent), sent)
 		bytes_recv, err_recv := net.recv_tcp(sock, buffer[:])
 		if err_recv != nil {
 			fmt.println("Failed to receive data")
 			break
 		}
-		fmt.printfln("Client received [ %d bytes ]: %s", bytes_recv, buffer[:bytes_recv])
+		received := buffer[:bytes_recv]
+		fmt.printfln("Client received [ %d bytes ]: %s", len(received), received)
 	}
 	net.close(sock)
 }
