@@ -2,7 +2,6 @@ package main
 
 import "core:fmt"
 import "core:net"
-import "core:strings"
 import "core:thread"
 
 is_ctrl_d :: proc(bytes: []u8, bytes_read: int) -> bool {
