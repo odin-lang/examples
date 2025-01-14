@@ -22,6 +22,9 @@ or
 
 Assets and third-party libraries are provided under their own license. If in doubt, check the `LICENSE*` and `COPYING*` file(s) in a particular directory for clarification.
 
+## Example suggestions
+Add example suggestions [here](https://github.com/odin-lang/examples/issues/73).
+
 ## Contributions
 Contributions via Pull Requests are warmly welcome. Before submitting your Pull Request, make sure of the following:
 
