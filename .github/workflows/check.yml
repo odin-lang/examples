@@ -42,6 +42,8 @@ jobs:
           odin check basics/read_console_input $FLAGS
           odin check basics/strings $FLAGS
 
+          odin check directx/d3d12_triangle_sdl2 -target:windows_amd64 $FLAGS
+
           odin check glfw/window $FLAGS
 
           odin check json/load_json $FLAGS
