@@ -33,16 +33,16 @@ jobs:
         run: |
           FLAGS="-vet -strict-style -vet-tabs -disallow-do -warnings-as-errors"
 
-          odin check basics/command_line_arguments $FLAGS
-          odin check basics/dir_info $FLAGS
-          odin check basics/dynamic_arrays $FLAGS
-          odin check basics/hellope $FLAGS
-          odin check basics/raw_console $FLAGS
-          odin check basics/raw_console -target:windows_amd64 $FLAGS
-          odin check basics/read_console_input $FLAGS
-          odin check basics/strings $FLAGS
-          odin check basics/variables $FLAGS
-          odin check basics/working_directory $FLAGS
+          odin check !basics/command_line_arguments $FLAGS
+          odin check !basics/dir_info $FLAGS
+          odin check !basics/dynamic_arrays $FLAGS
+          odin check !basics/hellope $FLAGS
+          odin check !basics/raw_console $FLAGS
+          odin check !basics/raw_console -target:windows_amd64 $FLAGS
+          odin check !basics/read_console_input $FLAGS
+          odin check !basics/strings $FLAGS
+          odin check !basics/variables $FLAGS
+          odin check !basics/working_directory $FLAGS
 
           odin check directx/d3d12_triangle_sdl2 -target:windows_amd64 $FLAGS
 
