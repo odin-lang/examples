@@ -1,0 +1,1 @@
+`demo.odin` is a file that showcases many aspects of Odin in a single program. You'll find it in the compiler repository: https://github.com/odin-lang/Odin/blob/master/examples/demo/demo.odin
