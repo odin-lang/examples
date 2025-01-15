@@ -1,6 +1,6 @@
 # Odin Basics Example
 
-This program shows the most basic features of Odin. It is meant for total beginners.
+This program shows the most basic features of Odin. It is meant for total beginners with very little programming experience.
 
 To start learning, open `1_main.odin` and read from the top.
 
@@ -12,9 +12,4 @@ odin run .
 
 However, the output might not make much sense without reading the code.
 
-## More learning material
-
-- Other examples in this repository!
-- The overview (covers many language features): https://odin-lang.org/docs/overview/
-- demo.odin (like a bigger and more advanced version of this example): https://github.com/odin-lang/Odin/blob/master/examples/demo/demo.odin
-- Understanding the Odin Programming Language (paid book with free sample): https://odinbook.com/
+See https://odin-lang.org/docs/ for additional Odin learning material.

@@ -7,8 +7,9 @@ package basics
 
 import "core:fmt"
 
-// In this example we'll look at variables. Variables are like the name hints
-// possible to vary. You can change their value and read their contents.
+// This procedure contains some examples on how to use variables. Variables are
+// like the name hints possible to vary. You can change their value and read
+// their contents.
 variables :: proc() {
 	// This creates an integer variable. It's called `number`. It is of type
 	// `int`, short for integer. It can only store whole numbers.
@@ -47,23 +48,25 @@ variables :: proc() {
 
 	fmt.println(float_number) // 0
 
-	// You can assign number with a period in them to variables of type `f32`.
+	// It's possible to assign numbers that contain a fractional part to
+	// variables of type `f32`. Note that this would not work if the type was `int`.
 	float_number = 7.2
 
-	// This one might actually print something like `7.1999998`. Floating point
-	// numbers have a limited precision, trying to print it that many decimals
-	// will make that limit apparent.
+	// This might actually print something like `7.1999998`. Floating point
+	// numbers have a limited precision, trying to print a lot of decimals can
+	// make that limited precision apparent.
 	fmt.println(float_number) // 7.1999998
 
 	// To limit the number of printed decimals, you can use `printfln` instead
-	// of `println`. That procedure takes two parameters: The first one is known
-	// as a format string. The thing `%.1f` says that we want to print a
+	// of `println`. That procedure accepts two arguments: The first one is
+	// a format string: It describes how to print the variable we feed into it.
+	// The format string we use is `%.1f`. It says that we want to print a
 	// floating point number with a single decimal.
 	fmt.printfln("%.1f", float_number) // 7.2
 
 	// Here we again create a new variable and try to infer the type. But the
-	// inferred type will not be `f32`. It will be `f64`! The default inferred
-	// type for when there is a decimal point in the right hand side is `f64`.
+	// inferred type will not be `f32`. It will be `f64`. The default inferred
+	// type for numbers with a fractional part is `f64`.
 	another_float_number := 7.2
 
 	// This prints the type of a variable! We can use it to verify that the type
@@ -73,16 +76,19 @@ variables :: proc() {
 	// So if you want to declare an f32 and give it a value on a single line,
 	// then you must say what type it should have. You can do this in two ways.
 	//
-	// 1) This creates a variable of type `f32` and assign `7.2` to it.
+	// 1) This creates a variable of type `f32` and assign `123.4` to it.
 	i_want_a_f32: f32 = 123.4
 
-	// 2) This creates a variable and infers the type from the right-hand-side.
-	// `f32(7.2)` casts the value `7.2` to the type `f32`, which is then used
-	// for the type inference.
+	fmt.printfln("%.1f", i_want_a_f32) // 123.4
+	fmt.println(typeid_of(type_of(i_want_a_f32))) // f32
+
+	// 2) This creates a variable and infers the type from the right-hand side.
+	// `f32(2025.1)` casts the value `2025.1` to the type `f32`. So the
+	// right-hand side has type `f32`.
 	i_want_another_f32 := f32(2025.1)
 
-	fmt.printfln("%.1f", i_want_a_f32)
-	fmt.printfln("%.1f", i_want_another_f32)
+	fmt.printfln("%.1f", i_want_another_f32) // 2025.1
+	fmt.println(typeid_of(type_of(i_want_another_f32))) // f32
 
 	// There's a list of all available so-called 'basic types' (int, f32 etc) in
 	// the overview: https://odin-lang.org/docs/overview/#basic-types
