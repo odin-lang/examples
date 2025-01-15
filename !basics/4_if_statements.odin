@@ -5,8 +5,8 @@ import "core:fmt"
 if_statements :: proc(some_number: int) {
 	// An if statement runs some code only if a condition is true.
 	//
-	// The condition goes between `if` and `{`. If the condition is `true` then
-	// the code between the curly braces runs.
+	// The condition goes between the `if` and the `{`. If the condition is
+	// `true` then the code between the curly braces runs.
 	if true {
 		fmt.println("This is always happens.")
 	}
@@ -17,7 +17,7 @@ if_statements :: proc(some_number: int) {
 	}
 
 	// Unless you changed something in the example, then `some_number` will be
-	// `210`. So the following code will not run!
+	// `210`. So the following call to `println` will not run!
 	if some_number > 300 {
 		fmt.println("some_number is bigger than 300!")
 	}
@@ -33,11 +33,12 @@ if_statements :: proc(some_number: int) {
 	// how we don't write any type: It's inferred to being of type `bool`:
 	a_condition := some_number < 500
 
+	// This will print.
 	if a_condition {
 		fmt.println("some_number is less than 500")
 	}
 
-	// Use ! to invert a boolean:
+	// Use ! to invert a boolean. This will not print anything.
 	if !a_condition {
 		fmt.println("some_number is equal to 500, or larger")
 	}

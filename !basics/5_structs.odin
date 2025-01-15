@@ -3,22 +3,21 @@ package basics
 import "core:fmt"
 
 // This defines a new type that we can use in our code. A struct is essentially
-// like a grouping of several variables. You can send a struct into a procedure
-// and treat it like a single thing. That way you don't have to juggle a million
+// like a group of several variables. You can send a struct into a procedure and
+// treat it like a single thing. That way you don't have to juggle a million
 // variables. Handy!
 Cat :: struct {
-	// These are called the fields of the struct. This field if of type string,
-	// it can store text. Note how the fields look like variables, but with a
-	// comma at the end.
+	// These are called the fields of the struct. The `name` field if of type
+	// string, it can store text. Note how the fields look like variables, but
+	// with a comma at the end.
 	name: string,
-
 	age: int,
 }
 
 // This procedure returns a whole struct!
 structs :: proc() -> Cat {
 	// This makes a new variable of type `Cat`. Since we don't provide a value,
-	// it is zero-initialized. This means that the `name` and the `age` field
+	// it is zero-initialized. This means that the `name` and the `age` fields
 	// are all zeroed.
 	cat1: Cat
 
