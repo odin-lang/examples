@@ -54,6 +54,7 @@ jobs:
           odin check json/load_json_unmarshal $FLAGS
           odin check json/odin_info $FLAGS
 
+          odin check thread/basics $FLAGS
 
           odin check math/noise/draw_texture $FLAGS
 
