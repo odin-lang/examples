@@ -1,8 +1,8 @@
 // As you can see, this is the same package name as in `1_main.odin`. Which is
 // required. Also: The filename `2_variables.odin` and `1_main.odin` are
-// numbered like that only in order to make you look in `1_main.odin` first.
-// The file names don't matter at all: By default, any file within a package can
-// use anything from any other file within that package.
+// numbered like that just to make you look in `1_main.odin` first. The file
+// names don't matter at all: By default, any file within a package can use
+// anything from any other file within that package.
 package basics
 
 import "core:fmt"
@@ -84,10 +84,9 @@ variables :: proc() {
 	fmt.printfln("%.1f", i_want_a_f32)
 	fmt.printfln("%.1f", i_want_another_f32)
 
-	// Read more:
-	// - All built-in basic types: https://odin-lang.org/docs/overview/#basic-types
-	// - Chapter on variables and constants from Odin book sample: https://odinbook.com/sample.html#variables-and-constants
+	// There's a list of all available so-called 'basic types' (int, f32 etc) in
+	// the overview: https://odin-lang.org/docs/overview/#basic-types
 
 	// That's it for this procedure! It ends here, which means that the program
-	// will continue with the next after `variables()` in `1_main.odin`.
+	// will continue with the next line after `variables()` in `1_main.odin`.
 }
