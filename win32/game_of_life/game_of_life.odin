@@ -63,6 +63,8 @@ Game :: struct {
 	window:            Window,
 }
 
+game := Game{}
+
 World :: struct {
 	width:  i32,
 	height: i32,
@@ -143,21 +145,10 @@ show_error_and_panic :: proc(msg: string, loc := #caller_location) {
 wndproc :: proc "system" (hwnd: win32.HWND, msg: win32.UINT, wparam: win32.WPARAM, lparam: win32.LPARAM) -> win32.LRESULT {
 	context = runtime.default_context()
 
-	app : ^Game = nil
-	if msg != win32.WM_CREATE {
-		app = (^Game)(rawptr(uintptr(win32.GetWindowLongPtrW(hwnd, win32.GWLP_USERDATA))))
-	}
-
 	switch msg {
-	case win32.WM_CREATE: {
-		pcs := (^win32.CREATESTRUCTW)(rawptr(uintptr(lparam)))
-		if pcs == nil {show_error_and_panic("lparam is nil")}
-		app = (^Game)(pcs.lpCreateParams)
-		if app == nil {show_error_and_panic("lpCreateParams is nil")}
-		win32.SetWindowLongPtrW(hwnd, win32.GWLP_USERDATA, win32.LONG_PTR(uintptr(app)))
-	
-		app.timer_id = win32.SetTimer(hwnd, IDT_TIMER1, 1000 / FPS, nil)
-		if app.timer_id == 0 {show_error_and_panic("No timer")}
+	case win32.WM_CREATE: {	
+		game.timer_id = win32.SetTimer(hwnd, IDT_TIMER1, 1000 / FPS, nil)
+		if game.timer_id == 0 {show_error_and_panic("No timer")}
 	
 		hdc := win32.GetDC(hwnd)
 		defer win32.ReleaseDC(hwnd, hdc)
@@ -165,36 +156,36 @@ wndproc :: proc "system" (hwnd: win32.HWND, msg: win32.UINT, wparam: win32.WPARA
 		bitmap_info := Bitmap_Info {
 			bmiHeader = win32.BITMAPINFOHEADER {
 				biSize        = size_of(win32.BITMAPINFOHEADER),
-				biWidth       = app.size.x,
-				biHeight      = -app.size.y, // minus for top-down
+				biWidth       = game.size.x,
+				biHeight      = -game.size.y, // minus for top-down
 				biPlanes      = 1,
 				biBitCount    = 8,
 				biCompression = win32.BI_RGB,
-				biClrUsed     = len(app.colors),
+				biClrUsed     = len(game.colors),
 			},
-			bmiColors = app.colors,
+			bmiColors = game.colors,
 		}
-		app.hbitmap = win32.CreateDIBSection(hdc, cast(^win32.BITMAPINFO)&bitmap_info, win32.DIB_RGB_COLORS, &app.pvBits, nil, 0)
+		game.hbitmap = win32.CreateDIBSection(hdc, cast(^win32.BITMAPINFO)&bitmap_info, win32.DIB_RGB_COLORS, &game.pvBits, nil, 0)
 	
-		if app.world != nil {
-			cc := app.world.width * app.world.height
-			for i in 0 ..< cc {app.world.alive[i] = u8(rand.int31_max(2))}
+		if game.world != nil {
+			cc := game.world.width * game.world.height
+			for i in 0 ..< cc {game.world.alive[i] = u8(rand.int31_max(2))}
 		}
-		app.pause = false
+		game.pause = false
 		return 0
 	}
 	case win32.WM_DESTROY: {
-		if app.timer_id != 0 {
-			if !win32.KillTimer(hwnd, app.timer_id) {
+		if game.timer_id != 0 {
+			if !win32.KillTimer(hwnd, game.timer_id) {
 				win32.MessageBoxW(nil, win32.utf8_to_wstring("Unable to kill timer"), win32.utf8_to_wstring("Error"), win32.MB_ICONSTOP | win32.MB_OK)
 			}
-			app.timer_id = 0
+			game.timer_id = 0
 		}
-		if app.hbitmap != nil {
-			if !win32.DeleteObject(win32.HGDIOBJ(app.hbitmap)) {
+		if game.hbitmap != nil {
+			if !win32.DeleteObject(win32.HGDIOBJ(game.hbitmap)) {
 				win32.MessageBoxW(nil, win32.utf8_to_wstring("Unable to delete hbitmap"), win32.utf8_to_wstring("Error"), win32.MB_ICONSTOP | win32.MB_OK)
 			}
-			app.hbitmap = nil
+			game.hbitmap = nil
 		}
 
 		win32.PostQuitMessage(0)
@@ -205,13 +196,13 @@ wndproc :: proc "system" (hwnd: win32.HWND, msg: win32.UINT, wparam: win32.WPARA
 		hdc := win32.BeginPaint(hwnd, &ps)
 		defer win32.EndPaint(hwnd, &ps)
 	
-		if app.hbitmap != nil {
+		if game.hbitmap != nil {
 			hdc_source := win32.CreateCompatibleDC(hdc)
 			defer win32.DeleteDC(hdc_source)
 	
-			win32.SelectObject(hdc_source, win32.HGDIOBJ(app.hbitmap))
+			win32.SelectObject(hdc_source, win32.HGDIOBJ(game.hbitmap))
 			client_size := [2]i32{(ps.rcPaint.right - ps.rcPaint.left), (ps.rcPaint.bottom - ps.rcPaint.top)}
-			win32.StretchBlt(hdc, 0, 0, client_size.x, client_size.y, hdc_source, 0, 0, app.size.x, app.size.y, win32.SRCCOPY)
+			win32.StretchBlt(hdc, 0, 0, client_size.x, client_size.y, hdc_source, 0, 0, game.size.x, game.size.y, win32.SRCCOPY)
 		}
 	
 		if show_help {
@@ -230,15 +221,15 @@ wndproc :: proc "system" (hwnd: win32.HWND, msg: win32.UINT, wparam: win32.WPARA
 		case 'h':
 			show_help ~= true
 		case 'p':
-			app.pause ~= true
-			if !app.pause {show_help = false}
+			game.pause ~= true
+			if !game.pause {show_help = false}
 		case 'r':
-			cc := app.world.width * app.world.height
-			for i in 0 ..< cc {app.world.alive[i] = u8(rand.int31_max(2))}
+			cc := game.world.width * game.world.height
+			for i in 0 ..< cc {game.world.alive[i] = u8(rand.int31_max(2))}
 		case ' ':
-			size := app.world.width * app.world.height
+			size := game.world.width * game.world.height
 			idx := rand.int31_max(size)
-			app.world.alive[idx] = 1
+			game.world.alive[idx] = 1
 		case '£':
 			show_error_and_panic("panic test")
 		}
@@ -247,21 +238,19 @@ wndproc :: proc "system" (hwnd: win32.HWND, msg: win32.UINT, wparam: win32.WPARA
 	case win32.WM_TIMER: {
 		switch wparam {
 		case IDT_TIMER1:
-		if app != nil {
-			if app.tick == 40 && show_help {show_help = false}
+		if game.tick == 40 && show_help {show_help = false}
 		
-			if !app.pause {
-				app.tick += 1
-				update_world(app.world, app.next_world)
-				app.world, app.next_world = app.next_world, app.world
-			}
-		
-			cnt := int(app.world.width * app.world.height)
-			runtime.mem_copy(app.pvBits, &app.world.alive[0], cnt)
-		
-			win32.SetWindowTextW(hwnd, win32.utf8_to_wstring(fmt.tprintf("%s - %d\n", app.window.name, app.tick)))
-			win32.RedrawWindow(hwnd, nil, nil, .RDW_INVALIDATE | .RDW_UPDATENOW)
+		if !game.pause {
+			game.tick += 1
+			update_world(game.world, game.next_world)
+			game.world, game.next_world = game.next_world, game.world
 		}
+		
+		cnt := int(game.world.width * game.world.height)
+		runtime.mem_copy(game.pvBits, &game.world.alive[0], cnt)
+		
+		win32.SetWindowTextW(hwnd, win32.utf8_to_wstring(fmt.tprintf("%s - %d\n", game.window.name, game.tick)))
+		win32.RedrawWindow(hwnd, nil, nil, .RDW_INVALIDATE | .RDW_UPDATENOW)
 		case: fmt.printf("WM_TIMER %v %v %v\n", hwnd, wparam, lparam)
 		}
 		return 0
@@ -272,7 +261,7 @@ wndproc :: proc "system" (hwnd: win32.HWND, msg: win32.UINT, wparam: win32.WPARA
 }
 
 main :: proc() {
-	game := Game {
+	game = Game {
 		tick_rate = 300 * time.Millisecond,
 		last_tick = time.now(),
 		pause = true,
@@ -281,6 +270,7 @@ main :: proc() {
 		zoom = ZOOM,
 		window = Window{name = win32.L(TITLE), size = WORLD_SIZE * ZOOM, fps = FPS, control_flags = {.Center}},
 	}
+
 	for i in 0 ..< PALETTE_COUNT {
 		c := u8((255 * int(i)) / (PALETTE_COUNT - 1))
 		game.colors[i] = [4]u8{c, c, c, 255}
