@@ -1,13 +1,25 @@
-// By laytan, from:
-// https://gist.github.com/laytan/ba57af3e5a59ab5cb2fca9e25bcfe262
-//
-// You must compile the shaders before compiling this program:
-//     glslc shader.vert -o vert.spv 
-//     glslc shader.frag -o frag.spv 
-//
-// glslc is part of shaderc, which you can find here:
-// https://github.com/google/shaderc
+/*
+Vulkan triangle example by laytan, source:
+https://gist.github.com/laytan/ba57af3e5a59ab5cb2fca9e25bcfe262
 
+Compile and run using:
+
+	odin run .
+
+This example comes with pre-compiled shaders. During compilation the shaders
+will be loaded from `vert.spv` and `frag.spv`.
+
+If you make any changes to the shader source files (`shader.vert` or
+`shader.frag`), then you must recompile them using `glslc`:
+
+	glslc shader.vert -o vert.spv
+	glslc shader.frag -o frag.spv
+
+`glslc` is part of the Vulkan SDK, which you can find here:
+https://vulkan.lunarg.com/sdk/home
+
+This example uses glfw for window management.
+*/
 package main
 
 import "base:runtime"
