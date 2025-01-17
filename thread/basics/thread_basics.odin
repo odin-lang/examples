@@ -39,7 +39,7 @@ main :: proc() {
 	t.data = &d
 
 	// Exactly when `thread_proc` starts running isn't certain. The operating
-	// system will start schedule it to start running some time soon.
+	// system will schedule it to start soon.
 	thread.start(t)
 
 	fmt.println("Main thread will do the same thing as the other thread, to make sure it does it correctly!")
