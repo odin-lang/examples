@@ -84,12 +84,12 @@ User_Input :: struct {
 }
 
 /*
- Game Of Life rules:
- * (1) A cell with 2 alive neighbors stays alive/dead
- * (2) A cell with 3 alive neighbors stays/becomes alive
- * (3) Otherwise: the cell dies/stays dead.
+	Game Of Life rules:
+	* (1) A cell with 2 alive neighbors stays alive/dead
+	* (2) A cell with 3 alive neighbors stays/becomes alive
+	* (3) Otherwise: the cell dies/stays dead.
 
- reads from world, writes into next_world
+	reads from world, writes into next_world
 */
 update_world :: #force_inline proc(world: ^World, next_world: ^World) {
 	for x: i32 = 0; x < world.width; x += 1 {
