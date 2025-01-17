@@ -19,8 +19,9 @@ WHITE :: [4]u8{255, 255, 255, 255}
 
 HELP_TEXT :: `ESC - Quit
 P - Toggle Pause
-H - Toggle Help`
-HELP_RECT :: win32.RECT{20, 20, 160, 100}
+H - Toggle Help
+R - Randomize World`
+HELP_RECT :: win32.RECT{20, 20, 200, 105}
 show_help := true
 
 IDT_TIMER1: win32.UINT_PTR : 10001
