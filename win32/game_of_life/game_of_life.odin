@@ -319,7 +319,7 @@ main :: proc() {
 			pos = (device_size - size) / 2
 		}
 	}
-	hwnd := win32.CreateWindowW(win32.LPCWSTR(uintptr(atom)), game.window.name, style, pos.x, pos.y, size.x, size.y, nil, nil, instance, &game)
+	hwnd := win32.CreateWindowW(win32.LPCWSTR(uintptr(atom)), game.window.name, style, pos.x, pos.y, size.x, size.y, nil, nil, instance, nil)
 
 	if hwnd == nil {show_error_and_panic("Failed to create window")}
 	win32.ShowWindow(hwnd, win32.SW_SHOWDEFAULT)
