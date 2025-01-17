@@ -52,7 +52,7 @@ jobs:
 
           odin check json/load_json $FLAGS
           odin check json/load_json_unmarshal $FLAGS
-          odin check json/odin_info $FLAGS
+          odin check json/write_json_marshal $FLAGS
 
           odin check thread/basics $FLAGS
 
