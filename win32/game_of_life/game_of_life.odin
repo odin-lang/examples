@@ -82,7 +82,7 @@ User_Input :: struct {
 	mouse_tile_x:         i32,
 	mouse_tile_y:         i32,
 }
-	
+
 /*
  Game Of Life rules:
  * (1) A cell with 2 alive neighbors stays alive/dead
@@ -90,7 +90,7 @@ User_Input :: struct {
  * (3) Otherwise: the cell dies/stays dead.
 
  reads from world, writes into next_world
-*/	
+*/
 update_world :: #force_inline proc(world: ^World, next_world: ^World) {
 	for x: i32 = 0; x < world.width; x += 1 {
 		for y: i32 = 0; y < world.height; y += 1 {
@@ -305,7 +305,7 @@ wndproc :: proc "system" (
 		}
 	case win32.WM_CHAR:
 		{
-			app := cast(^Game)rawptr(uintptr(win32.GetWindowLongPtrW(hwnd, win32.GWLP_USERDATA)))
+			app := get_app(hwnd)
 			switch wparam {
 			case '\x1b':
 				win32.PostMessageW(hwnd, win32.WM_CLOSE, 0, 0)
@@ -481,13 +481,15 @@ run :: proc() -> int {
 		show_error_and_panic("No instance")
 	}
 
+	// Loading the icon that we included with our .rc
 	icon: win32.HICON = win32.LoadIconW(instance, win32.MAKEINTRESOURCEW(101))
 	if icon == nil {
+		// Icon missing fall back to default
 		icon = win32.LoadIconW(nil, win32.wstring(win32._IDI_APPLICATION))
-	}
 
-	if icon == nil {
-		show_error_and_panic("Missing icon")
+		if icon == nil {
+			show_error_and_panic("Missing icon")
+		}
 	}
 
 	cursor := win32.LoadCursorW(nil, win32.wstring(win32._IDC_ARROW))
