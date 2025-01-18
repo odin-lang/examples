@@ -81,7 +81,7 @@ This means that slicing is very cheap: There are no extra allocations.
 Because this procedure uses a slice, we can also use it with any array type that
 supports slicing. A fixed array would work fine:
 
-	fixed_array_of_cats := [3]Cat { /* initialize them */ }
+	fixed_array_of_cats := [3]Cat { bla bla }
 	print_cats(fixed_array_of_cats[:])
 
 This makes the procedure more generally useful compared to if it accepted an
