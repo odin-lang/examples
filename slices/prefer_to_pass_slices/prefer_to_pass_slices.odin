@@ -118,7 +118,7 @@ it used a parameter of type `[dynamic]Cat`.
 We could for example create a fixed array of 100 cats and give them all a
 random age using this procedure:
 	
-	lots_of_cats := [100]Cat
+	lots_of_cats: [100]Cat
 	mutate_cats(lots_of_cats[:])
 */
 mutate_cats :: proc(cats: []Cat) {
