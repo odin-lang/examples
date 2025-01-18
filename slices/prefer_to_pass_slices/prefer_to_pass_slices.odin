@@ -44,9 +44,9 @@ main :: proc() {
 }
 
 /*
-This procedure makes changes to an array (appends items). So we must pass a
-pointer to the dynamic array. After all, the only way to use `append` is if you
-have something of type `^[dynamic]Element_Type`.
+This procedure makes changes to a dynamic array (appends items). So we must pass
+a pointer to the dynamic array. After all, the only way to use `append` is if
+you have something of type `^[dynamic]Element_Type`.
 */
 add_cat_of_random_age :: proc(cats: ^[dynamic]Cat, name: string) {
 	random_age := rand.int_max(12) + 2
