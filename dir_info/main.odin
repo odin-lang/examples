@@ -40,12 +40,16 @@ main :: proc() {
 	/*
 	This will deallocate `fis` at the end of this scope.
 
-	Note how `fis` is assigned a return value from `os.read_dir`. That's a
-	dynamically allocated slice.
+	It's not allocated yet, but `fis` is assigned a return value from
+	`os.read_dir`. That's a	dynamically allocated slice.
 	
-	Note how it doesn't matter that `fis` hasn't been assigned yet: `defer` will
-	fetch variable `fis` at the end of this scope. It does not fetch the value
-	of that	variable now.
+	It doesn't matter that `fis` hasn't been assigned yet: `defer` will fetch
+	the variable `fis` at the end of this scope. It does not fetch the value of
+	that variable now.
+
+	Note that each `File_Info` contains an allocated `fullpath` field. That's
+	why this uses `os.file_info_slice_delete(fis)` instead of `delete(fis)`:
+	It needs to go through the slice and deallocate those strings.
 	*/
 	defer os.file_info_slice_delete(fis)
 
