@@ -94,6 +94,8 @@ jobs:
           odin check sdl2/hellope $FLAGS
           odin check sdl2/microui $FLAGS
 
+          odin check slices/prefer_to_pass_slices $FLAGS
+
           odin check wgpu/microui -target:windows_amd64 $FLAGS
 
           odin check win32/game_of_life -target:windows_amd64 $FLAGS
