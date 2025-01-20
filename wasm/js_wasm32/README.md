@@ -4,13 +4,11 @@ This is an example of how to build an Odin program using the js_wasm32 target. T
 
 ## Building
 
-- The WASM file is already including in this example, but you can also built it again.
+- Build the WASM example. This builds the WASM module and also copies `odin.js` from the [core Odin library](https://github.com/odin-lang/Odin/blob/master/core/sys/wasm/js/odin.js) as it's required for a `js_wasm32` build.
 
 ```bash
 odin build . -target:js_wasm32 -out:web/index.wasm
 ```
-
-- Note that the `odin.js` file in this example comes from the [core Odin library](https://github.com/odin-lang/Odin/blob/master/core/sys/wasm/js/odin.js). You need this file in your project in order to utilize the the WASM build correctly and easily.
 
 ## Running
 
