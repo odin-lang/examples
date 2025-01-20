@@ -1,6 +1,6 @@
 # Odin js_wasm32 example
 
-This is an example of how to build Odin for the `js_wasm32` target and call a function from the browser.
+This is an example of how to build an Odin program using the js_wasm32 target. The example features a website that can call an Odin procedure.
 
 ## Building
 
