@@ -14,7 +14,9 @@ NUM_REPETITIONS :: #config(REP, 100) // The number of times to run each proc, fo
 // Due to LLVM math settings that Odin doesn't provide a way to set, this won't (currently) be
 // autovectorized.
 sum_scalar :: proc (s: []f32) -> (sum: f32) {
-	for x in s do sum += x
+	for x in s {
+		sum += x
+	}
 	return
 }
 
@@ -24,7 +26,9 @@ sum_scalar :: proc (s: []f32) -> (sum: f32) {
 // (on amd64).
 sum_scalar_wide :: proc (s: []f32) -> f32 {
 	sum : f64
-	for x in s do sum += f64(x)
+	for x in s {
+		sum += f64(x)
+	}
 	return f32(sum)
 }
 
@@ -88,7 +92,9 @@ sum_simd :: proc (s: []f32) -> f32 {
 	// 
 	// Note that for more complex logic, this could result in a duplication of logic! See
 	// sum_simd_masked for an alternative.
-	for x in s do sum += x
+	for x in s {
+		sum += x
+	}
 	return sum
 }
 
@@ -111,7 +117,9 @@ sum_simd_wide :: proc (s: []f32) -> f32 {
 	}
 
 	sum := simd.reduce_add_ordered(vec_sum)
-	for x in s do sum += f64(x)
+	for x in s {
+		sum += f64(x)
+	}
 	return f32(sum)
 }
 
@@ -166,9 +174,13 @@ main :: proc() {
 	when MISALIGN {
 		data_original := make([]f32, NUM_DATA + 1, context.temp_allocator)
 		data := ([^]f32)(uintptr(raw_data(data_original)) + 1)[:NUM_DATA]
-	} else do data := make([]f32, NUM_DATA, context.temp_allocator)
+	} else {
+		data := make([]f32, NUM_DATA, context.temp_allocator)
+	}
 
-	for &x in data do x = rand.float32()
+	for &x in data {
+		x = rand.float32()
+	}
 
 	fmt.printfln("Sum (Scalar f32): %0.5f (%v)", benchmark(sum_scalar, data))
 	fmt.printfln("Sum (SIMD f32): %0.5f (%v)", benchmark(sum_simd, data))
@@ -189,7 +201,9 @@ benchmark :: proc (p: proc ([]f32) -> f32, s: []f32) -> (f32, time.Duration) {
 }
 
 iota :: proc ($V: typeid/#simd[$N]$E) -> (result: V) {
-	for i in 0..<N do result = simd.replace(result, i, E(i))
+	for i in 0..<N {
+		result = simd.replace(result, i, E(i))
+	}
 	return
 }
 

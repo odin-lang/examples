@@ -4,7 +4,6 @@ import "base:intrinsics"
 import "core:fmt"
 import "core:math/rand"
 import "core:simd"
-import "core:sys/info"
 import "core:time"
 
 NUM_DATA :: #config(NUM, 10_000_000) // The amount of data points to generate and process
@@ -22,10 +21,10 @@ Bun :: struct {
 // This implementation uses straightforward scalar logic.
 update_buns_scalar :: proc (buns: #soa[]Bun, bounds: [2][2]f32, dt: f32) {
 	for &bun in buns {
-		if bun.pos_x <= bounds[0].x do bun.vel_x = +abs(bun.vel_x)
-		if bun.pos_x >= bounds[1].x do bun.vel_x = -abs(bun.vel_x)
-		if bun.pos_y <= bounds[0].y do bun.vel_y = +abs(bun.vel_y)
-		if bun.pos_y >= bounds[1].y do bun.vel_y = -abs(bun.vel_y)
+		if bun.pos_x <= bounds[0].x { bun.vel_x = +abs(bun.vel_x) }
+		if bun.pos_x >= bounds[1].x { bun.vel_x = -abs(bun.vel_x) }
+		if bun.pos_y <= bounds[0].y { bun.vel_y = +abs(bun.vel_y) }
+		if bun.pos_y >= bounds[1].y { bun.vel_y = -abs(bun.vel_y) }
 
 		bun.pos_x += dt * bun.vel_x
 		bun.pos_y += dt * bun.vel_y
@@ -136,7 +135,9 @@ benchmark :: proc (p: proc (buns: #soa[]Bun, bounds: [2][2]f32, dt: f32), buns: 
 }
 
 iota :: proc ($V: typeid/#simd[$N]$E) -> (result: V) {
-	for i in 0..<N do result = simd.replace(result, i, E(i))
+	for i in 0..<N {
+		result = simd.replace(result, i, E(i))
+	}
 	return
 }
 
