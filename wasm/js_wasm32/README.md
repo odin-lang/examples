@@ -1,14 +1,12 @@
 # Odin js_wasm32 example
 
-This is an example of how to build an Odin program using the js_wasm32 target. The example features a website that can call an Odin procedure.
+This is an example of how to build an Odin program using the `js_wasm32` target. The example features a website that can call an Odin procedure.
 
 ## Building
 
-- Build the WASM example. This builds the WASM module and also copies `odin.js` from the [core Odin library](https://github.com/odin-lang/Odin/blob/master/core/sys/wasm/js/odin.js) as it's required for a `js_wasm32` build.
+Run `build.bat` (Windows) or `build.sh` (mac / Linux).
 
-```bash
-odin build . -target:js_wasm32 -out:web/index.wasm
-```
+This builds the WASM module and also copies `odin.js` from the [core Odin library](https://github.com/odin-lang/Odin/blob/master/core/sys/wasm/js/odin.js) as it's required for a `js_wasm32` build.
 
 ## Running
 
