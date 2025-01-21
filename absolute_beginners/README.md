@@ -1,4 +1,4 @@
-# Odin Basics Example
+# Odin for Absolute Beginners
 
 This program shows the most basic features of Odin. It is meant for total beginners with very little programming experience.
 

@@ -33,7 +33,7 @@ jobs:
         run: |
           FLAGS="-vet -strict-style -vet-tabs -disallow-do -warnings-as-errors"
 
-          odin check !basics $FLAGS
+          odin check absolute_beginners $FLAGS
 
           odin check command_line_arguments $FLAGS
           odin check dir_info $FLAGS
