@@ -36,7 +36,7 @@ sum_scalar_wide :: proc (s: []f32) -> f32 {
 // The best value for this will depend on the available SIMD instructions, and possibly the hardware
 // itself.
 //
-// On amd64, he default target only uses SSE4, which has 128-bit SIMD registers. This means that
+// On amd64, the default target only uses SSE4, which has 128-bit SIMD registers. This means that
 // #simd[4]f32 would be the native vector size on that target--but that doesn't always give the
 // fastest results, as larger vectors allow for better instruction-level parallelism. For larger
 // vectors, LLVM will automatically spread the data over multiple SIMD registers, but if the SIMD
@@ -87,7 +87,7 @@ sum_simd :: proc (s: []f32) -> f32 {
 	sum := simd.reduce_add_ordered(vec_sum)
 
 	// Since the vectorized part above worked in chunks of size WIDTH, any leftover needs to be
-	// handled separately There are multiple ways to do this; in this case, we just process the
+	// handled separately. There are multiple ways to do this; in this case, we just process the
 	// remaining few values in scalar fashion.
 	// 
 	// Note that for more complex logic, this could result in a duplication of logic! See
