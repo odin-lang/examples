@@ -57,7 +57,7 @@ jobs:
           odin check thread/basics $FLAGS
 
           odin check math/noise/draw_texture $FLAGS
-          odin check math/rand/markov/simple_markov $FLAGS
+          odin check math/rand/markov $FLAGS
 
           odin check raylib/game_of_life $FLAGS
           odin check raylib/log $FLAGS
