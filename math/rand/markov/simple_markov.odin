@@ -18,13 +18,20 @@ Transition_Matrix := [State][State]f64{
 main :: proc() {
 	cur_state, prev_state: State
 
-	for i in 1..=50 {
+	for i in 1..=10 {
 		prev_state = cur_state
 		cur_state = next_state(cur_state)
-		fmt.printfln("State transition %v: %v -> %v", i, prev_state, cur_state)
+		fmt.printfln("Table state transition %v: %v -> %v", i, prev_state, cur_state)
+	}
+
+	for i in 1..=10 {
+		prev_state = cur_state
+		cur_state = next_state_equal()
+		fmt.printfln("Equal weight state transition %v: %v -> %v", i, prev_state, cur_state)
 	}
 }
 
+// Using transition matrix
 next_state :: proc(cur_state: State) -> State {
 	chance := rand.float64()
 	accumulate: f64
@@ -38,4 +45,9 @@ next_state :: proc(cur_state: State) -> State {
 	}
 
 	return cur_state
+}
+
+// Equal weighting
+next_state_equal :: proc() -> State {
+	return rand.choice_enum(State)
 }
