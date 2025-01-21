@@ -11,6 +11,7 @@ main :: proc() {
 		lpfnWndProc = win_proc,
 		lpszClassName = class_name,
 		hInstance = instance,
+		hCursor = win.LoadCursorA(nil, win.IDC_ARROW),
 	}
 
 	class := win.RegisterClassW(&cls)
