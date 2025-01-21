@@ -1,7 +1,6 @@
 package main
 
 import "core:fmt"
-import "core:math"
 import "core:math/rand"
 
 // Illustrating a simple first-order markov chain, and a few other ways to generate state transitions
