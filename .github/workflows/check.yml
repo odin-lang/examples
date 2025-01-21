@@ -94,6 +94,9 @@ jobs:
           odin check sdl2/hellope $FLAGS
           odin check sdl2/microui $FLAGS
 
+          odin check simd/basic-sum $FLAGS
+          odin check simd/motion $FLAGS
+
           odin check slices/prefer_to_pass_slices $FLAGS
 
           odin check wasm/js_wasm32 $FLAGS
