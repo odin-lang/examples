@@ -10,35 +10,35 @@ NUM_DATA :: #config(NUM, 10_000_000) // The amount of data points to generate an
 NUM_REPETITIONS :: #config(REP, 100) // The number of times to run each proc, for performance measurement
 WIDTH :: #config(WIDTH, 16)
 
-// A bun, as in a simple bunnymark. Buns travel in a straight line and bounce when reaching the edge
-// of a bounding rectangle.
-Bun :: struct {
+// A single moving point. A point has a position and a velocity, and in this example they will
+// travel in a straight line and bounce when reaching the edge of a bounding rectangle.
+Point :: struct {
 	// Components are separate fields so that they'll be stored in separate arrays when used as #soa
 	pos_x, pos_y, vel_x, vel_y: f32,
 }
 
-// Updates a SoA slice of buns, with given the bounds and delta-time.
+// Updates a SoA slice of points, with given the bounds and delta-time.
 // This implementation uses straightforward scalar logic.
-update_buns_scalar :: proc (buns: #soa[]Bun, bounds: [2][2]f32, dt: f32) {
-	for &bun in buns {
-		if bun.pos_x <= bounds[0].x { bun.vel_x = +abs(bun.vel_x) }
-		if bun.pos_x >= bounds[1].x { bun.vel_x = -abs(bun.vel_x) }
-		if bun.pos_y <= bounds[0].y { bun.vel_y = +abs(bun.vel_y) }
-		if bun.pos_y >= bounds[1].y { bun.vel_y = -abs(bun.vel_y) }
+update_points_scalar :: proc (points: #soa[]Point, bounds: [2][2]f32, dt: f32) {
+	for &point in points {
+		if point.pos_x <= bounds[0].x { point.vel_x = +abs(point.vel_x) }
+		if point.pos_x >= bounds[1].x { point.vel_x = -abs(point.vel_x) }
+		if point.pos_y <= bounds[0].y { point.vel_y = +abs(point.vel_y) }
+		if point.pos_y >= bounds[1].y { point.vel_y = -abs(point.vel_y) }
 
-		bun.pos_x += dt * bun.vel_x
-		bun.pos_y += dt * bun.vel_y
+		point.pos_x += dt * point.vel_x
+		point.pos_y += dt * point.vel_y
 	}
 }
 
-// Updates a SoA slice of buns, with given the bounds and delta-time
+// Updates a SoA slice of points, with given the bounds and delta-time
 // This implementation uses SIMD logic.
-update_buns_simd :: proc (buns: #soa[]Bun, bounds: [2][2]f32, dt: f32) {
-	process_chunk :: proc (buns: #soa[]Bun, mask: #simd[WIDTH]u32, bounds: [2][2]f32, dt: f32) {
-		px_ptr := cast(^#simd[WIDTH]f32)buns.pos_x
-		py_ptr := cast(^#simd[WIDTH]f32)buns.pos_y
-		vx_ptr := cast(^#simd[WIDTH]f32)buns.vel_x
-		vy_ptr := cast(^#simd[WIDTH]f32)buns.vel_y
+update_points_simd :: proc (points: #soa[]Point, bounds: [2][2]f32, dt: f32) {
+	process_chunk :: proc (points: #soa[]Point, mask: #simd[WIDTH]u32, bounds: [2][2]f32, dt: f32) {
+		px_ptr := cast(^#simd[WIDTH]f32)points.pos_x
+		py_ptr := cast(^#simd[WIDTH]f32)points.pos_y
+		vx_ptr := cast(^#simd[WIDTH]f32)points.vel_x
+		vy_ptr := cast(^#simd[WIDTH]f32)points.vel_y
 
 		// Read the vectors of positions and velocities, as specified by the mask. Any values that
 		// are masked out are just populated with 0 (from the second parameter).
@@ -48,7 +48,7 @@ update_buns_simd :: proc (buns: #soa[]Bun, bounds: [2][2]f32, dt: f32) {
 		// corresponding to a SIMD vector. This allows for better parallelism, especially in 2D.
 		// Using a SIMD vector to represent a 2D vector would give relatively little benefit (2x
 		// parallelism at most, often less), whereas using a SIMD vector to represent a single
-		// component across multiple vectors allows this to scale (processing 4/8/16+ buns at a
+		// component across multiple vectors allows this to scale (processing 4/8/16+ points at a
 		// time).
 		px := simd.masked_load(px_ptr, cast(#simd[WIDTH]f32)0, mask)
 		py := simd.masked_load(py_ptr, cast(#simd[WIDTH]f32)0, mask)
@@ -92,16 +92,16 @@ update_buns_simd :: proc (buns: #soa[]Bun, bounds: [2][2]f32, dt: f32) {
 		simd.masked_store(vy_ptr, vy, mask)
 	}
 
-	buns := buns
-	for len(buns) >= WIDTH {
-		process_chunk(buns, max(u32), bounds, dt)
-		buns = buns[WIDTH:]
+	points := points
+	for len(points) >= WIDTH {
+		process_chunk(points, max(u32), bounds, dt)
+		points = points[WIDTH:]
 	}
 
-	if len(buns) > 0 {
+	if len(points) > 0 {
 		index := iota(#simd[WIDTH]i32)
-		mask := simd.lanes_lt(index, cast(#simd[WIDTH]i32)len(buns))
-		process_chunk(buns, mask, bounds, dt)
+		mask := simd.lanes_lt(index, cast(#simd[WIDTH]i32)len(points))
+		process_chunk(points, mask, bounds, dt)
 	}
 }
 
@@ -112,23 +112,23 @@ main :: proc() {
 	}
 	dt := f32(0.1)
 
-	buns := make(#soa[]Bun, NUM_DATA, context.temp_allocator)
-	for &bun in buns {
-		bun.pos_x = rand.float32_range(bounds[0].x, bounds[1].x)
-		bun.pos_y = rand.float32_range(bounds[0].y, bounds[1].y)
-		bun.vel_x = rand.float32_range(-1, +1)
-		bun.vel_y = rand.float32_range(-1, +1)
+	points := make(#soa[]Point, NUM_DATA, context.temp_allocator)
+	for &point in points {
+		point.pos_x = rand.float32_range(bounds[0].x, bounds[1].x)
+		point.pos_y = rand.float32_range(bounds[0].y, bounds[1].y)
+		point.vel_x = rand.float32_range(-1, +1)
+		point.vel_y = rand.float32_range(-1, +1)
 	}
 
-	fmt.printfln("Motion (Scalar): %v", benchmark(update_buns_scalar, buns, bounds, dt))
-	fmt.printfln("Motion (SIMD): %v", benchmark(update_buns_simd, buns, bounds, dt))
+	fmt.printfln("Motion (Scalar): %v", benchmark(update_points_scalar, points, bounds, dt))
+	fmt.printfln("Motion (SIMD): %v", benchmark(update_points_simd, points, bounds, dt))
 }
 
-benchmark :: proc (p: proc (buns: #soa[]Bun, bounds: [2][2]f32, dt: f32), buns: #soa[]Bun, bounds: [2][2]f32, dt: f32) -> time.Duration {
+benchmark :: proc (p: proc (points: #soa[]Point, bounds: [2][2]f32, dt: f32), points: #soa[]Point, bounds: [2][2]f32, dt: f32) -> time.Duration {
 	best_elapsed := max(time.Duration)
 	for _ in 0..<NUM_REPETITIONS {
 		start := time.tick_now()
-		p(buns, bounds, dt)
+		p(points, bounds, dt)
 		best_elapsed = min(time.tick_since(start), best_elapsed)
 	}
 	return best_elapsed
