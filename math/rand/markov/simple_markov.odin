@@ -1,9 +1,11 @@
 package main
 
 import "core:fmt"
+import "core:math"
 import "core:math/rand"
 
-// Illustrating a simple first-order markov chain, leveraging some Odin features.
+// Illustrating a simple first-order markov chain, and a few other ways to generate state transitions
+// showcasing a handful of rand procedures in the process.
 
 State :: enum { Banana, Apple, Pear, Lime, Blueberry }
 
@@ -29,6 +31,12 @@ main :: proc() {
 		cur_state = next_state_equal()
 		fmt.printfln("Equal weight state transition %v: %v -> %v", i, prev_state, cur_state)
 	}
+
+	for s, i in state_list(10) {
+		prev_state = cur_state
+		cur_state = s
+		fmt.printfln("List state transition: %v: %v -> %v", i, prev_state, cur_state)
+	}
 }
 
 // Using transition matrix
@@ -50,4 +58,15 @@ next_state :: proc(cur_state: State) -> State {
 // Equal weighting
 next_state_equal :: proc() -> State {
 	return rand.choice_enum(State)
+}
+
+// A list of equally weighted transitions
+state_list :: proc(size: int) -> []State {
+	seq := make([]State, size)
+
+	for i in 0..<size {
+		seq[i] = State(rand.int_max(len(State)))
+	}
+
+	return seq
 }
