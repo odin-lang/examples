@@ -19,9 +19,9 @@ main :: proc() {
 	cur_state, prev_state: State
 
 	for i in 1..=50 {
+		prev_state = cur_state
 		cur_state = next_state(cur_state)
 		fmt.printfln("State transition %v: %v -> %v", i, prev_state, cur_state)
-		prev_state = cur_state
 	}
 }
 
