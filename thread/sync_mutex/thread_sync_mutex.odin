@@ -1,5 +1,6 @@
 //
-//  Demonstrates how to spawn multiple threads and safely access data from each.
+// Demonstrates how to spawn multiple threads and safely access data 
+// from each by using a mutex.
 //
 package thread_sync_example
 
