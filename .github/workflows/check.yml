@@ -55,6 +55,7 @@ jobs:
           odin check json/write_json_marshal $FLAGS
 
           odin check thread/basics $FLAGS
+          odin check thread/synchronization $FLAGS
 
           odin check math/noise/draw_texture $FLAGS
           odin check math/rand/markov $FLAGS
