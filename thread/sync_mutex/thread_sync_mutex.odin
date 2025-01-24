@@ -40,32 +40,26 @@ create_randomized_queue :: proc(num_items: int) -> (q: [dynamic]Work_Item) {
 process_item :: proc(queue: ^[dynamic]Work_Item, mutex: ^sync.Mutex, thread_identifier: int) {
 	// This proc is essentially an infinite loop that breaks once it no longer has any data to process.
 
-	// We should always call `mutex_unlock` at the end of the thread proc 
-	// so that we don't accidentally keep it locked.
-	//
-	// Since unlocking an already unlocked mutex is a no-op anyway, 
-	// it's fine to do this even if we don't need to.
-	defer sync.mutex_unlock(mutex)
-
-	loop: for {
+	for {
 		// First we need to get a lock on our mutex. 
 		// That way we know whether we can safely access our queue, or whether 
 		// another thread is using it already.
 		sync.mutex_lock(mutex)
-		// Once we've successfully got a lock, we can mess with the queue all we like!
 
-		// First we try to pop the first element off of our queue.
-		//
-		// `pop_front_safe` returns the data type of the dynamic array, and 
-		// a boolean indicating whether it was possible to pop an element or not.
-		//
-		// That means we can use `or_break` to break out of our loop if `pop_front_safe` 
-		// tells us there's nothing left in the queue!
-		item := pop_front_safe(queue) or_break loop
+		// This is the critical point where the mutex being locked matters.
+		// Here we attempt to pop the first element off of our queue.
+		item, pop_ok := pop_front_safe(queue)
 
 		// Now that we've got the data we need from the queue, we can unlock our mutex 
-		// to let other threads access it to perform their work.
+		// to let other threads access the queue to perform their work.
 		sync.mutex_unlock(mutex)
+
+		// If we tried to pop something off but the queue was empty, we have nothing left to
+		// process, so we'll just break out of our ininite loop.
+		// Once the loop ends, our function will return, and the thread will stop.
+		if !pop_ok {
+			break
+		}
 
 		// Now we can do our item processing! Which in this case is just "processing" it for 
 		// the item's `processing_time` in seconds.
@@ -109,7 +103,7 @@ main :: proc() {
 	// It'll be a dynamic array of `Work_Items`, which essentially just have an ID number and a duration.
 	queue := create_randomized_queue(500)
 
-	// This is a Mutex. If you don't know what that is, it stands for "mutual exclusion lock".
+	// This is a Mutex. (Short for "mutual exclusion lock")
 	// It doesn't actually hold any data, but rather it's used in multi-threaded 
 	// applications as a way to tell other threads when it's safe to access data.
 	//
@@ -119,9 +113,9 @@ main :: proc() {
 	//
 	// However, once the Mutex is UNLOCKED, any thread can LOCK it for themselves.
 	//
-	// Mutexes in this case can be used to guarantee safe access to data across multiple threads. 
-	// Once a thread locks it, any other threads that also try to lock it will be unsuccessful, because two threads 
-	// reading/writing to the same data would cause major issues.
+	// Mutexes can be used to guarantee safe access to data across multiple threads. Once a thread locks it, 
+	// any other threads that also try to lock it will be forced to wait. 
+	// This prevents two threads from reading/writing the same data, which can result in data races.
 	mutex: sync.Mutex
 
 
@@ -143,7 +137,7 @@ main :: proc() {
 		// Now to explain exactly what these arguments are:
 		//      &queue  - A pointer to our queue object. We need to pass it by pointer to pop items off of it!
 		//      &mutex  - A pointer to our mutex. This is what our threads will use to signal to each other that they 
-		//				need exclusive access to the queue for the moment.
+		//				need exclusive access to the queue at the critical point where they access it.
 		//      t_id    - Just the index of our thread + 1, for printing purposes so we can identify who's working.
 		//
 		//      process_item - This is our procedure! The thread is going to make this thing run with all of the 
@@ -153,19 +147,21 @@ main :: proc() {
 		threads[i] = thread.create_and_start_with_poly_data3(&queue, &mutex, t_id, process_item)
 	}
 
-	// Once the program ends, we'll clean up after ourselves by destroy each of these threads we created.
-	defer {
-		for t in threads {thread.destroy(t)}
-	}
-
 	// Now we're going to use `join_multiple` to wait for all of our threads to stop processing.
-	// This is why we're holding onto those threads in our array. You wouldn't want to just let them spin off and never check on them again!
+	// This is why we're holding onto those threads in our array. You wouldn't want to just let them spin off 
+	// and never check on them again!
 	//
-	// `join_multiple` takes a variable number of Thread pointers (`^Thread`), and BLOCKS the main thread until they're finished processing.
-	// (Keep this in mind if you're working on something where the main thread matters, such as with graphical applications, etc.)
+	// `join_multiple` takes a variable number of Thread pointers (`^Thread`), and BLOCKS the main thread 
+	// until each one of them is finished processing.
 	//
-	// Since we have an array of Thread pointers, we can use the `..` operator to expand all of the array items as arguments to `join_multiple`!
+	// Since we have an array of Thread pointers, we can use the `..` operator to expand all of the array 
+	// items as arguments to `join_multiple`!
 	thread.join_multiple(..threads[:])
+
+	// Once the program ends, we'll clean up after ourselves by destroying each of these threads we created.
+	for t in threads {
+		thread.destroy(t)
+	}
 
 	// Everything's all finished now. Let's print out a "done" message and call it a day!
 	fmt.printfln("Processed all items! Exiting.")
