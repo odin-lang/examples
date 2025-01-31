@@ -92,6 +92,8 @@ jobs:
           odin check metal/learn_metal/08-compute $FLAGS
           odin check metal/learn_metal/09-compute-to-render $FLAGS
 
+          odin check project_organization $FLAGS
+
           odin check sdl2/chase_in_space $FLAGS
           odin check sdl2/hellope $FLAGS
           odin check sdl2/microui $FLAGS
