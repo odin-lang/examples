@@ -1,3 +1,4 @@
+#+feature dynamic-literals
 package vendor_wgpu_example_microui
 
 import    "core:sys/wasm/js"
@@ -88,7 +89,7 @@ os_get_clipboard :: proc(_: rawptr) -> (string, bool) {
 
 @(private="file")
 KEY_MAP := map[string]mu.Key{
-"ShiftLeft"    = .SHIFT,
+	"ShiftLeft"    = .SHIFT,
 	"ShiftRight"   = .SHIFT,
 	"ControlLeft"  = .CTRL,
 	"ControlRight" = .CTRL,
