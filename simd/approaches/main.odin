@@ -23,7 +23,7 @@ Object :: struct {
 }
 
 // A straightforward implementation using array programming.
-@require step_aos_scalar :: proc (data: []Object, dt: f32) {
+step_aos_scalar :: proc (data: []Object, dt: f32) {
 	for &obj in data {
 		obj.pos += obj.vel * dt
 	}
@@ -62,7 +62,7 @@ store_vec :: proc (dst: ^[3]f32, src: #simd[4]f32) {
 
 // Using the above load_vec and store_vec, we can SIMD the update without needing to make any
 // changes to the data layout at all. The code itself stays pretty simple too.
-@require step_aos_within_mask :: proc (data: []Object, dt: f32) {
+step_aos_within_mask :: proc (data: []Object, dt: f32) {
 	for &obj in data {
 		pos := load_vec(&obj.pos)
 		vel := load_vec(&obj.vel)
@@ -85,7 +85,7 @@ Object_Simd :: struct {
 	_: [PADDING]int,
 }
 
-@require step_aos_within_simd :: proc (data: []Object_Simd, dt: f32) {
+step_aos_within_simd :: proc (data: []Object_Simd, dt: f32) {
 	for &obj in data {
 		obj.pos += obj.vel * dt
 	}
@@ -115,7 +115,7 @@ Object_Simd :: struct {
  * ( -target-features:avx512f,avx512vl ), but that's rare and may not fare much better even on
  * hardware that has it.
  */
-@require step_aos_gather :: proc (data: []Object, dt: f32) {
+step_aos_gather :: proc (data: []Object, dt: f32) {
 	data := data
 
 	do_add :: #force_inline proc (base: ^Object, dt: f32, mask: #simd[WIDTH]u32 = max(u32)) {
@@ -182,7 +182,7 @@ Object_Split :: struct {
 	_: [PADDING]int,
 }
 
-@require step_soa :: proc (data: #soa[]Object_Split, dt: f32) {
+step_soa :: proc (data: #soa[]Object_Split, dt: f32) {
 	data := data
 
 	do_add :: #force_inline proc (base: #soa[]Object_Split, first: int, dt: f32, mask: #simd[WIDTH]u32 = max(u32)) {
