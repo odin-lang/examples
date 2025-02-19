@@ -171,6 +171,10 @@ sum_simd_masked :: proc (s: []f32) -> f32 {
 }
 
 main :: proc() {
+	if ODIN_OPTIMIZATION_MODE <= .Minimal {
+		fmt.println("WARNING: For best results, run benchmarks in an optimized build!")
+	}
+
 	when MISALIGN {
 		data_original := make([]f32, NUM_DATA + 1, context.temp_allocator)
 		data := ([^]f32)(uintptr(raw_data(data_original)) + 1)[:NUM_DATA]
