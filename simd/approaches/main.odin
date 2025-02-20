@@ -30,21 +30,21 @@ step_aos_scalar :: proc (data: []Object, dt: f32) {
 }
 
 /*
- * We can use SIMD within an object, where a SIMD vector is used similarly to a mathematical vector.
- * This can provide moderate speedup without requiring the layout of your data to change
- * significantly, but doesn't necessarily scale. Even if your hardware can support wider SIMD
- * (e.g. 16 f32s with AVX-512), this approach will only allow you to SIMD up to a single
- * (mathematical) vector's worth of values.
- * 
- * However, most any SIMD hardware can handle 128-bit vectors, and as such will benefit from this.
- * While it may not technically be the fastest, it can still be a significant speedup.
- * 
- * Using masked loads and stores, you can potentially benefit from SIMD without needing to change
- * the data layout at all. Note that on amd64, this approach is comparable to the scalar approach
- * with default settings, but becomes significantly more effective with AVX enabled
- * (-target-features:avx or -microarch:x86-64-v3). AVX is available on any remotely-recent amd64
- * system.
- */
+We can use SIMD within an object, where a SIMD vector is used similarly to a mathematical vector.
+This can provide moderate speedup without requiring the layout of your data to change
+significantly, but doesn't necessarily scale. Even if your hardware can support wider SIMD
+(e.g. 16 f32s with AVX-512), this approach will only allow you to SIMD up to a single
+(mathematical) vector's worth of values.
+
+However, most any SIMD hardware can handle 128-bit vectors, and as such will benefit from this.
+While it may not technically be the fastest, it can still be a significant speedup.
+
+Using masked loads and stores, you can potentially benefit from SIMD without needing to change
+the data layout at all. Note that on amd64, this approach is comparable to the scalar approach
+with default settings, but becomes significantly more effective with AVX enabled
+(-target-features:avx or -microarch:x86-64-v3). AVX is available on any remotely-recent amd64
+system.
+*/
 
 // Loads a [3]f32 into a #simd[4]f32 using masking. The fourth element is filled with 0. This
 // approach allows for SIMD to be used with minimal alterations to existing data layouts.
@@ -71,15 +71,15 @@ step_aos_within_mask :: proc (data: []Object, dt: f32) {
 }
 
 /*
- * As another potential improvement, we can actually change the layout of the object so that the
- * mathematical vectors are stored as SIMD vectors. This makes loading them easier and possibly
- * faster--though this depends on the target.
- * 
- * This also has the downside that it affects the layout of your structs, resulting in a larger
- * alignment and a bit of padding after each vector. Additionally, any code which *does* need to
- * deal with the individual components of a vector will have a harder time doing so since #simd
- * vectors can't be indexed directly.
- */
+As another potential improvement, we can actually change the layout of the object so that the
+mathematical vectors are stored as SIMD vectors. This makes loading them easier and possibly
+faster--though this depends on the target.
+
+This also has the downside that it affects the layout of your structs, resulting in a larger
+alignment and a bit of padding after each vector. Additionally, any code which *does* need to
+deal with the individual components of a vector will have a harder time doing so since #simd
+vectors can't be indexed directly.
+*/
 Object_Simd :: struct {
 	pos, vel: #simd[4]f32,
 	_: [PADDING]int,
@@ -92,29 +92,29 @@ step_aos_within_simd :: proc (data: []Object_Simd, dt: f32) {
 }
 
 /*
- * What if we want to take advantage of the full width of the SIMD vectors? Modern hardware can have
- * as many as 16-float wide vectors (AVX-512), it sure seems restrictive to only be able to use 3.
- * `core:simd` has gather and scatter intrinsics that we can use to load and store each element of
- * a vector from arbitrary locations, provided as pointers. In theory, this allows us to take
- * advantage of the full width of the SIMD vector without needing to rearrange the struct at all!
- * 
- * There's just one problem: this approach is often very slow--possibly even significantly slower
- * than the scalar version, depending on your hardware.
- * 
- * On amd64, the gather instruction is only available with AVX2, so it can't be used with the
- * default compilation settings. Even then LLVM will tend to avoid using the actual gather
- * instruction in the x86-64-v3 microarch, and with good reason--it's quite slow on many CPUs. This
- * isn't just on old CPUs, either--even on a recent Ryzen 9950X, the alternative code that LLVM
- * generates to load the values in scalar fashion and load them into a vector is *still* faster than
- * the version it generates that uses the actual gather instruction. This may vary depending on the
- * hardware, so test on your target hardware if you know what it will be (and avoid gather if you
- * don't). Scatter is supported by even less hardware.
- * 
- * For amd64, to enable the use of hardware gather instructions, use
- * -target-features:avx2,fast-gather . Hardware scatter requires AVX-512
- * ( -target-features:avx512f,avx512vl ), but that's rare and may not fare much better even on
- * hardware that has it.
- */
+What if we want to take advantage of the full width of the SIMD vectors? Modern hardware can have
+as many as 16-float wide vectors (AVX-512), it sure seems restrictive to only be able to use 3.
+`core:simd` has gather and scatter intrinsics that we can use to load and store each element of
+a vector from arbitrary locations, provided as pointers. In theory, this allows us to take
+advantage of the full width of the SIMD vector without needing to rearrange the struct at all!
+
+There's just one problem: this approach is often very slow--possibly even significantly slower
+than the scalar version, depending on your hardware.
+
+On amd64, the gather instruction is only available with AVX2, so it can't be used with the
+default compilation settings. Even then LLVM will tend to avoid using the actual gather
+instruction in the x86-64-v3 microarch, and with good reason--it's quite slow on many CPUs. This
+isn't just on old CPUs, either--even on a recent Ryzen 9950X, the alternative code that LLVM
+generates to load the values in scalar fashion and load them into a vector is *still* faster than
+the version it generates that uses the actual gather instruction. This may vary depending on the
+hardware, so test on your target hardware if you know what it will be (and avoid gather if you
+don't). Scatter is supported by even less hardware.
+
+For amd64, to enable the use of hardware gather instructions, use
+-target-features:avx2,fast-gather . Hardware scatter requires AVX-512
+( -target-features:avx512f,avx512vl ), but that's rare and may not fare much better even on
+hardware that has it.
+*/
 step_aos_gather :: proc (data: []Object, dt: f32) {
 	data := data
 
@@ -154,28 +154,28 @@ step_aos_gather :: proc (data: []Object, dt: f32) {
 }
 
 /*
- * Finally, if we want to go all-out and take full advantage of the hardware, we need to rearrange
- * our data layout. Rather than storing all of the data for each object together, in
- * Array-of-Structs form, we separate them so that each field's data is stored in a separate array.
- * We call this Struct-of-Arrays (SoA) form, as its in memory layout more closely resembles a struct
- * where each field is an array, rather than an array where each value is a complete struct.
- * 
- * Odin's #soa tag helps significantly with this, allowing you to write code that accesses SoA data
- * but still looks mostly like AoS data. We do, unfortunately, have to sacrifice the fixed arrays
- * for pos/vel as otherwise the compiler will still group their components together.
- * 
- * For this particular update procedure, this data layout can be extremely fast. All of the data it
- * uses is stored consecutively with no gaps, so the SIMD loads and stores can operate directly on
- * it and also take advantage of the full width of the SIMD vector. Try playing with WIDTH in
- * conjunction with AVX and/or AVX512 (if you have it)!
- * 
- * Because each field's data is stored separately, it's also unaffected by other data that may be
- * stored in the struct that isn't being used here. Try increasing PADDING--the other approaches
- * will tend to slow down as the data they operate on becomes spaced further apart, but this one
- * will not since the position and velocity will always be tightly-packed. However, for random
- * access of the data in the array it can end up being slower, due to the possibility of being
- * multiple cache misses instead of just one (not shown in these benchmarks).
- */
+Finally, if we want to go all-out and take full advantage of the hardware, we need to rearrange
+our data layout. Rather than storing all of the data for each object together, in
+Array-of-Structs form, we separate them so that each field's data is stored in a separate array.
+We call this Struct-of-Arrays (SoA) form, as its in memory layout more closely resembles a struct
+where each field is an array, rather than an array where each value is a complete struct.
+
+Odin's #soa tag helps significantly with this, allowing you to write code that accesses SoA data
+but still looks mostly like AoS data. We do, unfortunately, have to sacrifice the fixed arrays
+for pos/vel as otherwise the compiler will still group their components together.
+
+For this particular update procedure, this data layout can be extremely fast. All of the data it
+uses is stored consecutively with no gaps, so the SIMD loads and stores can operate directly on
+it and also take advantage of the full width of the SIMD vector. Try playing with WIDTH in
+conjunction with AVX and/or AVX512 (if you have it)!
+
+Because each field's data is stored separately, it's also unaffected by other data that may be
+stored in the struct that isn't being used here. Try increasing PADDING--the other approaches
+will tend to slow down as the data they operate on becomes spaced further apart, but this one
+will not since the position and velocity will always be tightly-packed. However, for random
+access of the data in the array it can end up being slower, due to the possibility of being
+multiple cache misses instead of just one (not shown in these benchmarks).
+*/
 Object_Split :: struct {
 	px, py, pz: f32,
 	vx, vy, vz: f32,
