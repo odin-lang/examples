@@ -123,7 +123,7 @@ main :: proc() {
 	main_loop: for {
 		free_all(context.temp_allocator)
 
-		for e: SDL.Event; SDL.PollEvent(&e);  /**/{
+		for e: SDL.Event; SDL.PollEvent(&e); /**/ {
 
 			#partial switch e.type {
 			case .QUIT:
@@ -157,8 +157,8 @@ main :: proc() {
 				case SDL.K_LALT:		fn(ctx, .ALT)
 				case SDL.K_RALT:		fn(ctx, .ALT)
 				case SDL.K_RETURN:		fn(ctx, .RETURN)
-				case SDL.K_KP_ENTER:	fn(ctx, .RETURN)
-				case SDL.K_BACKSPACE:	fn(ctx, .BACKSPACE)
+				case SDL.K_KP_ENTER:		fn(ctx, .RETURN)
+				case SDL.K_BACKSPACE:		fn(ctx, .BACKSPACE)
 				case SDL.K_LEFT:		fn(ctx, .LEFT)
 				case SDL.K_RIGHT:		fn(ctx, .RIGHT)
 				case SDL.K_HOME:		fn(ctx, .HOME)
