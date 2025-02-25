@@ -106,6 +106,10 @@ update_points_simd :: proc (points: #soa[]Point, bounds: [2][2]f32, dt: f32) {
 }
 
 main :: proc() {
+	if ODIN_OPTIMIZATION_MODE <= .Minimal {
+		fmt.println("WARNING: For best results, run benchmarks in an optimized build!")
+	}
+
 	bounds := [2][2]f32 {
 		{-100, -100},
 		{+100, +100},
