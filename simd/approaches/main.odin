@@ -7,14 +7,14 @@ import "core:simd"
 import "core:time"
 
 // The number of elements to use for SIMD vectors (in cases where the width is variable).
-WIDTH :: 16
+WIDTH :: #config(WIDTH, 8)
 
 // The number of objects to use in benchmarking.
-NUM_OBJECTS :: 1_000_000
+NUM_OBJECTS :: #config(NUM_OBJECTS, 1_000_000)
 
 // Extra padding to add in to the Object. As this increases, *any* AoS solution will suffer due to
 // the decreasing effectiveness of memory caching.
-PADDING :: 0
+PADDING :: #config(PADDING, 0)
 
 // Straightforward data layout.
 Object :: struct {
