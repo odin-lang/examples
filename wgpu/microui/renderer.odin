@@ -58,21 +58,21 @@ r_init_and_run :: proc() {
 	r.instance = wgpu.CreateInstance(nil)
 	r.surface = os_get_surface(r.instance)
 
-	wgpu.InstanceRequestAdapter(r.instance, &{ compatibleSurface = r.surface }, handle_request_adapter, nil)
+	wgpu.InstanceRequestAdapter(r.instance, &{ compatibleSurface = r.surface }, { callback = handle_request_adapter })
 }
 
 @(private="file")
-handle_request_adapter :: proc "c" (status: wgpu.RequestAdapterStatus, adapter: wgpu.Adapter, message: cstring, userdata: rawptr) {
+handle_request_adapter :: proc "c" (status: wgpu.RequestAdapterStatus, adapter: wgpu.Adapter, message: string, userdata1, userdata2: rawptr) {
 	context = state.ctx
 	if status != .Success || adapter == nil {
 		fmt.panicf("request adapter failure: [%v] %s", status, message)
 	}
 	state.renderer.adapter = adapter
-	wgpu.AdapterRequestDevice(adapter, nil, handle_request_device, nil)
+	wgpu.AdapterRequestDevice(adapter, nil, { callback = handle_request_device })
 }
 
 @(private="file")
-handle_request_device :: proc "c" (status: wgpu.RequestDeviceStatus, device: wgpu.Device, message: cstring, userdata: rawptr) {
+handle_request_device :: proc "c" (status: wgpu.RequestDeviceStatus, device: wgpu.Device, message: string, userdata1, userdata2: rawptr) {
 	context = state.ctx
 	if status != .Success || device == nil {
 		fmt.panicf("request device failure: [%v] %s", status, message)
@@ -201,8 +201,8 @@ on_adapter_and_device :: proc() {
 	})
 
 	r.module = wgpu.DeviceCreateShaderModule(r.device, &{
-		nextInChain = &wgpu.ShaderModuleWGSLDescriptor{
-			sType = .ShaderModuleWGSLDescriptor,
+		nextInChain = &wgpu.ShaderSourceWGSL{
+			sType = .ShaderSourceWGSL,
 			code  = #load("shader.wgsl"),
 		},
 	})
@@ -219,6 +219,7 @@ on_adapter_and_device :: proc() {
 			bufferCount = 3,
 			buffers = raw_data([]wgpu.VertexBufferLayout{
 				{
+					stepMode = .Vertex,
 					arrayStride = 8,
 					attributeCount = 1,
 					attributes = &wgpu.VertexAttribute{
@@ -227,6 +228,7 @@ on_adapter_and_device :: proc() {
 					},
 				},
 				{
+					stepMode = .Vertex,
 					arrayStride = 8,
 					attributeCount = 1,
 					attributes = &wgpu.VertexAttribute{
@@ -235,6 +237,7 @@ on_adapter_and_device :: proc() {
 					},
 				},
 				{
+					stepMode = .Vertex,
 					arrayStride = 4,
 					attributeCount = 1,
 					attributes = &wgpu.VertexAttribute{
@@ -326,15 +329,15 @@ r_clear :: proc(color: mu.Color) -> bool {
 
 	r.curr_texture = wgpu.SurfaceGetCurrentTexture(r.surface)
 	switch r.curr_texture.status {
-	case .Success:
-	// All good, could check for `r.curr_texture.suboptimal` here.
+	case .SuccessOptimal, .SuccessSuboptimal:
+	// All good, could handle suboptimal here.
 	case .Timeout, .Outdated, .Lost:
 		if r.curr_texture.texture != nil {
 			wgpu.TextureRelease(r.curr_texture.texture)
 		}
 		r_resize()
 		return false
-	case .OutOfMemory, .DeviceLost:
+	case .OutOfMemory, .DeviceLost, .Error:
 		fmt.panicf("get_current_texture status=%v", r.curr_texture.status)
 	}
 
