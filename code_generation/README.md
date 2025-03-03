@@ -20,10 +20,10 @@ It will print:
 Long_Cat is 9 x 46 pixels and 183 bytes large
 
 Round_Cat is 20 x 24 pixels and 317 bytes large
-Round_Cat has width > 15 we loaded it!
-It is indeed 20 pixels wide!
+Round_Cat has width > 15, so we loaded it!
+The loaded PNG image is indeed 20 pixels wide!
 
 Tuna is 24 x 20 pixels and 318 bytes large
-Tuna has width > 15 we loaded it!
-It is indeed 24 pixels wide!
+Tuna has width > 15, so we loaded it!
+The loaded PNG image is indeed 24 pixels wide!
 ```
