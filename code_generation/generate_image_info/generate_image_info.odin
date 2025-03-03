@@ -17,6 +17,10 @@ import "core:path/slashpath"
 import "core:image/png"
 import "core:image"
 
+// Avoids 'unused import' error: "core:image/png" needs to be imported in order
+// to make `img.load_from_bytes` understand PNG format.
+_ :: png
+
 INPUT_DIR :: "images"
 OUTPUT_FILE :: "images.odin"
 
@@ -51,7 +55,7 @@ Image :: struct {
 	data: []u8,
 }
 
-Image_Name :: enum {`
+Image_Name :: enum {`,
 )
 
 	for i in images {
@@ -61,7 +65,7 @@ Image_Name :: enum {`
 	fmt.fprintln(f,
 `}
 
-images := [Image_Name]Image {`
+images := [Image_Name]Image {`,
 )
 
 	for i in images {
