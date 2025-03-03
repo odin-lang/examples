@@ -38,8 +38,8 @@ main :: proc() {
 			loaded_img, loaded_img_err := image.load_from_bytes(img.data)
 
 			if loaded_img_err == nil {
-				fmt.printfln("%v has width > 15 we loaded it!", name)
-				fmt.printfln("It is indeed %v pixels wide!", loaded_img.width)
+				fmt.printfln("%v has width > 15, so we loaded it!", name)
+				fmt.printfln("The loaded PNG image is indeed %v pixels wide!", loaded_img.width)
 			}
 		}
 
