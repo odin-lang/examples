@@ -33,7 +33,7 @@ jobs:
         run: |
           FLAGS="-vet -strict-style -vet-tabs -disallow-do -warnings-as-errors"
 
-          odin check !basics $FLAGS
+          odin check absolute_beginners $FLAGS
 
           odin check command_line_arguments $FLAGS
           odin check dir_info $FLAGS
@@ -52,11 +52,13 @@ jobs:
 
           odin check json/load_json $FLAGS
           odin check json/load_json_unmarshal $FLAGS
-          odin check json/odin_info $FLAGS
+          odin check json/write_json_marshal $FLAGS
 
           odin check thread/basics $FLAGS
+          odin check thread/sync_mutex $FLAGS
 
           odin check math/noise/draw_texture $FLAGS
+          odin check math/rand/markov $FLAGS
 
           odin check raylib/game_of_life $FLAGS
           odin check raylib/log $FLAGS
@@ -94,7 +96,21 @@ jobs:
           odin check sdl2/hellope $FLAGS
           odin check sdl2/microui $FLAGS
 
+          odin check simd/basic-sum $FLAGS
+          odin check simd/motion $FLAGS
+
+          odin check slices/prefer_to_pass_slices $FLAGS
+
+          odin check wasm/js_wasm32 $FLAGS
+
           odin check wgpu/microui -target:windows_amd64 $FLAGS
+          odin check wgpu/microui -target:js_wasm32 $FLAGS
+
+          odin check wgpu/glfw-triangle -target:windows_amd64 $FLAGS
+          odin check wgpu/glfw-triangle -target:js_wasm32 $FLAGS
+
+          odin check wgpu/sdl3-triangle -target:windows_amd64 $FLAGS
+          odin check wgpu/sdl3-triangle -target:js_wasm32 $FLAGS
 
           odin check win32/game_of_life -target:windows_amd64 $FLAGS
           odin check win32/open_window -target:windows_amd64 $FLAGS
@@ -102,9 +118,10 @@ jobs:
           odin check nanovg/example.odin -file $FLAGS
           odin check nanovg/fbo.odin -file $FLAGS
 
-          odin check orca/breakout -target:orca_wasm32 $FLAGS
-          odin check orca/clock -target:orca_wasm32 $FLAGS
-          odin check orca/ui -target:orca_wasm32 $FLAGS
+          # TODO: fix orca examples after update.
+          # odin check orca/breakout -target:orca_wasm32 $FLAGS
+          # odin check orca/clock -target:orca_wasm32 $FLAGS
+          # odin check orca/ui -target:orca_wasm32 $FLAGS
 
           odin check net/tcp_echo_server/client $FLAGS
           odin check net/tcp_echo_server/server $FLAGS

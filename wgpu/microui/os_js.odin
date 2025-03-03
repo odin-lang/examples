@@ -1,3 +1,4 @@
+#+feature dynamic-literals
 package vendor_wgpu_example_microui
 
 import    "core:sys/wasm/js"
@@ -66,8 +67,8 @@ os_get_surface :: proc(instance: wgpu.Instance) -> wgpu.Surface {
 	return wgpu.InstanceCreateSurface(
 		instance,
 		&wgpu.SurfaceDescriptor{
-			nextInChain = &wgpu.SurfaceDescriptorFromCanvasHTMLSelector{
-				sType = .SurfaceDescriptorFromCanvasHTMLSelector,
+			nextInChain = &wgpu.SurfaceSourceCanvasHTMLSelector{
+				sType = .SurfaceSourceCanvasHTMLSelector,
 				selector = "#wgpu-canvas",
 			},
 		},
@@ -88,7 +89,7 @@ os_get_clipboard :: proc(_: rawptr) -> (string, bool) {
 
 @(private="file")
 KEY_MAP := map[string]mu.Key{
-"ShiftLeft"    = .SHIFT,
+	"ShiftLeft"    = .SHIFT,
 	"ShiftRight"   = .SHIFT,
 	"ControlLeft"  = .CTRL,
 	"ControlRight" = .CTRL,

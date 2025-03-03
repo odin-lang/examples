@@ -1,13 +1,25 @@
-// By laytan, from:
-// https://gist.github.com/laytan/ba57af3e5a59ab5cb2fca9e25bcfe262
-//
-// You must compile the shaders before compiling this program:
-//     glslc shader.vert -o vert.spv 
-//     glslc shader.frag -o frag.spv 
-//
-// glslc is part of shaderc, which you can find here:
-// https://github.com/google/shaderc
+/*
+Vulkan triangle example by laytan, source:
+https://gist.github.com/laytan/ba57af3e5a59ab5cb2fca9e25bcfe262
 
+Compile and run using:
+
+	odin run .
+
+This example comes with pre-compiled shaders. During compilation the shaders
+will be loaded from `vert.spv` and `frag.spv`.
+
+If you make any changes to the shader source files (`shader.vert` or
+`shader.frag`), then you must recompile them using `glslc`:
+
+	glslc shader.vert -o vert.spv
+	glslc shader.frag -o frag.spv
+
+`glslc` is part of the Vulkan SDK, which you can find here:
+https://vulkan.lunarg.com/sdk/home
+
+This example uses glfw for window management.
+*/
 package main
 
 import "base:runtime"
@@ -15,7 +27,7 @@ import "base:runtime"
 import "core:log"
 import "core:slice"
 import "core:strings"
-import "core:os"
+
 
 import "vendor:glfw"
 import vk "vendor:vulkan"
@@ -27,6 +39,9 @@ when ODIN_OS == .Darwin {
 	@(require, extra_linker_flags = "-rpath /usr/local/lib")
 	foreign import __ "system:System.framework"
 }
+
+SHADER_VERT :: #load("vert.spv")
+SHADER_FRAG :: #load("frag.spv")
 
 // Enables Vulkan debug logging and validation layers.
 ENABLE_VALIDATION_LAYERS :: #config(ENABLE_VALIDATION_LAYERS, ODIN_DEBUG)
@@ -215,10 +230,7 @@ main :: proc() {
 
 	// Load shaders.
 	{
-		shader_vert, shader_vert_ok := os.read_entire_file("vert.spv")
-		assert(shader_vert_ok, "Failed loading `vert.spv`. Compile it using 'glslc shader.vert -o vert.spv'")
-
-		g_vert_shader_module = create_shader_module(shader_vert)
+		g_vert_shader_module = create_shader_module(SHADER_VERT)
 		g_shader_stages[0] = vk.PipelineShaderStageCreateInfo {
 			sType  = .PIPELINE_SHADER_STAGE_CREATE_INFO,
 			stage  = {.VERTEX},
@@ -226,10 +238,7 @@ main :: proc() {
 			pName  = "main",
 		}
 
-		shader_frag, shader_frag_ok := os.read_entire_file("frag.spv")
-		assert(shader_frag_ok, "Failed loading `frag.spv`. Compile it using 'glslc shader.frag -o frag.spv'")
-
-		g_frag_shader_module = create_shader_module(shader_frag)
+		g_frag_shader_module = create_shader_module(SHADER_FRAG)
 		g_shader_stages[1] = vk.PipelineShaderStageCreateInfo {
 			sType  = .PIPELINE_SHADER_STAGE_CREATE_INFO,
 			stage  = {.FRAGMENT},

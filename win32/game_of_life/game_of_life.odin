@@ -4,20 +4,24 @@ package game_of_life
                             GAME  OF  LIFE
                             (using win32)
 
-This example shows a simple setup for a game with Input processing,
-updating game state and drawing game state to the screen.
+This example shows a simple setup of Game of Life using Win32. It uses
+Software Rendering. This is done by drawing the game cells into a
+texture.
 
-You can
-* Left-Click to bring a cell alive
-* Right-Click to kill a cell
-* Press <Space> to (un)pause the game
-* Press <Esc> to close the game
-
-The game starts paused.
+Controls:
+ESC - Quit
+P   - Toggle Pause
+R   - Restart
+H   - Toggle Help
 
 Build with:
 
 odin build . -resource:game_of_life.rc
+
+If you get errors during build about missing `winres.h`, either:
+- Remove the `-resource:game_of_life.rc` flag
+- Launch a "x64 Native Tools Command Prompt" and build from that
+  command prompt.
 
 **********************************************************************/
 
@@ -31,29 +35,31 @@ import "core:time"
 
 // aliases
 L :: intrinsics.constant_utf16_cstring
-color :: [4]u8
-int2 :: [2]i32
+Color :: [4]u8
+Int2 :: [2]i32
 
 // constants
-TITLE :: "Game Of Life"
-WORLD_SIZE: int2 : {128, 64}
+TITLE :: "Game of Life"
+WORLD_SIZE :: Int2 {128, 64}
 ZOOM :: 12 // pixel size
 FPS :: 20
 
-BLACK :: color{0, 0, 0, 255}
-WHITE :: color{255, 255, 255, 255}
+BLACK :: Color{0, 0, 0, 255}
+WHITE :: Color{255, 255, 255, 255}
 
 HELP_TEXT :: `ESC - Quit
 P - Toggle Pause
+R - Restart
 H - Toggle Help`
-help_rect: win32.RECT = {20, 20, 160, 100}
+HELP_RECT :: win32.RECT {20, 20, 160, 105}
 show_help := true
 
-IDT_TIMER1: win32.UINT_PTR : 10001
+// The timer used for ticking the game.
+IDT_TIMER1 :: 10001
 
-color_bits :: 1
-palette_count :: 1 << color_bits
-Color_Palette :: [palette_count]color
+COLOR_BITS :: 1
+PALETTE_COUNT :: 1 << COLOR_BITS
+Color_Palette :: [PALETTE_COUNT]Color
 
 Bitmap_Info :: struct {
 	bmiHeader: win32.BITMAPINFOHEADER,
@@ -69,7 +75,7 @@ Config_Flags :: distinct bit_set[Config_Flag;u32]
 
 Window :: struct {
 	name:          win32.wstring,
-	size:          int2,
+	size:          Int2,
 	fps:           i32,
 	control_flags: Config_Flags,
 }
@@ -79,7 +85,7 @@ Game :: struct {
 	last_tick:         time.Time,
 	pause:             bool,
 	colors:            Color_Palette,
-	size:              int2,
+	size:              Int2,
 	zoom:              i32,
 	world, next_world: ^World,
 	timer_id:          win32.UINT_PTR,
@@ -98,15 +104,6 @@ World :: struct {
 Cell :: struct {
 	width:  f32,
 	height: f32,
-}
-
-User_Input :: struct {
-	left_mouse_clicked:   bool,
-	right_mouse_clicked:  bool,
-	toggle_pause:         bool,
-	mouse_world_position: i32,
-	mouse_tile_x:         i32,
-	mouse_tile_y:         i32,
 }
 
 
@@ -179,7 +176,7 @@ show_error_and_panic :: proc(msg: string, loc := #caller_location) {
 	panic(msg, loc = loc)
 }
 
-get_rect_size :: #force_inline proc(rect: ^win32.RECT) -> int2 {return {(rect.right - rect.left), (rect.bottom - rect.top)}}
+get_rect_size :: #force_inline proc(rect: ^win32.RECT) -> Int2 {return {(rect.right - rect.left), (rect.bottom - rect.top)}}
 
 set_app :: #force_inline proc(hwnd: win32.HWND, app: ^Game) {win32.SetWindowLongPtrW(hwnd, win32.GWLP_USERDATA, win32.LONG_PTR(uintptr(app)))}
 
@@ -263,7 +260,7 @@ WM_PAINT :: proc(hwnd: win32.HWND) -> win32.LRESULT {
 	}
 
 	if show_help {
-		rect := help_rect
+		rect := HELP_RECT
 		win32.RoundRect(hdc, rect.left, rect.top, rect.right, rect.bottom, 20, 20)
 		win32.InflateRect(&rect, -10, -10)
 		win32.DrawTextW(hdc, L(HELP_TEXT), -1, &rect, .DT_TOP)
@@ -315,8 +312,6 @@ WM_CHAR :: proc(hwnd: win32.HWND, wparam: win32.WPARAM, lparam: win32.LPARAM) ->
 		siz := app.world.width * app.world.height
 		idx := rand.int31_max(siz)
 		app.world.alive[idx] = 1
-	case '£':
-		show_error_and_panic("panic test")
 	}
 	return 0
 }
@@ -356,16 +351,16 @@ unregister_class :: proc(atom: win32.ATOM, instance: win32.HINSTANCE) {
 	if !win32.UnregisterClassW(win32.LPCWSTR(uintptr(atom)), instance) {show_error_and_panic("UnregisterClassW")}
 }
 
-adjust_size_for_style :: proc(size: ^int2, dwStyle: win32.DWORD) {
+adjust_size_for_style :: proc(size: ^Int2, dwStyle: win32.DWORD) {
 	rect := win32.RECT{0, 0, size.x, size.y}
 	if win32.AdjustWindowRect(&rect, dwStyle, false) {
 		size^ = {i32(rect.right - rect.left), i32(rect.bottom - rect.top)}
 	}
 }
 
-center_window :: proc(position: ^int2, size: int2) {
+center_window :: proc(position: ^Int2, size: Int2) {
 	if deviceMode: win32.DEVMODEW; win32.EnumDisplaySettingsW(nil, win32.ENUM_CURRENT_SETTINGS, &deviceMode) {
-		device_size := int2{i32(deviceMode.dmPelsWidth), i32(deviceMode.dmPelsHeight)}
+		device_size := Int2{i32(deviceMode.dmPelsWidth), i32(deviceMode.dmPelsHeight)}
 		position^ = (device_size - size) / 2
 	}
 }
@@ -374,7 +369,7 @@ create_window :: #force_inline proc(instance: win32.HINSTANCE, atom: win32.ATOM,
 	if atom == 0 {show_error_and_panic("atom is zero")}
 	style :: win32.WS_OVERLAPPED | win32.WS_CAPTION | win32.WS_SYSMENU
 	size := game.window.size
-	pos := int2{i32(win32.CW_USEDEFAULT), i32(win32.CW_USEDEFAULT)}
+	pos := Int2{i32(win32.CW_USEDEFAULT), i32(win32.CW_USEDEFAULT)}
 	adjust_size_for_style(&size, style)
 	if .CENTER in game.window.control_flags {
 		center_window(&pos, size)
@@ -401,13 +396,13 @@ run :: proc() -> int {
 		zoom = ZOOM,
 		window = Window{name = L(TITLE), size = WORLD_SIZE * ZOOM, fps = FPS, control_flags = {.CENTER}},
 	}
-	for i in 0 ..< palette_count {
-		c := u8((255 * int(i)) / (palette_count - 1))
-		game.colors[i] = color{c, c, c, 255}
+	for i in 0 ..< PALETTE_COUNT {
+		c := u8((255 * int(i)) / (PALETTE_COUNT - 1))
+		game.colors[i] = {c, c, c, 255}
 	}
 
-	game.colors[0] = color{128, 64, 32, 255}
-	game.colors[1] = color{255, 128, 64, 255}
+	game.colors[0] = {128, 64, 32, 255}
+	game.colors[1] = {255, 128, 64, 255}
 
 	world := World{game.size.x, game.size.y, make([]u8, game.size.x * game.size.y)}
 	next_world := World{game.size.x, game.size.y, make([]u8, game.size.x * game.size.y)}

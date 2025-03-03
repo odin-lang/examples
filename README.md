@@ -32,6 +32,5 @@ Contributions via Pull Requests are warmly welcome. Before submitting your Pull 
 
 - The example compiles with flags `-vet -strict-style -vet-tabs -disallow-do -warnings-as-errors`
 - Add the example to `.github/workflows/check.yml`
-- The example follows Odin best practices. Look at code in `core` for inspiration on how to write idiomatic Odin.
 - Your code follows the Odin naming convention: https://github.com/odin-lang/Odin/wiki/Naming-Convention (exception can be made for direct ports of examples that need to match 1:1 to the source of the port).
 - Note that your code will fall under the licenses listed above. Only for third-party dependencies are other licenses allowed.
