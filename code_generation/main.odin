@@ -22,10 +22,12 @@ This program prints:
 	Tuna has width > 15 we loaded it!
 	It is indeed 24 pixels wide!
 
-Note how it knows the size: `img.data` contains the data! It is loaded at
-compile time. The information about the width and height and which file to
-actually load is determined by the code generation program in the
-`generate_image_info` folder.
+Note how it knows width and height before it loads the file. That was written
+into `images.odin` by the code generation program in the `generate_image_info`
+folder. It also knows the file size: `img.data` contains the data (i.e. the file
+contents) for that image. That data is put into the executable at compile time
+using the built-in `#load` procedure. The path of the image send into `#load`
+is written by the code generation program.
 */
 main :: proc() {
 	for &img, name in images {
