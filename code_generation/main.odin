@@ -13,8 +13,14 @@ import "core:fmt"
 This program prints:
 
 	Long_Cat is 9 x 46 pixels and 183 bytes large
+	
 	Round_Cat is 20 x 24 pixels and 317 bytes large
+	Round_Cat has width > 15 we loaded it!
+	It is indeed 20 pixels wide!
+	
 	Tuna is 24 x 20 pixels and 318 bytes large
+	Tuna has width > 15 we loaded it!
+	It is indeed 24 pixels wide!
 
 Note how it knows the size: `img.data` contains the data! It is loaded at
 compile time. The information about the width and height and which file to
