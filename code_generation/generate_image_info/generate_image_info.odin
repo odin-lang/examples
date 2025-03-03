@@ -4,9 +4,10 @@ opening each file. From each PNG file in there it will:
 
 - Generate a pretty enum name for it
 - Make a list of images where it maps each pretty enum name to some data
-- The data contains the width and the height.
+- The data contains the width and the height. This is determined by opening the
+    PNG files.
 - The data also contains a `#load(THE_FILENAME)` field. That will make compiler
-  that later tries to compile `images.odin` load the file data at compile-time.
+    that later tries to compile `images.odin` load the file data at compile-time.
 */
 package generate_image_info
 
