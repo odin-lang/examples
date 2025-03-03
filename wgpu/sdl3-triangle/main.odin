@@ -50,7 +50,7 @@ main :: proc() {
 		}
 		state.device = device 
 
-		width, height := os_get_render_bounds()
+		width, height := os_get_framebuffer_size()
 
 		state.config = wgpu.SurfaceConfiguration {
 			device      = state.device,
@@ -118,7 +118,7 @@ main :: proc() {
 resize :: proc "c" () {
 	context = state.ctx
 	
-	state.config.width, state.config.height = os_get_render_bounds()
+	state.config.width, state.config.height = os_get_framebuffer_size()
 	wgpu.SurfaceConfigure(state.surface, &state.config)
 }
 

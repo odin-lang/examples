@@ -109,8 +109,8 @@ jobs:
           odin check wgpu/glfw-triangle -target:windows_amd64 $FLAGS
           odin check wgpu/glfw-triangle -target:js_wasm32 $FLAGS
 
-          odin check wgpu/sdl2-triangle -target:windows_amd64 $FLAGS
-          odin check wgpu/sdl2-triangle -target:js_wasm32 $FLAGS
+          odin check wgpu/sdl3-triangle -target:windows_amd64 $FLAGS
+          odin check wgpu/sdl3-triangle -target:js_wasm32 $FLAGS
 
           odin check win32/game_of_life -target:windows_amd64 $FLAGS
           odin check win32/open_window -target:windows_amd64 $FLAGS
