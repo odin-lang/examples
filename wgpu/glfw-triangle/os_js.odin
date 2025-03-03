@@ -28,9 +28,10 @@ step :: proc(dt: f32) -> bool {
 	return true
 }
 
-os_get_render_bounds :: proc() -> (width, height: u32) {
+os_get_framebuffer_size :: proc() -> (width, height: u32) {
 	rect := js.get_bounding_client_rect("body")
-	return u32(rect.width), u32(rect.height)
+	dpi := js.device_pixel_ratio()
+	return u32(f64(rect.width) * dpi), u32(f64(rect.height) * dpi)
 }
 
 os_get_surface :: proc(instance: wgpu.Instance) -> wgpu.Surface {

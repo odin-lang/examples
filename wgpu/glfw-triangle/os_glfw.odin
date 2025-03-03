@@ -40,8 +40,8 @@ os_run :: proc() {
 	glfw.Terminate()
 }
 
-os_get_render_bounds :: proc() -> (width, height: u32) {
-	iw, ih := glfw.GetWindowSize(state.os.window)
+os_get_framebuffer_size :: proc() -> (width, height: u32) {
+	iw, ih := glfw.GetFramebufferSize(state.os.window)
 	return u32(iw), u32(ih)
 }
 
