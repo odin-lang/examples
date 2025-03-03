@@ -44,6 +44,9 @@ jobs:
           odin check console/raw_console -target:windows_amd64 $FLAGS
           odin check console/read_console_input $FLAGS
 
+          odin check code_generation $FLAGS
+          odin check code_generation/generate_image_info $FLAGS
+
           odin check arena_allocator $FLAGS
 
           odin check directx/d3d12_triangle_sdl2 -target:windows_amd64 $FLAGS
