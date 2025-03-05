@@ -44,10 +44,10 @@ os_run :: proc() {
 		frame(dt)
 	}
 
+	finish()
+
 	SDL.DestroyWindow(state.os.window)
 	SDL.Quit()
-
-	finish()
 }
 
 
