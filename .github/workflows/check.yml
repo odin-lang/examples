@@ -39,6 +39,7 @@ jobs:
           odin check dir_info $FLAGS
           odin check dynamic_arrays $FLAGS
           odin check strings $FLAGS
+          odin check multi_pointers $FLAGS
 
           odin check console/raw_console $FLAGS
           odin check console/raw_console -target:windows_amd64 $FLAGS
