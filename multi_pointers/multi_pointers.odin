@@ -6,7 +6,7 @@ import "core:c/libc"
 
 main :: proc() {
 	// overview: 
-	// a multi pointer is just a regular pointer with syntactic sugar that llows you to index into a buffer or array
+	// a multi pointer is just a regular pointer with syntactic sugar that allows you to index into a buffer or array
 	// multi-pointer indicates that we are dealing with a pointer to a buffer, not just a single object
 	// in odin a regular pointer cannot be indexed 
 	
@@ -87,7 +87,9 @@ main :: proc() {
 			{128, 255},
 		}
 
+		// use this to access the buffer in strides of size_of(Example_Struct) 
 		data_mptr: [^]Example_Struct = &data[0]
+		// use this to access the buffer in directly in bytes
 		byte_data_mptr := cast([^]byte) &data[0]
 
 		fmt.println(data_mptr[3].value1, data_mptr[3].value2)
