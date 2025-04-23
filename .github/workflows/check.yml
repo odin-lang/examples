@@ -74,6 +74,7 @@ jobs:
           odin check raylib/ports/text/text_codepoints_loading.odin -file $FLAGS
           odin check raylib/ports/textures/textures_gif_player.odin -file $FLAGS
           odin check raylib/tetroid $FLAGS
+          odin check raylib/box2d $FLAGS
 
           odin check directx/d3d11_minimal_sdl2 -target:windows_amd64 $FLAGS
 
