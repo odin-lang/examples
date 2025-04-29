@@ -23,11 +23,17 @@ get_password :: proc(allocator := context.allocator) -> string {
 			fmt.eprintfln("\nError: %v", err)
 			os.exit(1)
 
-		case ch == '\n':
+		// End line
+		case ch == '\n': // Posix
+			fallthrough
+		case ch == '\r': // Windows
 			fmt.println()
 			return string(buf[:])
 
-		case ch == '\u007f': // Backspace.
+		// Backspace
+		case ch == '\u007f': // Posix
+			fallthrough
+		case ch == '\b':     // Windows
 			_, bs_sz := utf8.decode_last_rune(buf[:])	
 			if bs_sz > 0 {
 				resize(&buf, len(buf)-bs_sz)
