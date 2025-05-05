@@ -27,9 +27,7 @@ main :: proc() {
 		fmt.println("Please be sure to include Alice to the party :(")
 	}
 
-	l := len(m)
-
-	fmt.println("Length of map is", l)
+	fmt.println("Length of map is", len(m))
 
 	// We can remove a key like such 
 	deleted_key, deleted_value := delete_key(&m, "Alice")
