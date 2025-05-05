@@ -63,7 +63,7 @@ main :: proc() {
 		fmt.println("Name:", k, "Age:", v.age, "Salary:", v.salary)
 	}
 
-	// To enable compoud literals, #+feature dynamic-literals must be enbabled 
+	// To enable compoud literals, #+feature dynamic-literals must be added to the file
 	m2 := map[string]int {
 		"Bob"   = 10,
 		"Chloe" = 20,
