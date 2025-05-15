@@ -58,26 +58,26 @@ r_init_and_run :: proc() {
 	r.instance = wgpu.CreateInstance(nil)
 	r.surface = os_get_surface(r.instance)
 
-	wgpu.InstanceRequestAdapter(r.instance, &{ compatibleSurface = r.surface }, { callback = handle_request_adapter })
+	wgpu.InstanceRequestAdapter(r.instance, &{ compatibleSurface = r.surface }, handle_request_adapter)
 }
 
 @(private="file")
-handle_request_adapter :: proc "c" (status: wgpu.RequestAdapterStatus, adapter: wgpu.Adapter, message: string, userdata1, userdata2: rawptr) {
+handle_request_adapter :: proc "c" (status: wgpu.RequestAdapterStatus, adapter: wgpu.Adapter, message: cstring, userdata1: rawptr) {
 	context = state.ctx
 	if status != .Success || adapter == nil {
 		fmt.panicf("request adapter failure: [%v] %s", status, message)
 	}
 	state.renderer.adapter = adapter
-	wgpu.AdapterRequestDevice(adapter, nil, { callback = handle_request_device })
+	wgpu.AdapterRequestDevice(adapter, nil, handle_request_device)
 }
 
 @(private="file")
-handle_request_device :: proc "c" (status: wgpu.RequestDeviceStatus, device: wgpu.Device, message: string, userdata1, userdata2: rawptr) {
+handle_request_device :: proc "c" (status: wgpu.RequestDeviceStatus, device: wgpu.Device, message: cstring, userdata1: rawptr) {
 	context = state.ctx
 	if status != .Success || device == nil {
 		fmt.panicf("request device failure: [%v] %s", status, message)
 	}
-	state.renderer.device = device 
+	state.renderer.device = device
 	on_adapter_and_device()
 }
 
@@ -201,8 +201,8 @@ on_adapter_and_device :: proc() {
 	})
 
 	r.module = wgpu.DeviceCreateShaderModule(r.device, &{
-		nextInChain = &wgpu.ShaderSourceWGSL{
-			sType = .ShaderSourceWGSL,
+		nextInChain = &wgpu.ShaderModuleWGSLDescriptor {
+			sType = .ShaderModuleWGSLDescriptor ,
 			code  = #load("shader.wgsl"),
 		},
 	})
@@ -329,7 +329,7 @@ r_clear :: proc(color: mu.Color) -> bool {
 
 	r.curr_texture = wgpu.SurfaceGetCurrentTexture(r.surface)
 	switch r.curr_texture.status {
-	case .SuccessOptimal, .SuccessSuboptimal:
+	case .Success:
 	// All good, could handle suboptimal here.
 	case .Timeout, .Outdated, .Lost:
 		if r.curr_texture.texture != nil {
@@ -337,7 +337,7 @@ r_clear :: proc(color: mu.Color) -> bool {
 		}
 		r_resize()
 		return false
-	case .OutOfMemory, .DeviceLost, .Error:
+	case .OutOfMemory, .DeviceLost:
 		fmt.panicf("get_current_texture status=%v", r.curr_texture.status)
 	}
 
@@ -449,7 +449,7 @@ r_render :: proc() {
 		case ^mu.Command_Rect: r_draw_rect(cmd.rect, cmd.color)
 		case ^mu.Command_Icon: r_draw_icon(cmd.id, cmd.rect, cmd.color)
 		case ^mu.Command_Clip: r_set_clip_rect(cmd.rect)
-		case ^mu.Command_Jump: unreachable() 
+		case ^mu.Command_Jump: unreachable()
 		}
 	}
 
