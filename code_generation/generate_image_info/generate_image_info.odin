@@ -33,7 +33,7 @@ main :: proc() {
 
 	input_files, _ := os.read_dir(d, -1)
 
-	f, _ := os.open(OUTPUT_FILE, os.O_WRONLY | os.O_CREATE | os.O_TRUNC)
+	f, _ := os.open(OUTPUT_FILE, os.O_WRONLY | os.O_CREATE | os.O_TRUNC, 0o644)
 	defer os.close(f)
 
 	images: [dynamic]os.File_Info
