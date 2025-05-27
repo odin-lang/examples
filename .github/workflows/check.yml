@@ -38,6 +38,7 @@ jobs:
           odin check command_line_arguments $FLAGS
           odin check dir_info $FLAGS
           odin check dynamic_arrays $FLAGS
+          odin check maps $FLAGS
           odin check strings $FLAGS
 
           odin check console/raw_console $FLAGS
