@@ -7,8 +7,6 @@ import "core:time"
 import "core:unicode/utf8"
 
 get_password :: proc(allocator := context.allocator) -> string {
-	enable_raw_mode()
-	defer disable_raw_mode()
 
 	fmt.print("Enter password: ")
 
@@ -65,6 +63,9 @@ draw_progress_bar :: proc(title: string, percent: int, width := 25) {
 
 main :: proc() {
 	set_utf8_terminal()
+
+	enable_raw_mode()
+	defer disable_raw_mode()
 
 	password := get_password()
 	defer delete(password)
