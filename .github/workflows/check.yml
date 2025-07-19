@@ -60,6 +60,7 @@ jobs:
 
           odin check thread/basics $FLAGS
           odin check thread/sync_mutex $FLAGS
+          odin check thread/pool/basic $FLAGS
 
           odin check math/noise/draw_texture $FLAGS
           odin check math/rand/markov $FLAGS
