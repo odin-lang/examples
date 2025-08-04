@@ -131,3 +131,6 @@ jobs:
 
           odin check net/tcp_echo_server/client $FLAGS
           odin check net/tcp_echo_server/server $FLAGS
+
+          odin check net/udp_echo_server/client $FLAGS
+          odin check net/udp_echo_server/server $FLAGS
