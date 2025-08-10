@@ -2,7 +2,7 @@ package main
 
 /*
 Original Source: https://github.com/memononen/nanovg/blob/master/example/example_gl3.c
-Can be run using: odin.exe run main.odin -file
+Can be run using: odin.exe run example.odin -file
 */
 
 import "core:fmt"
