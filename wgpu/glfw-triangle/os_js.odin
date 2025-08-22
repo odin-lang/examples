@@ -47,7 +47,8 @@ os_get_surface :: proc(instance: wgpu.Instance) -> wgpu.Surface {
 }
 
 @(private="file", fini)
-os_fini :: proc() {
+os_fini :: proc "contextless" () {
+	context = runtime.default_context()
 	js.remove_window_event_listener(.Resize, nil, size_callback)
 
 	finish()
