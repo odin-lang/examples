@@ -68,7 +68,7 @@ SCREEN_HEIGHT :: 450
 color_rects: [NUMBER_OF_COLORS]rl.Rectangle
 
 @(init) // Calls this proc once before main.
-initialize_colors_rects :: proc() {
+initialize_colors_rects :: proc "contextless" () {
 	// Initial rectangle geometry data in colors_rects.
 	for i in 0..<len(color_rects) {
 		color_rects[i].x      = 20 + 100 * f32(i % 7) + 10 * f32(i % 7)
