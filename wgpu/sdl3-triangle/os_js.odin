@@ -1,5 +1,7 @@
 package vendor_wgpu_example_triangle
 
+import "base:runtime"
+
 import "core:sys/wasm/js"
 
 import "vendor:wgpu"
