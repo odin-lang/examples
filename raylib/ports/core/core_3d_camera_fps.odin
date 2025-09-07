@@ -204,8 +204,7 @@ update_body :: proc(body: ^Body,rot: f32, side: i8, forward: i8, jumpPressed: bo
 	if hvelLength < (MAX_SPEED * 0.01) {
 		hvel = rl.Vector3{0.0, 0.0, 0.0}
 	}
-
-	// TODO(DimitrisE): Check the result
+	
 	// This is what creates strafing
 	speed := rl.Vector3DotProduct(hvel, body.dir)
 
