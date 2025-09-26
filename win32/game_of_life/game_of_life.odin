@@ -330,7 +330,7 @@ wndproc :: proc "system" (hwnd: win32.HWND, msg: win32.UINT, wparam: win32.WPARA
 }
 
 register_class :: proc(instance: win32.HINSTANCE) -> win32.ATOM {
-	icon: win32.HICON = win32.LoadIconW(instance, win32.MAKEINTRESOURCEW(101))
+	icon: win32.HICON = win32.LoadIconW(instance, cstring16(win32.MAKEINTRESOURCEW(101)))
 	if icon == nil {icon = win32.LoadIconW(nil, win32.wstring(win32._IDI_APPLICATION))}
 	if icon == nil {show_error_and_panic("Missing icon")}
 	cursor := win32.LoadCursorW(nil, win32.wstring(win32._IDC_ARROW))
@@ -348,7 +348,8 @@ register_class :: proc(instance: win32.HINSTANCE) -> win32.ATOM {
 
 unregister_class :: proc(atom: win32.ATOM, instance: win32.HINSTANCE) {
 	if atom == 0 {show_error_and_panic("atom is zero")}
-	if !win32.UnregisterClassW(win32.LPCWSTR(uintptr(atom)), instance) {show_error_and_panic("UnregisterClassW")}
+	class_name := L("OdinMainClass")
+	if !win32.UnregisterClassW(cstring16(class_name), instance) {show_error_and_panic("UnregisterClassW")}
 }
 
 adjust_size_for_style :: proc(size: ^Int2, dwStyle: win32.DWORD) {
@@ -374,7 +375,8 @@ create_window :: #force_inline proc(instance: win32.HINSTANCE, atom: win32.ATOM,
 	if .CENTER in game.window.control_flags {
 		center_window(&pos, size)
 	}
-	return win32.CreateWindowW(win32.LPCWSTR(uintptr(atom)), game.window.name, style, pos.x, pos.y, size.x, size.y, nil, nil, instance, game)
+	class_name := L("OdinMainClass")
+	return win32.CreateWindowW(cstring16(class_name), game.window.name, style, pos.x, pos.y, size.x, size.y, nil, nil, instance, game)
 }
 
 message_loop :: proc() -> int {
