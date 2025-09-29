@@ -19,7 +19,7 @@ loops :: proc(n: int) -> int {
 
 	// This loops from 0 to 4 and for each lap of the loop the number is
 	// available in the loop variable `i`.
-	for i in 0 ..< 5 {
+	for i in 0..<5 {
 		fmt.println(i) // 0, 1, 2, 3, 4
 	}
 
@@ -47,7 +47,7 @@ loops :: proc(n: int) -> int {
 	// We can use the procedure parameter `n` to loop that many times.
 	res := 0
 
-	for i in 0 ..< n {
+	for i in 0..<n {
 		fmt.println(i) // 0, 1, 2, ... , 19, 20
 		res += i
 	}
