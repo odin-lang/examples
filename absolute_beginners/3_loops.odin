@@ -18,8 +18,8 @@ loops :: proc(n: int) -> int {
 	// Let's make a loop that runs 5 times! You can do that in several ways.
 
 	// This loops from 0 to 4 and for each lap of the loop the number is
-	// availble in the loop variable `i`.
-	for i in 0..<5 {
+	// available in the loop variable `i`.
+	for i in 0 ..< 5 {
 		fmt.println(i) // 0, 1, 2, 3, 4
 	}
 
@@ -47,7 +47,7 @@ loops :: proc(n: int) -> int {
 	// We can use the procedure parameter `n` to loop that many times.
 	res := 0
 
-	for i in 0..<n {
+	for i in 0 ..< n {
 		fmt.println(i) // 0, 1, 2, ... , 19, 20
 		res += i
 	}
