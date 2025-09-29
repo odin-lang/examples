@@ -1,7 +1,7 @@
 package basics
 
 import "core:fmt"
- 
+
 if_statements :: proc(some_number: int) {
 	// An if statement runs some code only if a condition is true.
 	//
@@ -11,9 +11,16 @@ if_statements :: proc(some_number: int) {
 		fmt.println("This is always happens.")
 	}
 
-	// You can use `>` to check if a value is bigger than another value.
+	// You can use `>` or `<` to check if a value is greater than or
+	// less than another value, respectively.
+	//
+	// Along with else if/else statements.
 	if some_number > 10 {
 		fmt.printfln("some_number is %v, which is bigger than 10!", some_number)
+	} else if some_number < 10 {
+		fmt.printfln("some_number is %v, which is smaller than 10!", some_number)
+	} else {
+		fmt.printfln("some_number is %v, which is equal to 10!", some_number)
 	}
 
 	// Unless you changed something in the example, then `some_number` will be
