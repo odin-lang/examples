@@ -65,14 +65,14 @@ main :: proc()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    screenWidth :: 800;
-    screenHeight :: 450;
+    screenWidth :: 800
+    screenHeight :: 450
 
-    rl.InitWindow(screenWidth, screenHeight, "raylib [<module>] example - <name>");
+    rl.InitWindow(screenWidth, screenHeight, "raylib [<module>] example - <name>")
 
     // TODO: Load resources / Initialize variables at this point
 
-    rl.SetTargetFPS(60);
+    rl.SetTargetFPS(60)
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -85,17 +85,17 @@ main :: proc()
 
         // Draw
         //----------------------------------------------------------------------------------
-        rl.BeginDrawing();
+        rl.BeginDrawing()
 
-            rl.ClearBackground(rl.RAYWHITE);
+            rl.ClearBackground(rl.RAYWHITE)
 
             // TODO: Draw everything that requires to be drawn at this point
 
-            rl.DrawLineEx({ 0, 0 }, { screenWidth, screenHeight }, 2, rl.RED);
-            rl.DrawLineEx({ 0, screenHeight }, { screenWidth, 0 }, 2, rl.RED);
-            rl.DrawText("example base code template", 260, 400, 20, rl.LIGHTGRAY);
+            rl.DrawLineEx({ 0, 0 }, { screenWidth, screenHeight }, 2, rl.RED)
+            rl.DrawLineEx({ 0, screenHeight }, { screenWidth, 0 }, 2, rl.RED)
+            rl.DrawText("example base code template", 260, 400, 20, rl.LIGHTGRAY)
 
-        rl.EndDrawing();
+        rl.EndDrawing()
         //----------------------------------------------------------------------------------
     }
 
@@ -104,6 +104,6 @@ main :: proc()
 
     // TODO: Unload all loaded resources at this point
 
-    rl.CloseWindow();        // Close window and OpenGL context
+    rl.CloseWindow()        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 }
