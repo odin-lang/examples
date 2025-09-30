@@ -67,6 +67,7 @@ jobs:
           odin check raylib/game_of_life $FLAGS
           odin check raylib/log $FLAGS
           odin check raylib/microui $FLAGS
+          odin check raylib/ports/examples_template.odin -file $FLAGS
           odin check raylib/ports/shaders/shaders_mesh_instancing.odin -file $FLAGS
           odin check raylib/ports/shapes/shapes_basic_shapes.odin -file $FLAGS
           odin check raylib/ports/shapes/shapes_bouncing_ball.odin -file $FLAGS
@@ -77,6 +78,11 @@ jobs:
           odin check raylib/tetroid $FLAGS
           odin check raylib/box2d $FLAGS
           odin check raylib/ports/core/core_basic_window.odin -file $FLAGS
+          odin check raylib/ports/core/core_3d_camera_mode.odin -file $FLAGS
+          odin check raylib/ports/core/core_input_mouse_wheel.odin -file $FLAGS
+          odin check raylib/ports/core/core_window_should_close.odin -file $FLAGS
+          odin check raylib/ports/core/core_input_keys.odin -file $FLAGS
+          odin check raylib/ports/core/core_input_mouse.odin -file $FLAGS
 
           odin check directx/d3d11_minimal_sdl2 -target:windows_amd64 $FLAGS
 

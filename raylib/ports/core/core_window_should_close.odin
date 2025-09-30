@@ -20,8 +20,7 @@ import rl "vendor:raylib"
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-main :: proc()
-{
+main :: proc() {
 	// Initialization
 	//--------------------------------------------------------------------------------------
 	screenWidth :: 800
@@ -38,27 +37,21 @@ main :: proc()
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
-	for (!exitWindow)
-	{
+	for (!exitWindow) {
 		// Update
 		//----------------------------------------------------------------------------------
 		// Detect if X-button or KEY_ESCAPE have been pressed to close window
-		if (rl.WindowShouldClose() || rl.IsKeyPressed(.ESCAPE))
-		{
+		if (rl.WindowShouldClose() || rl.IsKeyPressed(.ESCAPE)) {
 			exitWindowRequested = true
 		}
 
-		if (exitWindowRequested)
-		{
+		if (exitWindowRequested) {
 			// A request for close window has been issued, we can save data before closing
 			// or just show a message asking for confirmation
 
-			if (rl.IsKeyPressed(.Y))
-			{
+			if (rl.IsKeyPressed(.Y)) {
 				exitWindow = true
-			}
-			else if (rl.IsKeyPressed(.N))
-			{
+			} else if (rl.IsKeyPressed(.N)) {
 				exitWindowRequested = false
 			}
 		}
@@ -70,13 +63,10 @@ main :: proc()
 
 			rl.ClearBackground(rl.RAYWHITE)
 
-			if (exitWindowRequested)
-			{
+			if (exitWindowRequested) {
 				rl.DrawRectangle(0, 100, screenWidth, 200, rl.BLACK)
 				rl.DrawText("Are you sure you want to exit program? [Y/N]", 40, 180, 30, rl.WHITE)
-			}
-			else
-			{
+			} else {
 				rl.DrawText("Try to close the window to get confirmation message!", 120, 200, 20, rl.LIGHTGRAY)
 			}
 
