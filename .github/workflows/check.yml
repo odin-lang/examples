@@ -85,6 +85,7 @@ jobs:
           odin check raylib/ports/core/core_input_mouse.odin -file $FLAGS
           odin check raylib/ports/core/core_world_screen.odin -file $FLAGS
           odin check raylib/ports/core/core_3d_camera_free.odin -file $FLAGS
+          odin check raylib/ports/core/core_render_texture.odin -file $FLAGS
 
           odin check directx/d3d11_minimal_sdl2 -target:windows_amd64 $FLAGS
 
