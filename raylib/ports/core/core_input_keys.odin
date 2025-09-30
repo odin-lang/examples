@@ -20,34 +20,32 @@ import rl "vendor:raylib"
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-main :: proc()
-{
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    screenWidth :: 800
-    screenHeight :: 450
+main :: proc() {
+	// Initialization
+	//--------------------------------------------------------------------------------------
+	screenWidth :: 800
+	screenHeight :: 450
 
-    rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - input keys");
+	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - input keys")
 
-	ballPosition: rl.Vector2 = { screenWidth/2, screenHeight/2 };
+	ballPosition: rl.Vector2 = {screenWidth/2, screenHeight/2}
 
-    rl.SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
+	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
+	//--------------------------------------------------------------------------------------
 
-    // Main game loop
-    for (!rl.WindowShouldClose())    // Detect window close button or ESC key
-    {
-        // Update
-        //----------------------------------------------------------------------------------
-        if (rl.IsKeyDown(.RIGHT)) {
+	// Main game loop
+	for (!rl.WindowShouldClose()) {    // Detect window close button or ESC key
+		// Update
+		//----------------------------------------------------------------------------------
+		if (rl.IsKeyDown(.RIGHT)) {
 			ballPosition.x += 2
 		}
-        
+		
 		if (rl.IsKeyDown(.LEFT)) {
 			ballPosition.x -= 2
 		}
 		
-        if (rl.IsKeyDown(.UP)) {
+		if (rl.IsKeyDown(.UP)) {
 			ballPosition.y -= 2
 		}
 		
@@ -55,24 +53,24 @@ main :: proc()
 			ballPosition.y += 2
 		}
 		
-        //----------------------------------------------------------------------------------
+		//----------------------------------------------------------------------------------
 
-        // Draw
-        //----------------------------------------------------------------------------------
-        rl.BeginDrawing();
+		// Draw
+		//----------------------------------------------------------------------------------
+		rl.BeginDrawing()
 
-            rl.ClearBackground(rl.RAYWHITE);
+			rl.ClearBackground(rl.RAYWHITE)
 
-            rl.DrawText("move the ball with arrow keys", 10, 10, 20, rl.DARKGRAY);
+			rl.DrawText("move the ball with arrow keys", 10, 10, 20, rl.DARKGRAY)
 
-            rl.DrawCircleV(ballPosition, 50, rl.MAROON);
+			rl.DrawCircleV(ballPosition, 50, rl.MAROON)
 
-        rl.EndDrawing();
-        //----------------------------------------------------------------------------------
-    }
+		rl.EndDrawing()
+		//----------------------------------------------------------------------------------
+	}
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    rl.CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+	// De-Initialization
+	//--------------------------------------------------------------------------------------
+	rl.CloseWindow()        // Close window and OpenGL context
+	//--------------------------------------------------------------------------------------
 }

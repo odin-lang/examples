@@ -22,70 +22,70 @@ import rl "vendor:raylib"
 //------------------------------------------------------------------------------------
 main :: proc()
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    screenWidth :: 800
-    screenHeight :: 450
+	// Initialization
+	//--------------------------------------------------------------------------------------
+	screenWidth :: 800
+	screenHeight :: 450
 
-    rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - window should close")
+	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - window should close")
 
-    rl.SetExitKey(.KEY_NULL)       // Disable KEY_ESCAPE to close window, X-button still works
+	rl.SetExitKey(.KEY_NULL)       // Disable KEY_ESCAPE to close window, X-button still works
 
 	exitWindowRequested: bool = false   // Flag to request window to exit
-    exitWindow: bool = false    // Flag to set window to exit
+	exitWindow: bool = false    // Flag to set window to exit
 
-    rl.SetTargetFPS(60)           // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
+	rl.SetTargetFPS(60)           // Set our game to run at 60 frames-per-second
+	//--------------------------------------------------------------------------------------
 
-    // Main game loop
-    for (!exitWindow)
-    {
-        // Update
-        //----------------------------------------------------------------------------------
-        // Detect if X-button or KEY_ESCAPE have been pressed to close window
-        if (rl.WindowShouldClose() || rl.IsKeyPressed(.ESCAPE))
+	// Main game loop
+	for (!exitWindow)
+	{
+		// Update
+		//----------------------------------------------------------------------------------
+		// Detect if X-button or KEY_ESCAPE have been pressed to close window
+		if (rl.WindowShouldClose() || rl.IsKeyPressed(.ESCAPE))
 		{
 			exitWindowRequested = true
 		}
 
-        if (exitWindowRequested)
-        {
-            // A request for close window has been issued, we can save data before closing
-            // or just show a message asking for confirmation
+		if (exitWindowRequested)
+		{
+			// A request for close window has been issued, we can save data before closing
+			// or just show a message asking for confirmation
 
-            if (rl.IsKeyPressed(.Y))
+			if (rl.IsKeyPressed(.Y))
 			{
 				exitWindow = true
 			}
-            else if (rl.IsKeyPressed(.N))
+			else if (rl.IsKeyPressed(.N))
 			{
 				exitWindowRequested = false
 			}
-        }
-        //----------------------------------------------------------------------------------
+		}
+		//----------------------------------------------------------------------------------
 
-        // Draw
-        //----------------------------------------------------------------------------------
-        rl.BeginDrawing()
+		// Draw
+		//----------------------------------------------------------------------------------
+		rl.BeginDrawing()
 
-            rl.ClearBackground(rl.RAYWHITE)
+			rl.ClearBackground(rl.RAYWHITE)
 
-            if (exitWindowRequested)
-            {
-                rl.DrawRectangle(0, 100, screenWidth, 200, rl.BLACK)
-                rl.DrawText("Are you sure you want to exit program? [Y/N]", 40, 180, 30, rl.WHITE)
-            }
-            else
+			if (exitWindowRequested)
+			{
+				rl.DrawRectangle(0, 100, screenWidth, 200, rl.BLACK)
+				rl.DrawText("Are you sure you want to exit program? [Y/N]", 40, 180, 30, rl.WHITE)
+			}
+			else
 			{
 				rl.DrawText("Try to close the window to get confirmation message!", 120, 200, 20, rl.LIGHTGRAY)
 			}
 
-        rl.EndDrawing()
-        //----------------------------------------------------------------------------------
-    }
+		rl.EndDrawing()
+		//----------------------------------------------------------------------------------
+	}
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    rl.CloseWindow()        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+	// De-Initialization
+	//--------------------------------------------------------------------------------------
+	rl.CloseWindow()        // Close window and OpenGL context
+	//--------------------------------------------------------------------------------------
 }

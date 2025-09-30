@@ -20,85 +20,74 @@ import rl "vendor:raylib"
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-main :: proc()
-{
-    // Initialization
-    //--------------------------------------------------------------------------------------
+main :: proc() {
+	// Initialization
+	//--------------------------------------------------------------------------------------
 	screenWidth :: 800
-    screenHeight :: 450
+	screenHeight :: 450
 
-    rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - input mouse")
+	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - input mouse")
 
-    ballPosition: rl.Vector2 = { -100, -100 }
+	ballPosition: rl.Vector2 = { -100, -100 }
 	ballColor: rl.Color = rl.DARKBLUE
 
-    rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
-    //---------------------------------------------------------------------------------------
+	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
+	//---------------------------------------------------------------------------------------
 
-    // Main game loop
-    for (!rl.WindowShouldClose())    // Detect window close button or ESC key
-    {
-        // Update
-        //----------------------------------------------------------------------------------
-        if (rl.IsKeyPressed(.H))
-        {
-            if (rl.IsCursorHidden()) {
+	// Main game loop
+	for (!rl.WindowShouldClose()) {    // Detect window close button or ESC key
+		// Update
+		//----------------------------------------------------------------------------------
+		if (rl.IsKeyPressed(.H)) {
+			if (rl.IsCursorHidden()) {
 				rl.ShowCursor()
-			}
-            else {
+			} else {
 				rl.HideCursor()
 			}
-        }
+		}
 
-        ballPosition = rl.GetMousePosition();
+		ballPosition = rl.GetMousePosition()
 
-        if (rl.IsMouseButtonPressed(.LEFT)) {
+		if (rl.IsMouseButtonPressed(.LEFT)) {
 			ballColor = rl.MAROON
-		}
-        else if (rl.IsMouseButtonPressed(.MIDDLE)) {
+		} else if (rl.IsMouseButtonPressed(.MIDDLE)) {
 			ballColor = rl.LIME
-		}
-        else if (rl.IsMouseButtonPressed(.RIGHT)) {
+		} else if (rl.IsMouseButtonPressed(.RIGHT)) {
 			ballColor = rl.DARKBLUE
-		}
-        else if (rl.IsMouseButtonPressed(.SIDE)) {
+		} else if (rl.IsMouseButtonPressed(.SIDE)) {
 			ballColor = rl.PURPLE
-		}
-        else if (rl.IsMouseButtonPressed(.EXTRA)) {
+		} else if (rl.IsMouseButtonPressed(.EXTRA)) {
 			ballColor = rl.YELLOW
-		}
-        else if (rl.IsMouseButtonPressed(.FORWARD)) {
+		} else if (rl.IsMouseButtonPressed(.FORWARD)) {
 			ballColor = rl.ORANGE
-		}
-        else if (rl.IsMouseButtonPressed(.BACK)) {
+		} else if (rl.IsMouseButtonPressed(.BACK)) {
 			ballColor = rl.BEIGE
 		}
-        //----------------------------------------------------------------------------------
+		//----------------------------------------------------------------------------------
 
-        // Draw
-        //----------------------------------------------------------------------------------
-        rl.BeginDrawing()
+		// Draw
+		//----------------------------------------------------------------------------------
+		rl.BeginDrawing()
 
-            rl.ClearBackground(rl.RAYWHITE)
+			rl.ClearBackground(rl.RAYWHITE)
 
-            rl.DrawCircleV(ballPosition, 40, ballColor)
+			rl.DrawCircleV(ballPosition, 40, ballColor)
 
-            rl.DrawText("move ball with mouse and click mouse button to change color", 10, 10, 20, rl.DARKGRAY)
-            rl.DrawText("Press 'H' to toggle cursor visibility", 10, 30, 20, rl.DARKGRAY)
+			rl.DrawText("move ball with mouse and click mouse button to change color", 10, 10, 20, rl.DARKGRAY)
+			rl.DrawText("Press 'H' to toggle cursor visibility", 10, 30, 20, rl.DARKGRAY)
 
-            if (rl.IsCursorHidden()) {
+			if (rl.IsCursorHidden()) {
 				rl.DrawText("CURSOR HIDDEN", 20, 60, 20, rl.RED)
-			}
-            else {
+			} else {
 				rl.DrawText("CURSOR VISIBLE", 20, 60, 20, rl.LIME)
 			}
 
-        rl.EndDrawing()
-        //----------------------------------------------------------------------------------
-    }
+		rl.EndDrawing()
+		//----------------------------------------------------------------------------------
+	}
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    rl.CloseWindow()        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+	// De-Initialization
+	//--------------------------------------------------------------------------------------
+	rl.CloseWindow()        // Close window and OpenGL context
+	//--------------------------------------------------------------------------------------
 }
