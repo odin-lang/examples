@@ -1,5 +1,3 @@
-package core
-
 /*******************************************************************************************
 *
 *   raylib [core] example - 3d camera mode
@@ -14,6 +12,8 @@ package core
 *   Copyright (c) 2014-2025 Ramon Santamaria (@raysan5)
 *
 ********************************************************************************************/
+
+package raylib_examples
 
 import rl "vendor:raylib"
 
