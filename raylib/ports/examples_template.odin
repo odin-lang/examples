@@ -65,10 +65,10 @@ import rl "vendor:raylib"
 main :: proc() {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	screenWidth :: 800
-	screenHeight :: 450
+	SCREEN_WIDTH :: 800
+	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(screenWidth, screenHeight, "raylib [<module>] example - <name>")
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [<module>] example - <name>")
 
 	// TODO: Load resources / Initialize variables at this point
 
@@ -90,8 +90,8 @@ main :: proc() {
 
 			// TODO: Draw everything that requires to be drawn at this point
 
-			rl.DrawLineEx({0, 0}, {screenWidth, screenHeight}, 2, rl.RED)
-			rl.DrawLineEx({0, screenHeight}, {screenWidth, 0}, 2, rl.RED)
+			rl.DrawLineEx({0, 0}, {SCREEN_WIDTH, SCREEN_HEIGHT}, 2, rl.RED)
+			rl.DrawLineEx({0, SCREEN_HEIGHT}, {SCREEN_WIDTH, 0}, 2, rl.RED)
 			rl.DrawText("example base code template", 260, 400, 20, rl.LIGHTGRAY)
 
 		rl.EndDrawing()

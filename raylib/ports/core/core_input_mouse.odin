@@ -23,13 +23,13 @@ import rl "vendor:raylib"
 main :: proc() {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	screenWidth :: 800
-	screenHeight :: 450
+	SCREEN_WIDTH :: 800
+	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - input mouse")
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - input mouse")
 
-	ballPosition: rl.Vector2 = { -100, -100 }
-	ballColor: rl.Color = rl.DARKBLUE
+	ball_position: rl.Vector2 = { -100, -100 }
+	ball_color: rl.Color = rl.DARKBLUE
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//---------------------------------------------------------------------------------------
@@ -46,22 +46,22 @@ main :: proc() {
 			}
 		}
 
-		ballPosition = rl.GetMousePosition()
+		ball_position = rl.GetMousePosition()
 
 		if (rl.IsMouseButtonPressed(.LEFT)) {
-			ballColor = rl.MAROON
+			ball_color = rl.MAROON
 		} else if (rl.IsMouseButtonPressed(.MIDDLE)) {
-			ballColor = rl.LIME
+			ball_color = rl.LIME
 		} else if (rl.IsMouseButtonPressed(.RIGHT)) {
-			ballColor = rl.DARKBLUE
+			ball_color = rl.DARKBLUE
 		} else if (rl.IsMouseButtonPressed(.SIDE)) {
-			ballColor = rl.PURPLE
+			ball_color = rl.PURPLE
 		} else if (rl.IsMouseButtonPressed(.EXTRA)) {
-			ballColor = rl.YELLOW
+			ball_color = rl.YELLOW
 		} else if (rl.IsMouseButtonPressed(.FORWARD)) {
-			ballColor = rl.ORANGE
+			ball_color = rl.ORANGE
 		} else if (rl.IsMouseButtonPressed(.BACK)) {
-			ballColor = rl.BEIGE
+			ball_color = rl.BEIGE
 		}
 		//----------------------------------------------------------------------------------
 
@@ -71,7 +71,7 @@ main :: proc() {
 
 			rl.ClearBackground(rl.RAYWHITE)
 
-			rl.DrawCircleV(ballPosition, 40, ballColor)
+			rl.DrawCircleV(ball_position, 40, ball_color)
 
 			rl.DrawText("move ball with mouse and click mouse button to change color", 10, 10, 20, rl.DARKGRAY)
 			rl.DrawText("Press 'H' to toggle cursor visibility", 10, 30, 20, rl.DARKGRAY)

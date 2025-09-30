@@ -23,13 +23,13 @@ import rl "vendor:raylib"
 main :: proc() {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	screenWidth :: 800
-	screenHeight :: 450
+	SCREEN_WIDTH :: 800
+	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - input mouse wheel")
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - input mouse wheel")
 
-	boxPositionY: int = screenHeight/2 - 40
-	scrollSpeed: int = 4            // Scrolling speed in pixels
+	box_position_y: int = SCREEN_HEIGHT/2 - 40
+	scroll_speed: int = 4            // Scrolling speed in pixels
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ main :: proc() {
 	for (!rl.WindowShouldClose()) {    // Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
-		boxPositionY -= int(rl.GetMouseWheelMove()*f32(scrollSpeed))
+		box_position_y -= int(rl.GetMouseWheelMove()*f32(scroll_speed))
 		//----------------------------------------------------------------------------------
 
 		// Draw
@@ -47,10 +47,10 @@ main :: proc() {
 
 			rl.ClearBackground(rl.RAYWHITE)
 
-			rl.DrawRectangle(screenWidth/2 - 40, i32(boxPositionY), 80, 80, rl.MAROON)
+			rl.DrawRectangle(SCREEN_WIDTH/2 - 40, i32(box_position_y), 80, 80, rl.MAROON)
 
 			rl.DrawText("Use mouse wheel to move the cube up and down!", 10, 10, 20, rl.GRAY)
-			rl.DrawText(rl.TextFormat("Box position Y: %03i", boxPositionY), 10, 40, 20, rl.LIGHTGRAY)
+			rl.DrawText(rl.TextFormat("Box position Y: %03i", box_position_y), 10, 40, 20, rl.LIGHTGRAY)
 
 		rl.EndDrawing()
 		//----------------------------------------------------------------------------------

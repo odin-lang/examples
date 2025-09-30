@@ -23,12 +23,12 @@ import rl "vendor:raylib"
 main :: proc() {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	screenWidth :: 800
-	screenHeight :: 450
+	SCREEN_WIDTH :: 800
+	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - input keys")
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - input keys")
 
-	ballPosition: rl.Vector2 = {screenWidth/2, screenHeight/2}
+	ball_position: rl.Vector2 = {SCREEN_WIDTH/2, SCREEN_HEIGHT/2}
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
@@ -38,19 +38,19 @@ main :: proc() {
 		// Update
 		//----------------------------------------------------------------------------------
 		if (rl.IsKeyDown(.RIGHT)) {
-			ballPosition.x += 2
+			ball_position.x += 2
 		}
 		
 		if (rl.IsKeyDown(.LEFT)) {
-			ballPosition.x -= 2
+			ball_position.x -= 2
 		}
 		
 		if (rl.IsKeyDown(.UP)) {
-			ballPosition.y -= 2
+			ball_position.y -= 2
 		}
 		
 		if (rl.IsKeyDown(.DOWN)) {
-			ballPosition.y += 2
+			ball_position.y += 2
 		}
 		
 		//----------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ main :: proc() {
 
 			rl.DrawText("move the ball with arrow keys", 10, 10, 20, rl.DARKGRAY)
 
-			rl.DrawCircleV(ballPosition, 50, rl.MAROON)
+			rl.DrawCircleV(ball_position, 50, rl.MAROON)
 
 		rl.EndDrawing()
 		//----------------------------------------------------------------------------------

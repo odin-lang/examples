@@ -23,20 +23,20 @@ import rl "vendor:raylib"
 main :: proc() {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	screenWidth :: 800
-	screenHeight :: 450
+	SCREEN_WIDTH :: 800
+	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera mode")
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - 3d camera mode")
 
 	// Define the camera to look into our 3d world
 	camera: rl.Camera3D
-	camera.position = { 0, 10, 10 }  // Camera position
-	camera.target = { 0, 0, 0 }      // Camera looking at point
-	camera.up = { 0, 1, 0 }          // Camera up vector (rotation towards target)
+	camera.position = {0, 10, 10}  // Camera position
+	camera.target = {0, 0, 0}      // Camera looking at point
+	camera.up = {0, 1, 0}          // Camera up vector (rotation towards target)
 	camera.fovy = 45                                // Camera field-of-view Y
 	camera.projection = .PERSPECTIVE             // Camera mode type
 
-	cubePosition: rl.Vector3 = { 0, 0, 0 }
+	cube_position: rl.Vector3 = {0, 0, 0}
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
@@ -56,8 +56,8 @@ main :: proc() {
 
 			rl.BeginMode3D(camera)
 
-				rl.DrawCube(cubePosition, 2, 2, 2, rl.RED)
-				rl.DrawCubeWires(cubePosition, 2, 2, 2, rl.MAROON)
+				rl.DrawCube(cube_position, 2, 2, 2, rl.RED)
+				rl.DrawCubeWires(cube_position, 2, 2, 2, rl.MAROON)
 
 				rl.DrawGrid(10, 1)
 

@@ -23,36 +23,36 @@ import rl "vendor:raylib"
 main :: proc() {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	screenWidth :: 800
-	screenHeight :: 450
+	SCREEN_WIDTH :: 800
+	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - window should close")
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - window should close")
 
 	rl.SetExitKey(.KEY_NULL)       // Disable KEY_ESCAPE to close window, X-button still works
 
-	exitWindowRequested: bool = false   // Flag to request window to exit
-	exitWindow: bool = false    // Flag to set window to exit
+	exit_window_requested: bool = false   // Flag to request window to exit
+	exit_window: bool = false    // Flag to set window to exit
 
 	rl.SetTargetFPS(60)           // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
-	for (!exitWindow) {
+	for (!exit_window) {
 		// Update
 		//----------------------------------------------------------------------------------
 		// Detect if X-button or KEY_ESCAPE have been pressed to close window
 		if (rl.WindowShouldClose() || rl.IsKeyPressed(.ESCAPE)) {
-			exitWindowRequested = true
+			exit_window_requested = true
 		}
 
-		if (exitWindowRequested) {
+		if (exit_window_requested) {
 			// A request for close window has been issued, we can save data before closing
 			// or just show a message asking for confirmation
 
 			if (rl.IsKeyPressed(.Y)) {
-				exitWindow = true
+				exit_window = true
 			} else if (rl.IsKeyPressed(.N)) {
-				exitWindowRequested = false
+				exit_window_requested = false
 			}
 		}
 		//----------------------------------------------------------------------------------
@@ -63,8 +63,8 @@ main :: proc() {
 
 			rl.ClearBackground(rl.RAYWHITE)
 
-			if (exitWindowRequested) {
-				rl.DrawRectangle(0, 100, screenWidth, 200, rl.BLACK)
+			if (exit_window_requested) {
+				rl.DrawRectangle(0, 100, SCREEN_WIDTH, 200, rl.BLACK)
 				rl.DrawText("Are you sure you want to exit program? [Y/N]", 40, 180, 30, rl.WHITE)
 			} else {
 				rl.DrawText("Try to close the window to get confirmation message!", 120, 200, 20, rl.LIGHTGRAY)
