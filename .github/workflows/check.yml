@@ -80,6 +80,8 @@ jobs:
           odin check raylib/ports/text/text_codepoints_loading.odin -file $FLAGS
           odin check raylib/ports/textures/textures_gif_player.odin -file $FLAGS
           odin check raylib/ports/textures/textures_bunnymark.odin -file $FLAGS
+          odin check raylib/ports/textures/textures_npatch_drawing.odin -file $FLAGS
+          odin check raylib/ports/textures/textures_background_scrolling.odin -file $FLAGS
           odin check raylib/tetroid $FLAGS
           odin check raylib/box2d $FLAGS
           odin check raylib/ports/core/core_basic_window.odin -file $FLAGS
@@ -94,6 +96,7 @@ jobs:
           odin check raylib/ports/core/core_scissor_test.odin -file $FLAGS
           odin check raylib/ports/core/core_random_values.odin -file $FLAGS
           odin check raylib/ports/models/models_orthographic_projection.odin -file $FLAGS
+          odin check raylib/ports/audio/audio_music_stream.odin -file $FLAGS
 
           odin check directx/d3d11_minimal_sdl2 -target:windows_amd64 $FLAGS
 
