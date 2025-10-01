@@ -72,28 +72,28 @@ main :: proc() {
 		dstRecV.height = mouse_position.y - dstRecV.y
 
 		// Set a minimum width and/or height
-		if (dstRec1.width < 1) {
+		if dstRec1.width < 1 {
 			dstRec1.width = 1
 		}
-		if (dstRec1.width > 300) {
+		if dstRec1.width > 300 {
 			dstRec1.width = 300
 		}
-		if (dstRec1.height < 1) {
+		if dstRec1.height < 1 {
 			dstRec1.height = 1
 		}
-		if (dstRec2.width < 1) {
+		if dstRec2.width < 1 {
 			dstRec2.width = 1
 		}
-		if (dstRec2.width > 300) {
+		if dstRec2.width > 300 {
 			dstRec2.width = 300
 		}
-		if (dstRec2.height < 1) {
+		if dstRec2.height < 1 {
 			dstRec2.height = 1
 		}
-		if (dstRecH.width < 1) {
+		if dstRecH.width < 1 {
 			dstRecH.width = 1
 		}
-		if (dstRecV.height < 1) {
+		if dstRecV.height < 1 {
 			dstRecV.height = 1
 		}
 		//----------------------------------------------------------------------------------
