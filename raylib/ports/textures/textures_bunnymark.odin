@@ -17,12 +17,6 @@ package raylib_examples
 
 import rl "vendor:raylib"
 
-MAX_BUNNIES :: 50000    // 50K bunnies limit
-
-// This is the maximum amount of elements (quads) per batch
-// NOTE: This value is defined in [rlgl] module and can be changed there
-MAX_BATCH_ELEMENTS :: 8192
-
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
@@ -41,14 +35,20 @@ main :: proc() {
 	SCREEN_WIDTH :: 800
 	SCREEN_HEIGHT :: 450
 
+	MAX_BUNNIES :: 50000    // 50K bunnies limit
+
+	// This is the maximum amount of elements (quads) per batch
+	// NOTE: This value is defined in [rlgl] module and can be changed there
+	MAX_BATCH_ELEMENTS :: 8192
+
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [textures] example - bunnymark")
 
 	// Load bunny texture
-	texBunny: rl.Texture2D = rl.LoadTexture("resources/wabbit_alpha.png")
+	tex_bunny: rl.Texture2D = rl.LoadTexture("resources/wabbit_alpha.png")
 
 	bunnies: [dynamic]Bunny          // Bunnies array
 
-	bunniesCount: uint = 0           // Bunnies counter
+	bunnies_count: uint = 0           // Bunnies counter
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
@@ -57,7 +57,7 @@ main :: proc() {
 		//----------------------------------------------------------------------------------
 		if rl.IsMouseButtonDown(.LEFT) {
 			for i: uint; i < 100; i += 1 {
-				if bunniesCount < MAX_BUNNIES {
+				if bunnies_count < MAX_BUNNIES {
 					bunny: Bunny
 					bunny.position = rl.GetMousePosition()
 					bunny.speed.x = f32(rl.GetRandomValue(-250, 250))/60
@@ -68,7 +68,7 @@ main :: proc() {
 					
 					append(&bunnies, bunny)
 					
-					bunniesCount += 1
+					bunnies_count += 1
 				}
 			}
 		}
@@ -80,12 +80,12 @@ main :: proc() {
 			
 			bunny.position += bunny.speed * rl.GetFrameTime() * 30
 			
-			if (bunny.position.x + f32(texBunny.width)/2) > f32(rl.GetScreenWidth()) ||
-				(bunny.position.x + f32(texBunny.width)/2) < 0 {
+			if (bunny.position.x + f32(tex_bunny.width)/2) > f32(rl.GetScreenWidth()) ||
+				(bunny.position.x + f32(tex_bunny.width)/2) < 0 {
 					bunny.speed.x *= -1
 				}
-			if (bunny.position.y + f32(texBunny.height/2)) > f32(rl.GetScreenHeight()) ||
-				(bunny.position.y + f32(texBunny.height)/2 - 40) < 0 {
+			if (bunny.position.y + f32(tex_bunny.height/2)) > f32(rl.GetScreenHeight()) ||
+				(bunny.position.y + f32(tex_bunny.height)/2 - 40) < 0 {
 					bunny.speed.y *= -1
 				}
 		}
@@ -98,12 +98,12 @@ main :: proc() {
 			rl.ClearBackground(rl.RAYWHITE)
 
 			for bunny in bunnies {
-				rl.DrawTexture(texBunny, i32(bunny.position.x), i32(bunny.position.y), bunny.color)
+				rl.DrawTexture(tex_bunny, i32(bunny.position.x), i32(bunny.position.y), bunny.color)
 			}
 
 			rl.DrawRectangle(0, 0, SCREEN_WIDTH, 40, rl.BLACK)
-			rl.DrawText(rl.TextFormat("bunnies: %i", bunniesCount), 120, 10, 20, rl.GREEN)
-			rl.DrawText(rl.TextFormat("batched draw calls: %i", 1 + bunniesCount/MAX_BATCH_ELEMENTS), 320, 10, 20, rl.MAROON)
+			rl.DrawText(rl.TextFormat("bunnies: %i", bunnies_count), 120, 10, 20, rl.GREEN)
+			rl.DrawText(rl.TextFormat("batched draw calls: %i", 1 + bunnies_count/MAX_BATCH_ELEMENTS), 320, 10, 20, rl.MAROON)
 
 			rl.DrawFPS(10, 10)
 
@@ -115,7 +115,7 @@ main :: proc() {
 	//--------------------------------------------------------------------------------------
 	delete(bunnies)            // Unload bunnies data array
 
-	rl.UnloadTexture(texBunny)    // Unload bunny texture
+	rl.UnloadTexture(tex_bunny)    // Unload bunny texture
 
 	rl.CloseWindow()              // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------

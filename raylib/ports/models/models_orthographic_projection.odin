@@ -28,10 +28,10 @@ WIDTH_ORTHOGRAPHIC :: 10
 main :: proc() {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	screenWidth :: 800
-	screenHeight :: 450
+	SCREEN_WIDTH :: 800
+	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(screenWidth, screenHeight, "raylib [models] example - orthographic projection")
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [models] example - orthographic projection")
 
 	// Define the camera to look into our 3d world
 	camera: rl.Camera = {{0, 10, 10}, {0, 0, 0}, {0, 1, 0}, FOVY_PERSPECTIVE, .PERSPECTIVE}
