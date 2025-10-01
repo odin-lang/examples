@@ -35,11 +35,11 @@ main :: proc() {
 	//---------------------------------------------------------------------------------------
 
 	// Main game loop
-	for (!rl.WindowShouldClose()) {    // Detect window close button or ESC key
+	for !rl.WindowShouldClose() {    // Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
-		if (rl.IsKeyPressed(.H)) {
-			if (rl.IsCursorHidden()) {
+		if rl.IsKeyPressed(.H) {
+			if rl.IsCursorHidden() {
 				rl.ShowCursor()
 			} else {
 				rl.HideCursor()
@@ -48,19 +48,19 @@ main :: proc() {
 
 		ball_position = rl.GetMousePosition()
 
-		if (rl.IsMouseButtonPressed(.LEFT)) {
+		if rl.IsMouseButtonPressed(.LEFT) {
 			ball_color = rl.MAROON
-		} else if (rl.IsMouseButtonPressed(.MIDDLE)) {
+		} else if rl.IsMouseButtonPressed(.MIDDLE) {
 			ball_color = rl.LIME
-		} else if (rl.IsMouseButtonPressed(.RIGHT)) {
+		} else if rl.IsMouseButtonPressed(.RIGHT) {
 			ball_color = rl.DARKBLUE
-		} else if (rl.IsMouseButtonPressed(.SIDE)) {
+		} else if rl.IsMouseButtonPressed(.SIDE) {
 			ball_color = rl.PURPLE
-		} else if (rl.IsMouseButtonPressed(.EXTRA)) {
+		} else if rl.IsMouseButtonPressed(.EXTRA) {
 			ball_color = rl.YELLOW
-		} else if (rl.IsMouseButtonPressed(.FORWARD)) {
+		} else if rl.IsMouseButtonPressed(.FORWARD) {
 			ball_color = rl.ORANGE
-		} else if (rl.IsMouseButtonPressed(.BACK)) {
+		} else if rl.IsMouseButtonPressed(.BACK) {
 			ball_color = rl.BEIGE
 		}
 		//----------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ main :: proc() {
 			rl.DrawText("move ball with mouse and click mouse button to change color", 10, 10, 20, rl.DARKGRAY)
 			rl.DrawText("Press 'H' to toggle cursor visibility", 10, 30, 20, rl.DARKGRAY)
 
-			if (rl.IsCursorHidden()) {
+			if rl.IsCursorHidden() {
 				rl.DrawText("CURSOR HIDDEN", 20, 60, 20, rl.RED)
 			} else {
 				rl.DrawText("CURSOR VISIBLE", 20, 60, 20, rl.LIME)

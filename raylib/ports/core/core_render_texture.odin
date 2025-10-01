@@ -43,7 +43,7 @@ main :: proc() {
 	//----------------------------------------------------------
 
 	// Main game loop
-	for (!rl.WindowShouldClose()) {    // Detect window close button or ESC key
+	for !rl.WindowShouldClose() {    // Detect window close button or ESC key
 		// Update
 		//-----------------------------------------------------
 		// Ball movement logic
@@ -51,10 +51,10 @@ main :: proc() {
 		ball_position.y += ball_speed.y
 
 		// Check walls collision for bouncing
-		if ((ball_position.x >= f32(render_texture_width - ball_radius)) || (ball_position.x <= f32(ball_radius))) {
+		if (ball_position.x >= f32(render_texture_width - ball_radius)) || (ball_position.x <= f32(ball_radius)) {
 			ball_speed.x *= -1
 		}
-		if ((ball_position.y >= f32(render_texture_height - ball_radius)) || (ball_position.y <= f32(ball_radius))) {
+		if (ball_position.y >= f32(render_texture_height - ball_radius)) || (ball_position.y <= f32(ball_radius)) {
 			ball_speed.y *= -1
 		}
 

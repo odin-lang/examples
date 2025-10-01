@@ -37,21 +37,21 @@ main :: proc() {
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
-	for (!exit_window) {
+	for !exit_window {
 		// Update
 		//----------------------------------------------------------------------------------
 		// Detect if X-button or KEY_ESCAPE have been pressed to close window
-		if (rl.WindowShouldClose() || rl.IsKeyPressed(.ESCAPE)) {
+		if rl.WindowShouldClose() || rl.IsKeyPressed(.ESCAPE) {
 			exit_window_requested = true
 		}
 
-		if (exit_window_requested) {
+		if exit_window_requested {
 			// A request for close window has been issued, we can save data before closing
 			// or just show a message asking for confirmation
 
-			if (rl.IsKeyPressed(.Y)) {
+			if rl.IsKeyPressed(.Y) {
 				exit_window = true
-			} else if (rl.IsKeyPressed(.N)) {
+			} else if rl.IsKeyPressed(.N) {
 				exit_window_requested = false
 			}
 		}
@@ -63,7 +63,7 @@ main :: proc() {
 
 			rl.ClearBackground(rl.RAYWHITE)
 
-			if (exit_window_requested) {
+			if exit_window_requested {
 				rl.DrawRectangle(0, 100, SCREEN_WIDTH, 200, rl.BLACK)
 				rl.DrawText("Are you sure you want to exit program? [Y/N]", 40, 180, 30, rl.WHITE)
 			} else {

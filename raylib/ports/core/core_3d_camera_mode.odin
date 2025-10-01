@@ -42,7 +42,7 @@ main :: proc() {
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
-	for (!rl.WindowShouldClose()) {    // Detect window close button or ESC key
+	for !rl.WindowShouldClose() {    // Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
 		// TODO: Update your variables here

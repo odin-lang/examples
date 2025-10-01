@@ -44,14 +44,14 @@ main :: proc() {
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
-	for (!rl.WindowShouldClose()) {    // Detect window close button or ESC key
+	for !rl.WindowShouldClose() {    // Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
 		iris_left_position = rl.GetMousePosition()
 		iris_right_position = rl.GetMousePosition()
 
 		// Check not inside the left eye sclera
-		if (!rl.CheckCollisionPointCircle(iris_left_position, sclera_left_position, sclera_radius - iris_radius)) {
+		if !rl.CheckCollisionPointCircle(iris_left_position, sclera_left_position, sclera_radius - iris_radius) {
 			dx = iris_left_position.x - sclera_left_position.x
 			dy = iris_left_position.y - sclera_left_position.y
 
@@ -65,7 +65,7 @@ main :: proc() {
 		}
 
 		// Check not inside the right eye sclera
-		if (!rl.CheckCollisionPointCircle(iris_right_position, sclera_right_position, sclera_radius - iris_radius)) {
+		if !rl.CheckCollisionPointCircle(iris_right_position, sclera_right_position, sclera_radius - iris_radius) {
 			dx = iris_right_position.x - sclera_right_position.x
 			dy = iris_right_position.y - sclera_right_position.y
 

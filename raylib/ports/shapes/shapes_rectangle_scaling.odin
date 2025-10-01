@@ -43,12 +43,12 @@ main :: proc() {
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
-	for (!rl.WindowShouldClose()) {    // Detect window close button or ESC key
+	for !rl.WindowShouldClose() {    // Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
 		mousePosition = rl.GetMousePosition()
 
-		if (rl.CheckCollisionPointRec(mousePosition, {rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height - MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE})) {
+		if rl.CheckCollisionPointRec(mousePosition, {rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height - MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE}) {
 			mouseScaleReady = true
 			if (rl.IsMouseButtonPressed(.LEFT)) {
 				mouseScaleMode = true
@@ -57,25 +57,25 @@ main :: proc() {
 			mouseScaleReady = false
 		}
 
-		if (mouseScaleMode) {
+		if mouseScaleMode {
 			mouseScaleReady = true
 
 			rec.width = (mousePosition.x - rec.x)
 			rec.height = (mousePosition.y - rec.y)
 
 			// Check minimum rec size
-			if (rec.width < MOUSE_SCALE_MARK_SIZE) {
+			if rec.width < MOUSE_SCALE_MARK_SIZE {
 				rec.width = MOUSE_SCALE_MARK_SIZE
 			}
-			if (rec.height < MOUSE_SCALE_MARK_SIZE) {
+			if rec.height < MOUSE_SCALE_MARK_SIZE {
 				rec.height = MOUSE_SCALE_MARK_SIZE
 			}
 
 			// Check maximum rec size
-			if (rec.width > (f32(rl.GetScreenWidth()) - rec.x)) {
+			if rec.width > (f32(rl.GetScreenWidth()) - rec.x) {
 				rec.width = f32(rl.GetScreenWidth()) - rec.x
 			}
-			if (rec.height > (f32(rl.GetScreenHeight()) - rec.y)) {
+			if rec.height > (f32(rl.GetScreenHeight()) - rec.y) {
 				rec.height = f32(rl.GetScreenHeight()) - rec.y
 			}
 
@@ -95,7 +95,7 @@ main :: proc() {
 
 			rl.DrawRectangleRec(rec, rl.Fade(rl.GREEN, 0.5))
 
-			if (mouseScaleReady) {
+			if mouseScaleReady {
 				rl.DrawRectangleLinesEx(rec, 1, rl.RED)
 				rl.DrawTriangle({rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height},
 							 {rec.x + rec.width, rec.y + rec.height},

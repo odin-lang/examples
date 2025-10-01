@@ -34,22 +34,22 @@ main :: proc() {
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
-	for (!rl.WindowShouldClose()) {    // Detect window close button or ESC key
+	for !rl.WindowShouldClose() {    // Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
-		if (rl.IsKeyDown(.RIGHT)) {
+		if rl.IsKeyDown(.RIGHT) {
 			ball_position.x += 2
 		}
 		
-		if (rl.IsKeyDown(.LEFT)) {
+		if rl.IsKeyDown(.LEFT) {
 			ball_position.x -= 2
 		}
 		
-		if (rl.IsKeyDown(.UP)) {
+		if rl.IsKeyDown(.UP) {
 			ball_position.y -= 2
 		}
 		
-		if (rl.IsKeyDown(.DOWN)) {
+		if rl.IsKeyDown(.DOWN) {
 			ball_position.y += 2
 		}
 		
