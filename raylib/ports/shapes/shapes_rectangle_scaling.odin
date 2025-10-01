@@ -27,17 +27,17 @@ MOUSE_SCALE_MARK_SIZE :: 12
 main :: proc() {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	screenWidth :: 800
-	screenHeight :: 450
+	SCREEN_WIDTH :: 800
+	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(screenWidth, screenHeight, "raylib [shapes] example - rectangle scaling")
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [shapes] example - rectangle scaling")
 
 	rec: rl.Rectangle = {100, 100, 200, 80}
 
-	mousePosition: rl.Vector2
+	mouse_position: rl.Vector2
 
-	mouseScaleReady: bool
-	mouseScaleMode: bool
+	mouse_scale_ready: bool
+	mouse_scale_mode: bool
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
@@ -46,22 +46,22 @@ main :: proc() {
 	for !rl.WindowShouldClose() {    // Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
-		mousePosition = rl.GetMousePosition()
+		mouse_position = rl.Getmouse_position()
 
-		if rl.CheckCollisionPointRec(mousePosition, {rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height - MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE}) {
-			mouseScaleReady = true
+		if rl.CheckCollisionPointRec(mouse_position, {rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height - MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE}) {
+			mouse_scale_ready = true
 			if (rl.IsMouseButtonPressed(.LEFT)) {
-				mouseScaleMode = true
+				mouse_scale_mode = true
 			}
 		} else {
-			mouseScaleReady = false
+			mouse_scale_ready = false
 		}
 
-		if mouseScaleMode {
-			mouseScaleReady = true
+		if mouse_scale_mode {
+			mouse_scale_ready = true
 
-			rec.width = (mousePosition.x - rec.x)
-			rec.height = (mousePosition.y - rec.y)
+			rec.width = (mouse_position.x - rec.x)
+			rec.height = (mouse_position.y - rec.y)
 
 			// Check minimum rec size
 			if rec.width < MOUSE_SCALE_MARK_SIZE {
@@ -75,12 +75,12 @@ main :: proc() {
 			if rec.width > (f32(rl.GetScreenWidth()) - rec.x) {
 				rec.width = f32(rl.GetScreenWidth()) - rec.x
 			}
-			if rec.height > (f32(rl.GetScreenHeight()) - rec.y) {
-				rec.height = f32(rl.GetScreenHeight()) - rec.y
+			if rec.height > (f32(rl.GetSCREEN_HEIGHT()) - rec.y) {
+				rec.height = f32(rl.GetSCREEN_HEIGHT()) - rec.y
 			}
 
 			if (rl.IsMouseButtonReleased(.LEFT)) {
-				mouseScaleMode = false
+				mouse_scale_mode = false
 			}
 		}
 		//----------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ main :: proc() {
 
 			rl.DrawRectangleRec(rec, rl.Fade(rl.GREEN, 0.5))
 
-			if mouseScaleReady {
+			if mouse_scale_ready {
 				rl.DrawRectangleLinesEx(rec, 1, rl.RED)
 				rl.DrawTriangle({rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height},
 							 {rec.x + rec.width, rec.y + rec.height},
