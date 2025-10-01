@@ -23,19 +23,19 @@ import rl "vendor:raylib"
 main :: proc() {
 	// Initialization
 	//---------------------------------------------------------
-	screenWidth :: 800
-	screenHeight :: 450
+	SCREEN_WIDTH :: 800
+	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - render texture")
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - render texture")
 	
 	// Define a render texture to render
-	renderTextureWidth: i32 = 300
-	renderTextureHeight: i32 = 300
-	target: rl.RenderTexture2D = rl.LoadRenderTexture(renderTextureWidth, renderTextureHeight)
+	render_texture_width: i32 = 300
+	render_texture_height: i32 = 300
+	target: rl.RenderTexture2D = rl.LoadRenderTexture(render_texture_width, render_texture_height)
 
-	ballPosition: rl.Vector2 = {f32(renderTextureWidth)/2, f32(renderTextureHeight)/2}
-	ballSpeed: rl.Vector2 = {5.0, 4.0}
-	ballRadius: i32 = 20
+	ball_position: rl.Vector2 = {f32(render_texture_width)/2, f32(render_texture_height)/2}
+	ball_speed: rl.Vector2 = {5.0, 4.0}
+	ball_radius: i32 = 20
 
 	rotation: f32 = 0
 
@@ -47,15 +47,15 @@ main :: proc() {
 		// Update
 		//-----------------------------------------------------
 		// Ball movement logic
-		ballPosition.x += ballSpeed.x
-		ballPosition.y += ballSpeed.y
+		ball_position.x += ball_speed.x
+		ball_position.y += ball_speed.y
 
 		// Check walls collision for bouncing
-		if ((ballPosition.x >= f32(renderTextureWidth - ballRadius)) || (ballPosition.x <= f32(ballRadius))) {
-			ballSpeed.x *= -1
+		if ((ball_position.x >= f32(render_texture_width - ball_radius)) || (ball_position.x <= f32(ball_radius))) {
+			ball_speed.x *= -1
 		}
-		if ((ballPosition.y >= f32(renderTextureHeight - ballRadius)) || (ballPosition.y <= f32(ballRadius))) {
-			ballSpeed.y *= -1
+		if ((ball_position.y >= f32(render_texture_height - ball_radius)) || (ball_position.y <= f32(ball_radius))) {
+			ball_speed.y *= -1
 		}
 
 		// Render texture rotation
@@ -69,7 +69,7 @@ main :: proc() {
 		
 			rl.ClearBackground(rl.SKYBLUE)
 			
-			rl.DrawCircleV(ballPosition, f32(ballRadius), rl.MAROON)
+			rl.DrawCircleV(ball_position, f32(ball_radius), rl.MAROON)
 		
 		rl.EndTextureMode()
 		
@@ -82,10 +82,10 @@ main :: proc() {
 			// NOTE: We set the origin of the texture to the center of the render texture
 			rl.DrawTexturePro(target.texture, 
 				{0, 0, f32(target.texture.width), f32(-target.texture.height)}, 
-				{screenWidth/2, screenHeight/2, f32(target.texture.width), f32(-target.texture.height)}, 
+				{SCREEN_WIDTH/2, SCREEN_HEIGHT/2, f32(target.texture.width), f32(-target.texture.height)}, 
 				{f32(target.texture.width/2), f32(target.texture.height/2)}, rotation, rl.WHITE)
 
-			rl.DrawText("DRAWING BOUNCING BALL INSIDE RENDER TEXTURE!", 10, screenHeight - 40, 20, rl.BLACK)
+			rl.DrawText("DRAWING BOUNCING BALL INSIDE RENDER TEXTURE!", 10, SCREEN_HEIGHT - 40, 20, rl.BLACK)
 			
 
 			rl.DrawFPS(10, 10)
