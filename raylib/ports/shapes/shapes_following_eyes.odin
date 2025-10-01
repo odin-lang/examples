@@ -30,12 +30,12 @@ main :: proc() {
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [shapes] example - following eyes")
 
-	sclera_left_position: rl.Vector2 = {SCREEN_WIDTH/2 - 100, SCREEN_HEIGHT/2}
-	sclera_right_position: rl.Vector2 = {SCREEN_WIDTH/2 + 100, SCREEN_HEIGHT/2}
+	sclera_left_position: rl.Vector2 = {rl.GetScreenWidth()/2 - 100, rl.GetScreenHeight()/2}
+	sclera_right_position: rl.Vector2 = {rl.GetScreenWidth()/2 + 100, rl.GetScreenHeight()/2}
 	sclera_radius: f32 = 80
 
-	iris_left_position: rl.Vector2 = {SCREEN_WIDTH/2 - 100, SCREEN_HEIGHT/2}
-	iris_right_position: rl.Vector2 = {SCREEN_WIDTH/2 + 100, SCREEN_HEIGHT/2}
+	iris_left_position: rl.Vector2 = {rl.GetScreenWidth()/2 - 100, rl.GetScreenHeight()/2}
+	iris_right_position: rl.Vector2 = {rl.GetScreenWidth()/2 + 100, rl.GetScreenHeight()/2}
 	iris_radius: f32 = 24
 
 	angle, dx, dy, dxx, dyy: f32 // Initialized to zero.
