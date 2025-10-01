@@ -23,15 +23,15 @@ import rl "vendor:raylib"
 main :: proc() {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	screenWidth :: 800
-	screenHeight :: 450
+	SCREEN_WIDTH :: 800
+	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(screenWidth, screenHeight, "raylib [audio] example - sound loading")
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [audio] example - sound loading")
 
 	rl.InitAudioDevice()      // Initialize audio device
 
-	fxWav: rl.Sound = rl.LoadSound("resources/spring.wav")         // Load WAV audio file
-	fxOgg: rl.Sound = rl.LoadSound("resources/target.ogg")        // Load OGG audio file
+	fx_wav: rl.Sound = rl.LoadSound("resources/spring.wav")         // Load WAV audio file
+	fx_ogg: rl.Sound = rl.LoadSound("resources/target.ogg")        // Load OGG audio file
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
@@ -41,10 +41,10 @@ main :: proc() {
 		// Update
 		//----------------------------------------------------------------------------------
 		if rl.IsKeyPressed(.SPACE) {
-			rl.PlaySound(fxWav)      // Play WAV sound
+			rl.PlaySound(fx_wav)      // Play WAV sound
 		}
 		if rl.IsKeyPressed(.ENTER) {
-			rl.PlaySound(fxOgg)      // Play OGG sound
+			rl.PlaySound(fx_ogg)      // Play OGG sound
 		}
 		//----------------------------------------------------------------------------------
 
@@ -63,8 +63,8 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.UnloadSound(fxWav)     // Unload sound data
-	rl.UnloadSound(fxOgg)     // Unload sound data
+	rl.UnloadSound(fx_wav)     // Unload sound data
+	rl.UnloadSound(fx_ogg)     // Unload sound data
 
 	rl.CloseAudioDevice()     // Close audio device
 
