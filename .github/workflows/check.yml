@@ -98,6 +98,7 @@ jobs:
           odin check raylib/ports/models/models_orthographic_projection.odin -file $FLAGS
           odin check raylib/ports/audio/audio_music_stream.odin -file $FLAGS
           odin check raylib/ports/audio/audio_sound_loading.odin -file $FLAGS
+          odin check raylib/ports/audio/audio_module_playing.odin -file $FLAGS
 
           odin check directx/d3d11_minimal_sdl2 -target:windows_amd64 $FLAGS
 
