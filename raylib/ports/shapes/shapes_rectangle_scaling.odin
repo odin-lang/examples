@@ -47,7 +47,7 @@ main :: proc() {
 	for !rl.WindowShouldClose() {    // Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
-		mouse_position = rl.Getmouse_position()
+		mouse_position = rl.GetMousePosition()
 
 		if rl.CheckCollisionPointRec(mouse_position, {rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height - MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE}) {
 			mouse_scale_ready = true
@@ -76,8 +76,8 @@ main :: proc() {
 			if rec.width > (f32(rl.GetScreenWidth()) - rec.x) {
 				rec.width = f32(rl.GetScreenWidth()) - rec.x
 			}
-			if rec.height > (f32(rl.GetSCREEN_HEIGHT()) - rec.y) {
-				rec.height = f32(rl.GetSCREEN_HEIGHT()) - rec.y
+			if rec.height > (f32(rl.GetScreenHeight()) - rec.y) {
+				rec.height = f32(rl.GetScreenHeight()) - rec.y
 			}
 
 			if rl.IsMouseButtonReleased(.LEFT) {
