@@ -79,6 +79,7 @@ jobs:
           odin check raylib/ports/core/core_basic_window.odin -file $FLAGS
 
           odin check directx/d3d11_minimal_sdl2 -target:windows_amd64 $FLAGS
+          odin check directx/d3d11_minimal_sdl3 -target:windows_amd64 $FLAGS
 
           odin check opengl/minimal_sdl2 $FLAGS
 
