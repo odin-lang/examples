@@ -47,7 +47,7 @@ main :: proc() {
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
-	for (!rl.WindowShouldClose()) {        // Detect window close button or ESC key
+	for !rl.WindowShouldClose() {        // Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
 		rl.UpdateCamera(&camera, .THIRD_PERSON)

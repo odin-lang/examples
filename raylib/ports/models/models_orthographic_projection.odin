@@ -51,7 +51,7 @@ main :: proc() {
 		// Update
 		//----------------------------------------------------------------------------------
 		if rl.IsKeyPressed(.SPACE) {
-			if (camera.projection == .PERSPECTIVE) {
+			if camera.projection == .PERSPECTIVE {
 				camera.fovy = WIDTH_ORTHOGRAPHIC
 				camera.projection = .ORTHOGRAPHIC
 			} else {
@@ -89,9 +89,9 @@ main :: proc() {
 
 			rl.DrawText("Press Spacebar to switch camera type", 10, rl.GetScreenHeight() - 30, 20, rl.DARKGRAY)
 
-			if (camera.projection == .ORTHOGRAPHIC) {
+			if camera.projection == .ORTHOGRAPHIC {
 				rl.DrawText("ORTHOGRAPHIC", 10, 40, 20, rl.BLACK)
-			} else if (camera.projection == .PERSPECTIVE) {
+			} else if camera.projection == .PERSPECTIVE {
 				rl.DrawText("PERSPECTIVE", 10, 40, 20, rl.BLACK)
 			}
 

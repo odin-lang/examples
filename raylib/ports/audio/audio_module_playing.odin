@@ -66,7 +66,7 @@ main :: proc() {
 
 	rl.PlayMusicStream(music)
 
-	time_played: f32 = 0
+	time_played: f32
 	pause: bool
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
