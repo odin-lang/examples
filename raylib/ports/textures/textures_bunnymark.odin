@@ -56,7 +56,7 @@ main :: proc() {
 		// Update
 		//----------------------------------------------------------------------------------
 		if rl.IsMouseButtonDown(.LEFT) {
-			for i in 0..<100 {
+			for i := 0; i < 100; i += 1 {
 				if bunnies_count < MAX_BUNNIES {
 					bunny: Bunny
 					bunny.position = rl.GetMousePosition()
