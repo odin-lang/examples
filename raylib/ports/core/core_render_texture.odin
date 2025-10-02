@@ -38,7 +38,7 @@ main :: proc() {
 	ball_speed := rl.Vector2 {5.0, 4.0}
 	ball_radius: i32 = 20
 
-	rotation: f32 = 0
+	rotation: f32
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//----------------------------------------------------------
@@ -52,10 +52,10 @@ main :: proc() {
 		ball_position.y += ball_speed.y
 
 		// Check walls collision for bouncing
-		if ball_position.x >= f32(render_texture_width - ball_radius)) || (ball_position.x <= f32(ball_radius) {
+		if ball_position.x >= f32(render_texture_width - ball_radius) || ball_position.x <= f32(ball_radius) {
 			ball_speed.x *= -1
 		}
-		if ball_position.y >= f32(render_texture_height - ball_radius)) || (ball_position.y <= f32(ball_radius) {
+		if ball_position.y >= f32(render_texture_height - ball_radius) || ball_position.y <= f32(ball_radius) {
 			ball_speed.y *= -1
 		}
 
@@ -81,10 +81,12 @@ main :: proc() {
 
 			// Draw our render texture with rotation applied
 			// NOTE: We set the origin of the texture to the center of the render texture
+			texture_width := f32(target.texture.width)
+			texture_height := f32(target.texture.height)
 			rl.DrawTexturePro(target.texture, 
-				{0, 0, f32(target.texture.width), f32(-target.texture.height)}, 
-				{SCREEN_WIDTH/2, SCREEN_HEIGHT/2, f32(target.texture.width), f32(-target.texture.height)}, 
-				{f32(target.texture.width)/2, f32(target.texture.height)/2}, rotation, rl.WHITE)
+				{0, 0, texture_width, -texture_height}, 
+				{SCREEN_WIDTH/2, SCREEN_HEIGHT/2, texture_width, -texture_height}, 
+				{texture_width/2, texture_height/2}, rotation, rl.WHITE)
 
 			rl.DrawText("DRAWING BOUNCING BALL INSIDE RENDER TEXTURE!", 10, SCREEN_HEIGHT - 40, 20, rl.BLACK)
 			
