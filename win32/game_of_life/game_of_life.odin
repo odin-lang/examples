@@ -34,12 +34,12 @@ import win32 "core:sys/windows"
 import "core:time"
 
 // aliases
-L :: intrinsics.constant_utf16_cstring
 Color :: [4]u8
 Int2 :: [2]i32
 
 // constants
 TITLE :: "Game of Life"
+CLASS_NAME :: "OdinMainClass"
 WORLD_SIZE :: Int2 {128, 64}
 ZOOM :: 12 // pixel size
 FPS :: 20
@@ -263,7 +263,7 @@ WM_PAINT :: proc(hwnd: win32.HWND) -> win32.LRESULT {
 		rect := HELP_RECT
 		win32.RoundRect(hdc, rect.left, rect.top, rect.right, rect.bottom, 20, 20)
 		win32.InflateRect(&rect, -10, -10)
-		win32.DrawTextW(hdc, L(HELP_TEXT), -1, &rect, .DT_TOP)
+		win32.DrawTextW(hdc, HELP_TEXT, -1, &rect, .DT_TOP)
 	}
 
 	return 0
@@ -341,15 +341,14 @@ register_class :: proc(instance: win32.HINSTANCE) -> win32.ATOM {
 		hInstance     = instance,
 		hIcon         = icon,
 		hCursor       = cursor,
-		lpszClassName = L("OdinMainClass"),
+		lpszClassName = CLASS_NAME,
 	}
 	return win32.RegisterClassW(&wcx)
 }
 
 unregister_class :: proc(atom: win32.ATOM, instance: win32.HINSTANCE) {
 	if atom == 0 {show_error_and_panic("atom is zero")}
-	class_name := L("OdinMainClass")
-	if !win32.UnregisterClassW(cstring16(class_name), instance) {show_error_and_panic("UnregisterClassW")}
+	if !win32.UnregisterClassW(CLASS_NAME, instance) {show_error_and_panic("UnregisterClassW")}
 }
 
 adjust_size_for_style :: proc(size: ^Int2, dwStyle: win32.DWORD) {
@@ -375,8 +374,7 @@ create_window :: #force_inline proc(instance: win32.HINSTANCE, atom: win32.ATOM,
 	if .CENTER in game.window.control_flags {
 		center_window(&pos, size)
 	}
-	class_name := L("OdinMainClass")
-	return win32.CreateWindowW(cstring16(class_name), game.window.name, style, pos.x, pos.y, size.x, size.y, nil, nil, instance, game)
+	return win32.CreateWindowW(CLASS_NAME, game.window.name, style, pos.x, pos.y, size.x, size.y, nil, nil, instance, game)
 }
 
 message_loop :: proc() -> int {
@@ -396,7 +394,7 @@ run :: proc() -> int {
 		colors = {BLACK, WHITE},
 		size = WORLD_SIZE,
 		zoom = ZOOM,
-		window = Window{name = L(TITLE), size = WORLD_SIZE * ZOOM, fps = FPS, control_flags = {.CENTER}},
+		window = Window{name = TITLE, size = WORLD_SIZE * ZOOM, fps = FPS, control_flags = {.CENTER}},
 	}
 	for i in 0 ..< PALETTE_COUNT {
 		c := u8((255 * int(i)) / (PALETTE_COUNT - 1))
