@@ -15,7 +15,6 @@ main :: proc() {
 
 	camera := rl.Camera{
         position   = { -125, 125, -125 },
-        target     = 0,
         up         = { 0, 1, 0 },
         fovy       = 45,
         projection = .PERSPECTIVE,

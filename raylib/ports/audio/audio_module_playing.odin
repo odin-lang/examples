@@ -39,8 +39,10 @@ main :: proc() {
 	rl.SetConfigFlags({.MSAA_4X_HINT})  // NOTE: Try to enable MSAA 4X
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [audio] example - module playing")
+	defer rl.CloseWindow()          // Close window and OpenGL context
 
 	rl.InitAudioDevice()                  // Initialize audio device
+	defer rl.CloseAudioDevice()     // Close audio device (music streaming is automatically stopped)
 
 	colors: [14]rl.Color = {rl.ORANGE, rl.RED, rl.GOLD, rl.LIME, rl.BLUE, rl.VIOLET, rl.BROWN, rl.LIGHTGRAY, rl.PINK,
 						 rl.YELLOW, rl.GREEN, rl.SKYBLUE, rl.PURPLE, rl.BEIGE}
@@ -49,14 +51,16 @@ main :: proc() {
 	circles: [MAX_CIRCLES]CircleWave
 
 	for i: int = MAX_CIRCLES - 1; i >= 0; i -= 1 {
-		circles[i].radius = f32(rl.GetRandomValue(10, 40))
-		circles[i].position.x = f32(rl.GetRandomValue(i32(circles[i].radius), i32(SCREEN_WIDTH - circles[i].radius)))
-		circles[i].position.y = f32(rl.GetRandomValue(i32(circles[i].radius), i32(SCREEN_HEIGHT - circles[i].radius)))
-		circles[i].speed = f32(rl.GetRandomValue(1, 100))/2000
-		circles[i].color = colors[rl.GetRandomValue(0, 13)]
+		circles[i] = {
+			radius = f32(rl.GetRandomValue(10, 40)),
+			position = {f32(rl.GetRandomValue(i32(circles[i].radius), i32(SCREEN_WIDTH - circles[i].radius))), f32(rl.GetRandomValue(i32(circles[i].radius), i32(SCREEN_HEIGHT - circles[i].radius)))},
+			speed = f32(rl.GetRandomValue(1, 100))/2000,
+			color = colors[rl.GetRandomValue(0, 13)],
+		}
 	}
 
-	music: rl.Music = rl.LoadMusicStream("resources/mini1111.xm")
+	music := rl.LoadMusicStream("resources/mini1111.xm")
+	defer rl.UnloadMusicStream(music)          // Unload music stream buffers from RAM
 	music.looping = false
 	pitch: f32 = 1
 
@@ -94,7 +98,7 @@ main :: proc() {
 
 		if rl.IsKeyDown(.DOWN) {
 			pitch -= 0.01
-		} else if (rl.IsKeyDown(.UP)) {
+		} else if rl.IsKeyDown(.UP) {
 			pitch += 0.01
 		}
 
@@ -108,11 +112,11 @@ main :: proc() {
 			circles[i].alpha += circles[i].speed
 			circles[i].radius += circles[i].speed*10
 
-			if (circles[i].alpha > 1) {
+			if circles[i].alpha > 1 {
 				circles[i].speed *= -1
 			}
 
-			if (circles[i].alpha <= 0) {
+			if circles[i].alpha <= 0 {
 				circles[i].alpha = 0
 				circles[i].radius = f32(rl.GetRandomValue(10, 40))
 				circles[i].position.x = f32(rl.GetRandomValue(i32(circles[i].radius), i32(SCREEN_WIDTH - circles[i].radius)))
@@ -152,10 +156,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.UnloadMusicStream(music)          // Unload music stream buffers from RAM
-
-	rl.CloseAudioDevice()     // Close audio device (music streaming is automatically stopped)
-
-	rl.CloseWindow()          // Close window and OpenGL context
+	
 	//--------------------------------------------------------------------------------------
 }

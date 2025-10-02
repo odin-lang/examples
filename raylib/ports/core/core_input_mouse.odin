@@ -27,8 +27,9 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - input mouse")
+	defer rl.CloseWindow()        // Close window and OpenGL context
 
-	ball_position: rl.Vector2 = { -100, -100 }
+	ball_position := rl.Vector2 { -100, -100 }
 	ball_color: rl.Color = rl.DARKBLUE
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
@@ -88,6 +89,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.CloseWindow()        // Close window and OpenGL context
+	
 	//--------------------------------------------------------------------------------------
 }

@@ -50,7 +50,7 @@ main :: proc() {
 	logoPosY: i32 = SCREEN_HEIGHT / 2 - 128
 
 	framesCounter := 0
-	lettersCount: i32 = 0
+	lettersCount: i32
 
 	topSideRecWidth:    i32 = 16
 	leftSideRecHeight:  i32 = 16

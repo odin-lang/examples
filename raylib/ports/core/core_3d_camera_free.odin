@@ -27,16 +27,18 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - 3d camera free")
+	defer rl.CloseWindow()        // Close window and OpenGL context
 
 	// Define the camera to look into our 3d world
-	camera: rl.Camera3D
-	camera.position = {10, 10, 10} // Camera position
-	camera.target = {0, 0, 0}      // Camera looking at point
-	camera.up = {0, 1, 0}          // Camera up vector (rotation towards target)
-	camera.fovy = 45                                // Camera field-of-view Y
-	camera.projection = .PERSPECTIVE             // Camera projection type
+	camera := rl.Camera3D {
+		position = {10, 10, 10}, // Camera position
+		//target = {0, 0, 0},      // Camera looking at point
+		up = {0, 1, 0},          // Camera up vector (rotation towards target)
+		fovy = 45,                                // Camera field-of-view Y
+		projection = .PERSPECTIVE,             // Camera projection type
+	}
 
-	cube_position: rl.Vector3 = {0, 0, 0}
+	cube_position: rl.Vector3
 
 	rl.DisableCursor()                    // Limit cursor to relative movement inside the window
 
@@ -44,12 +46,12 @@ main :: proc() {
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
-	for (!rl.WindowShouldClose()) {        // Detect window close button or ESC key
+	for !rl.WindowShouldClose() {        // Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
 		rl.UpdateCamera(&camera, .FREE)
 		
-		if (rl.IsKeyPressed(.Z)) {
+		if rl.IsKeyPressed(.Z) {
 			camera.target = {0, 0, 0}
 		}
 		//----------------------------------------------------------------------------------
@@ -69,7 +71,7 @@ main :: proc() {
 
 			rl.EndMode3D()
 
-			rl.DrawRectangle( 10, 10, 320, 93, rl.Fade(rl.SKYBLUE, 0.5))
+			rl.DrawRectangle(10, 10, 320, 93, rl.Fade(rl.SKYBLUE, 0.5))
 			rl.DrawRectangleLines( 10, 10, 320, 93, rl.BLUE)
 
 			rl.DrawText("Free camera default controls:", 20, 20, 10, rl.BLACK)
@@ -83,6 +85,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.CloseWindow()        // Close window and OpenGL context
+	
 	//--------------------------------------------------------------------------------------
 }

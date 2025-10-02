@@ -31,8 +31,9 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [shapes] example - rectangle scaling")
+	defer rl.CloseWindow()        // Close window and OpenGL context
 
-	rec: rl.Rectangle = {100, 100, 200, 80}
+	rec := rl.Rectangle {100, 100, 200, 80}
 
 	mouse_position: rl.Vector2
 
@@ -50,7 +51,7 @@ main :: proc() {
 
 		if rl.CheckCollisionPointRec(mouse_position, {rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height - MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE}) {
 			mouse_scale_ready = true
-			if (rl.IsMouseButtonPressed(.LEFT)) {
+			if rl.IsMouseButtonPressed(.LEFT) {
 				mouse_scale_mode = true
 			}
 		} else {
@@ -79,7 +80,7 @@ main :: proc() {
 				rec.height = f32(rl.GetSCREEN_HEIGHT()) - rec.y
 			}
 
-			if (rl.IsMouseButtonReleased(.LEFT)) {
+			if rl.IsMouseButtonReleased(.LEFT) {
 				mouse_scale_mode = false
 			}
 		}
@@ -108,6 +109,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.CloseWindow()        // Close window and OpenGL context
+	
 	//--------------------------------------------------------------------------------------
 }

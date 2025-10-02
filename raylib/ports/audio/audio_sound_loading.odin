@@ -27,11 +27,15 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [audio] example - sound loading")
+	defer rl.CloseWindow()          // Close window and OpenGL context
 
 	rl.InitAudioDevice()      // Initialize audio device
+	defer rl.CloseAudioDevice()     // Close audio device
 
-	fx_wav: rl.Sound = rl.LoadSound("resources/spring.wav")         // Load WAV audio file
-	fx_ogg: rl.Sound = rl.LoadSound("resources/target.ogg")        // Load OGG audio file
+	fx_wav := rl.LoadSound("resources/spring.wav")         // Load WAV audio file
+	defer rl.UnloadSound(fx_wav)     // Unload sound data
+	fx_ogg := rl.LoadSound("resources/target.ogg")        // Load OGG audio file
+	defer rl.UnloadSound(fx_ogg)     // Unload sound data
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
@@ -63,11 +67,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.UnloadSound(fx_wav)     // Unload sound data
-	rl.UnloadSound(fx_ogg)     // Unload sound data
-
-	rl.CloseAudioDevice()     // Close audio device
-
-	rl.CloseWindow()          // Close window and OpenGL context
+	
 	//--------------------------------------------------------------------------------------
 }

@@ -32,9 +32,16 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [models] example - orthographic projection")
+	defer rl.CloseWindow()        // Close window and OpenGL context
 
 	// Define the camera to look into our 3d world
-	camera: rl.Camera = {{0, 10, 10}, {0, 0, 0}, {0, 1, 0}, FOVY_PERSPECTIVE, .PERSPECTIVE}
+	camera := rl.Camera {
+		position = {0, 10, 10},
+		//target = {0, 0, 0},
+		up = {0, 1, 0},
+		fovy = FOVY_PERSPECTIVE,
+		projection = .PERSPECTIVE,
+	}
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
@@ -96,6 +103,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.CloseWindow()        // Close window and OpenGL context
+	
 	//--------------------------------------------------------------------------------------
 }

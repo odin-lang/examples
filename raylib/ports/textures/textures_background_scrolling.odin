@@ -27,16 +27,20 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [textures] example - background scrolling")
+	defer rl.CloseWindow()              // Close window and OpenGL context
 
 	// NOTE: Be careful, background width must be equal or bigger than screen width
 	// if not, texture should be draw more than two times for scrolling effect
-	background: rl.Texture2D = rl.LoadTexture("resources/cyberpunk_street_background.png")
-	midground: rl.Texture2D = rl.LoadTexture("resources/cyberpunk_street_midground.png")
-	foreground: rl.Texture2D = rl.LoadTexture("resources/cyberpunk_street_foreground.png")
+	background := rl.LoadTexture("resources/cyberpunk_street_background.png")
+	defer rl.UnloadTexture(background)  // Unload background texture
+	midground := rl.LoadTexture("resources/cyberpunk_street_midground.png")
+	defer rl.UnloadTexture(midground)   // Unload midground texture
+	foreground := rl.LoadTexture("resources/cyberpunk_street_foreground.png")
+	defer rl.UnloadTexture(foreground)  // Unload foreground texture
 
-	scrolling_back: f32 = 0
-	scrolling_mid: f32 = 0
-	scrolling_fore: f32 = 0
+	scrolling_back: f32
+	scrolling_mid: f32
+	scrolling_fore: f32
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
@@ -89,10 +93,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.UnloadTexture(background)  // Unload background texture
-	rl.UnloadTexture(midground)   // Unload midground texture
-	rl.UnloadTexture(foreground)  // Unload foreground texture
-
-	rl.CloseWindow()              // Close window and OpenGL context
+	
 	//--------------------------------------------------------------------------------------
 }

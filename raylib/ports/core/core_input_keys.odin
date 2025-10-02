@@ -27,8 +27,9 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - input keys")
+	defer rl.CloseWindow()        // Close window and OpenGL context
 
-	ball_position: rl.Vector2 = {SCREEN_WIDTH/2, SCREEN_HEIGHT/2}
+	ball_position := rl.Vector2 {SCREEN_WIDTH/2, SCREEN_HEIGHT/2}
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
@@ -71,6 +72,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.CloseWindow()        // Close window and OpenGL context
+	
 	//--------------------------------------------------------------------------------------
 }

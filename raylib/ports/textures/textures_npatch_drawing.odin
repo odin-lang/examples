@@ -31,28 +31,30 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [textures] example - npatch drawing")
+	defer rl.CloseWindow()                // Close window and OpenGL context
 
 	// NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-	n_patch_texture: rl.Texture2D = rl.LoadTexture("resources/ninepatch_button.png")
+	n_patch_texture  := rl.LoadTexture("resources/ninepatch_button.png")
+	defer rl.UnloadTexture(n_patch_texture)       // Texture unloading
 
 	mouse_position: rl.Vector2
 	origin: rl.Vector2
 
 	// Position and size of the n-patches
-	dstRec1: rl.Rectangle = {480, 160, 32, 32}
-	dstRec2: rl.Rectangle = {160, 160, 32, 32}
-	dstRecH: rl.Rectangle = {160, 93, 32, 32}
-	dstRecV: rl.Rectangle = {92, 160, 32, 32}
+	dstRec1 := rl.Rectangle {480, 160, 32, 32}
+	dstRec2 := rl.Rectangle {160, 160, 32, 32}
+	dstRecH := rl.Rectangle {160, 93, 32, 32}
+	dstRecV := rl.Rectangle {92, 160, 32, 32}
 
 	// A 9-patch (NPATCH_NINE_PATCH) changes its sizes in both axis
-	nine_patch_info_1: rl.NPatchInfo = {{0, 0, 64, 64}, 12, 40, 12, 12, .NINE_PATCH}
-	nine_patch_info_2: rl.NPatchInfo = {{0, 128, 64, 64}, 16, 16, 16, 16, .NINE_PATCH}
+	nine_patch_info_1 := rl.NPatchInfo {{0, 0, 64, 64}, 12, 40, 12, 12, .NINE_PATCH}
+	nine_patch_info_2 := rl.NPatchInfo {{0, 128, 64, 64}, 16, 16, 16, 16, .NINE_PATCH}
 
 	// A horizontal 3-patch (NPATCH_THREE_PATCH_HORIZONTAL) changes its sizes along the x axis only
-	h3_patch_info: rl.NPatchInfo = {{0, 64, 64, 64}, 8, 8, 8, 8, .THREE_PATCH_HORIZONTAL}
+	h3_patch_info := rl.NPatchInfo {{0, 64, 64, 64}, 8, 8, 8, 8, .THREE_PATCH_HORIZONTAL}
 
 	// A vertical 3-patch (NPATCH_THREE_PATCH_VERTICAL) changes its sizes along the y axis only
-	v3_patch_info: rl.NPatchInfo = {{0, 192, 64, 64}, 6, 6, 6, 6, .THREE_PATCH_VERTICAL}
+	v3_patch_info := rl.NPatchInfo {{0, 192, 64, 64}, 6, 6, 6, 6, .THREE_PATCH_VERTICAL}
 
 	rl.SetTargetFPS(60)
 	//---------------------------------------------------------------------------------------
@@ -123,8 +125,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.UnloadTexture(n_patch_texture)       // Texture unloading
-
-	rl.CloseWindow()                // Close window and OpenGL context
+	
 	//--------------------------------------------------------------------------------------
 }

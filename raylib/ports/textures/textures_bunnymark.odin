@@ -48,7 +48,7 @@ main :: proc() {
 
 	bunnies: [dynamic]Bunny          // Bunnies array
 
-	bunnies_count: uint = 0           // Bunnies counter
+	bunnies_count: uint           // Bunnies counter
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
@@ -56,7 +56,7 @@ main :: proc() {
 		// Update
 		//----------------------------------------------------------------------------------
 		if rl.IsMouseButtonDown(.LEFT) {
-			for i: uint; i < 100; i += 1 {
+			for i in 0..<100 {
 				if bunnies_count < MAX_BUNNIES {
 					bunny: Bunny
 					bunny.position = rl.GetMousePosition()
@@ -74,18 +74,15 @@ main :: proc() {
 		}
 
 		// Update bunnies
-		bunniesSize: uint = len(bunnies)
-		for i: uint; i < bunniesSize; i += 1 {
-			bunny: ^Bunny = &bunnies[i]
-			
+		for &bunny in bunnies {
 			bunny.position += bunny.speed * rl.GetFrameTime() * 30
 			
-			if (bunny.position.x + f32(tex_bunny.width)/2) > f32(rl.GetScreenWidth()) ||
-				(bunny.position.x + f32(tex_bunny.width)/2) < 0 {
+			if bunny.position.x + f32(tex_bunny.width)/2 > f32(rl.GetScreenWidth()) ||
+				bunny.position.x + f32(tex_bunny.width)/2 < 0 {
 					bunny.speed.x *= -1
 				}
-			if (bunny.position.y + f32(tex_bunny.height/2)) > f32(rl.GetScreenHeight()) ||
-				(bunny.position.y + f32(tex_bunny.height)/2 - 40) < 0 {
+			if bunny.position.y + f32(tex_bunny.height/2) > f32(rl.GetScreenHeight()) ||
+				bunny.position.y + f32(tex_bunny.height)/2 - 40 < 0 {
 					bunny.speed.y *= -1
 				}
 		}

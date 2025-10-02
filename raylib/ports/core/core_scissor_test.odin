@@ -29,8 +29,9 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - scissor test")
+	defer rl.CloseWindow()        // Close window and OpenGL context
 
-	scissor_area: rl.Rectangle = {0, 0, 300, 300}
+	scissor_area := rl.Rectangle {0, 0, 300, 300}
 	scissor_mode: bool = true
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
@@ -77,6 +78,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.CloseWindow()        // Close window and OpenGL context
+	
 	//--------------------------------------------------------------------------------------
 }

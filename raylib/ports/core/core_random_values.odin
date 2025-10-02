@@ -22,49 +22,50 @@ import rl "vendor:raylib"
 //------------------------------------------------------------------------------------
 main :: proc()
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    SCREEN_WIDTH :: 800;
-    SCREEN_HEIGHT :: 450;
+	// Initialization
+	//--------------------------------------------------------------------------------------
+	SCREEN_WIDTH :: 800
+	SCREEN_HEIGHT :: 450
 
-    rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - random values");
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - random values")
+	defer rl.CloseWindow()        // Close window and OpenGL context
 
-    // SetRandomSeed(0xaabbccff);   // Set a custom random seed if desired, by default: "time(NULL)"
+	// SetRandomSeed(0xaabbccff);   // Set a custom random seed if desired, by default: "time(NULL)"
 
-	rand_value: i32 = rl.GetRandomValue(-8, 5);   // Get a random integer number between -8 and 5 (both included)
+	rand_value: i32 = rl.GetRandomValue(-8, 5)   // Get a random integer number between -8 and 5 (both included)
 
 	timer: f32 // Variable used to count frames
-    //--------------------------------------------------------------------------------------
+	//--------------------------------------------------------------------------------------
 
-    // Main game loop
-    for !rl.WindowShouldClose() {    // Detect window close button or ESC key
-        // Update
-        //----------------------------------------------------------------------------------
-        // Every two seconds (120 frames) a new random value is generated
-        if timer >= 2 {
-            rand_value = rl.GetRandomValue(-8, 5);
-            timer = 0;
-        }
+	// Main game loop
+	for !rl.WindowShouldClose() {    // Detect window close button or ESC key
+		// Update
+		//----------------------------------------------------------------------------------
+		// Every two seconds (120 frames) a new random value is generated
+		if timer >= 2 {
+			rand_value = rl.GetRandomValue(-8, 5)
+			timer = 0
+		}
 		
 		timer += rl.GetFrameTime()
-        //----------------------------------------------------------------------------------
+		//----------------------------------------------------------------------------------
 
-        // Draw
-        //----------------------------------------------------------------------------------
-        rl.BeginDrawing();
+		// Draw
+		//----------------------------------------------------------------------------------
+		rl.BeginDrawing()
 
-            rl.ClearBackground(rl.RAYWHITE);
+			rl.ClearBackground(rl.RAYWHITE)
 
-            rl.DrawText("Every 2 seconds a new random value is generated:", 130, 100, 20, rl.MAROON);
+			rl.DrawText("Every 2 seconds a new random value is generated:", 130, 100, 20, rl.MAROON)
 
-            rl.DrawText(rl.TextFormat("%i", rand_value), 360, 180, 80, rl.LIGHTGRAY);
+			rl.DrawText(rl.TextFormat("%i", rand_value), 360, 180, 80, rl.LIGHTGRAY)
 
-        rl.EndDrawing();
-        //----------------------------------------------------------------------------------
-    }
+		rl.EndDrawing()
+		//----------------------------------------------------------------------------------
+	}
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    rl.CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+	// De-Initialization
+	//--------------------------------------------------------------------------------------
+	
+	//--------------------------------------------------------------------------------------
 }

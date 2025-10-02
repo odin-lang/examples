@@ -27,10 +27,13 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [audio] example - music stream")
+	defer rl.CloseWindow()              // Close window and OpenGL context
 
 	rl.InitAudioDevice()              // Initialize audio device
+	defer rl.CloseAudioDevice()         // Close audio device (music streaming is automatically stopped)
 
-	music: rl.Music = rl.LoadMusicStream("resources/country.mp3")
+	music := rl.LoadMusicStream("resources/country.mp3")
+	defer rl.UnloadMusicStream(music)   // Unload music stream buffers from RAM
 
 	rl.PlayMusicStream(music)
 
@@ -92,10 +95,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.UnloadMusicStream(music)   // Unload music stream buffers from RAM
-
-	rl.CloseAudioDevice()         // Close audio device (music streaming is automatically stopped)
-
-	rl.CloseWindow()              // Close window and OpenGL context
+	
 	//--------------------------------------------------------------------------------------
 }

@@ -27,13 +27,14 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [shapes] example - collision area")
+	defer rl.CloseWindow()        // Close window and OpenGL context
 
 	// Box A: Moving box
-	box_a: rl.Rectangle = {10, f32(rl.GetScreenHeight())/2 - 50, 200, 100}
+	box_a := rl.Rectangle {10, f32(rl.GetScreenHeight())/2 - 50, 200, 100}
 	box_a_speed_x: int = 4
 
 	// Box B: Mouse moved box
-	box_b: rl.Rectangle = {f32(rl.GetScreenWidth())/2 - 30, f32(rl.GetScreenHeight())/2 - 30, 60, 60}
+	box_b := rl.Rectangle {f32(rl.GetScreenWidth())/2 - 30, f32(rl.GetScreenHeight())/2 - 30, 60, 60}
 
 	box_collision: rl.Rectangle // Collision rectangle
 
@@ -55,7 +56,7 @@ main :: proc() {
 		}
 
 		// Bounce box on x screen limits
-		if ((box_a.x + box_a.width) >= f32(rl.GetScreenWidth())) || (box_a.x <= 0) {
+		if (box_a.x + box_a.width) >= f32(rl.GetScreenWidth()) || box_a.x <= 0 {
 			box_a_speed_x *= -1
 		}
 
@@ -64,13 +65,13 @@ main :: proc() {
 		box_b.y = f32(rl.GetMouseY()) - box_b.height/2
 
 		// Make sure Box B does not go out of move area limits
-		if (box_b.x + box_b.width) >= f32(rl.GetScreenWidth()) {
+		if box_b.x + box_b.width >= f32(rl.GetScreenWidth()) {
 			box_b.x = f32(rl.GetScreenWidth()) - box_b.width
 		} else if box_b.x <= 0 {
 			box_b.x = 0
 		}
 
-		if (box_b.y + box_b.height) >= f32(rl.GetScreenHeight()) {
+		if box_b.y + box_b.height >= f32(rl.GetScreenHeight()) {
 			box_b.y = f32(rl.GetScreenHeight()) - box_b.height
 		} else if box_b.y <= f32(screen_upper_limit) {
 			box_b.y = f32(screen_upper_limit)
@@ -123,6 +124,6 @@ main :: proc() {
 
 	// De-Initialization
 	//---------------------------------------------------------
-	rl.CloseWindow()        // Close window and OpenGL context
+	
 	//----------------------------------------------------------
 }

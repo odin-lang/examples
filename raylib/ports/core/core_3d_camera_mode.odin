@@ -27,16 +27,18 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - 3d camera mode")
+	defer rl.CloseWindow()        // Close window and OpenGL context
 
 	// Define the camera to look into our 3d world
-	camera: rl.Camera3D
-	camera.position = {0, 10, 10}  // Camera position
-	camera.target = {0, 0, 0}      // Camera looking at point
-	camera.up = {0, 1, 0}          // Camera up vector (rotation towards target)
-	camera.fovy = 45                                // Camera field-of-view Y
-	camera.projection = .PERSPECTIVE             // Camera mode type
+	camera := rl.Camera3D {
+		position = {0, 10, 10},  // Camera position
+		//target = {0, 0, 0},      // Camera looking at point
+		up = {0, 1, 0},          // Camera up vector (rotation towards target)
+		fovy = 45,                                // Camera field-of-view Y
+		projection = .PERSPECTIVE,             // Camera mode type
+	}
 
-	cube_position: rl.Vector3 = {0, 0, 0}
+	cube_position: rl.Vector3
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
@@ -73,6 +75,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	rl.CloseWindow()        // Close window and OpenGL context
+	
 	//--------------------------------------------------------------------------------------
 }
