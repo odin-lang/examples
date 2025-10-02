@@ -34,7 +34,7 @@ main :: proc() {
 	defer rl.CloseWindow()                // Close window and OpenGL context
 
 	// NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-	n_patch_texture  := rl.LoadTexture("resources/ninepatch_button.png")
+	n_patch_texture := rl.LoadTexture("resources/ninepatch_button.png")
 	defer rl.UnloadTexture(n_patch_texture)       // Texture unloading
 
 	mouse_position: rl.Vector2

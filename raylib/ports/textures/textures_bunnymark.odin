@@ -44,7 +44,7 @@ main :: proc() {
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [textures] example - bunnymark")
 
 	// Load bunny texture
-	tex_bunny: rl.Texture2D = rl.LoadTexture("resources/wabbit_alpha.png")
+	tex_bunny := rl.LoadTexture("resources/wabbit_alpha.png")
 
 	bunnies: [dynamic]Bunny          // Bunnies array
 
