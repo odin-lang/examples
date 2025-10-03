@@ -50,10 +50,12 @@ main :: proc() {
 	// Creates some circles for visual effect
 	circles: [MAX_CIRCLES]CircleWave
 
-	for i: int = MAX_CIRCLES - 1; i >= 0; i -= 1 {
-		circles[i] = {
-			radius = f32(rl.GetRandomValue(10, 40)),
-			position = {f32(rl.GetRandomValue(i32(circles[i].radius), i32(SCREEN_WIDTH - circles[i].radius))), f32(rl.GetRandomValue(i32(circles[i].radius), i32(SCREEN_HEIGHT - circles[i].radius)))},
+	for &c in circles {
+		radius := rl.GetRandomValue(10, 40)
+
+		c = {
+			radius = f32(radius),
+			position = {f32(rl.GetRandomValue(radius, SCREEN_WIDTH - radius)), f32(rl.GetRandomValue(radius, SCREEN_HEIGHT - radius))},
 			speed = f32(rl.GetRandomValue(1, 100))/2000,
 			color = colors[rl.GetRandomValue(0, 13)],
 		}
@@ -108,23 +110,28 @@ main :: proc() {
 		time_played = rl.GetMusicTimePlayed(music)/rl.GetMusicTimeLength(music)*(SCREEN_WIDTH - 40)
 
 		// Color circles animation
-		for i: int = MAX_CIRCLES - 1; (i >= 0) && !pause; i -= 1 {
-			circles[i].alpha += circles[i].speed
-			circles[i].radius += circles[i].speed*10
+		if !pause {
+			for &c in circles {
+				c.alpha += c.speed
+				c.radius += c.speed*10
 
-			if circles[i].alpha > 1 {
-				circles[i].speed *= -1
-			}
+				if c.alpha > 1 {
+					c.speed *= -1
+				}
 
-			if circles[i].alpha <= 0 {
-				circles[i].alpha = 0
-				circles[i].radius = f32(rl.GetRandomValue(10, 40))
-				circles[i].position.x = f32(rl.GetRandomValue(i32(circles[i].radius), i32(SCREEN_WIDTH - circles[i].radius)))
-				circles[i].position.y = f32(rl.GetRandomValue(i32(circles[i].radius), i32(SCREEN_HEIGHT - circles[i].radius)))
-				circles[i].color = colors[rl.GetRandomValue(0, 13)]
-				circles[i].speed = f32(rl.GetRandomValue(1, 100))/2000
+				if c.alpha <= 0 {
+					radius := rl.GetRandomValue(10, 40)
+
+					c = {
+						radius = f32(radius),
+						position = {f32(rl.GetRandomValue(radius, SCREEN_WIDTH - radius)), f32(rl.GetRandomValue(radius, SCREEN_HEIGHT - radius))},
+						speed = f32(rl.GetRandomValue(1, 100))/2000,
+						color = colors[rl.GetRandomValue(0, 13)],
+					}
+				}
 			}
 		}
+		
 		//----------------------------------------------------------------------------------
 
 		// Draw
@@ -133,8 +140,8 @@ main :: proc() {
 
 			rl.ClearBackground(rl.RAYWHITE)
 
-			for i: int = MAX_CIRCLES - 1; i >= 0; i -= 1 {
-				rl.DrawCircleV(circles[i].position, circles[i].radius, rl.Fade(circles[i].color, circles[i].alpha))
+			for c in circles {
+				rl.DrawCircleV(c.position, c.radius, rl.Fade(c.color, c.alpha))
 			}
 
 			// Draw time bar
