@@ -1,23 +1,10 @@
 /*******************************************************************************************
 *
-*   raylib [core] example - basic window
+*   raylib [core] example - window should close
 *
 *   Example complexity rating: [★☆☆☆] 1/4
 *
-*   Welcome to raylib!
-*
-*   To test examples, just press F6 and execute 'raylib_compile_execute' script
-*   Note that compiled executable is placed in the same folder as .c file
-*
-*   To test the examples on Web, press F6 and execute 'raylib_compile_execute_web' script
-*   Web version of the program is generated in the same folder as .c file
-*
-*   You can find all basic examples on C:\raylib\raylib\examples folder or
-*   raylib official webpage: www.raylib.com
-*
-*   Enjoy using raylib. :)
-*
-*   Example originally created with raylib 1.0, last time updated with raylib 1.0
+*   Example originally created with raylib 4.2, last time updated with raylib 4.2
 *
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
@@ -39,17 +26,36 @@ main :: proc() {
 	SCREEN_WIDTH :: 800
 	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - basic window")
-	defer rl.CloseWindow() // Close window and OpenGL context
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - window should close")
+	defer rl.CloseWindow()        // Close window and OpenGL context
 
-	rl.SetTargetFPS(60) 				// Set our game to run at 60 frames-per-second
+	rl.SetExitKey(.KEY_NULL)       // Disable KEY_ESCAPE to close window, X-button still works
+
+	exit_window_requested: bool   // Flag to request window to exit
+	exit_window: bool    // Flag to set window to exit
+
+	rl.SetTargetFPS(60)           // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
-	for !rl.WindowShouldClose() { 		// Detect window close button or ESC key
+	for !exit_window {
 		// Update
 		//----------------------------------------------------------------------------------
-		// TODO: Update your variables here
+		// Detect if X-button or KEY_ESCAPE have been pressed to close window
+		if rl.WindowShouldClose() || rl.IsKeyPressed(.ESCAPE) {
+			exit_window_requested = true
+		}
+
+		if exit_window_requested {
+			// A request for close window has been issued, we can save data before closing
+			// or just show a message asking for confirmation
+
+			if rl.IsKeyPressed(.Y) {
+				exit_window = true
+			} else if rl.IsKeyPressed(.N) {
+				exit_window_requested = false
+			}
+		}
 		//----------------------------------------------------------------------------------
 
 		// Draw
@@ -58,7 +64,12 @@ main :: proc() {
 
 			rl.ClearBackground(rl.RAYWHITE)
 
-			rl.DrawText("Congrats! You created your first window!", 190, 200, 20, rl.LIGHTGRAY)
+			if exit_window_requested {
+				rl.DrawRectangle(0, 100, SCREEN_WIDTH, 200, rl.BLACK)
+				rl.DrawText("Are you sure you want to exit program? [Y/N]", 40, 180, 30, rl.WHITE)
+			} else {
+				rl.DrawText("Try to close the window to get confirmation message!", 120, 200, 20, rl.LIGHTGRAY)
+			}
 
 		rl.EndDrawing()
 		//----------------------------------------------------------------------------------

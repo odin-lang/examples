@@ -1,28 +1,15 @@
 /*******************************************************************************************
 *
-*   raylib [core] example - basic window
+*   raylib [core] example - random values
 *
 *   Example complexity rating: [★☆☆☆] 1/4
 *
-*   Welcome to raylib!
-*
-*   To test examples, just press F6 and execute 'raylib_compile_execute' script
-*   Note that compiled executable is placed in the same folder as .c file
-*
-*   To test the examples on Web, press F6 and execute 'raylib_compile_execute_web' script
-*   Web version of the program is generated in the same folder as .c file
-*
-*   You can find all basic examples on C:\raylib\raylib\examples folder or
-*   raylib official webpage: www.raylib.com
-*
-*   Enjoy using raylib. :)
-*
-*   Example originally created with raylib 1.0, last time updated with raylib 1.0
+*   Example originally created with raylib 1.1, last time updated with raylib 1.1
 *
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright (c) 2013-2025 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2014-2025 Ramon Santamaria (@raysan5)
 *
 ********************************************************************************************/
 
@@ -33,23 +20,34 @@ import rl "vendor:raylib"
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-main :: proc() {
+main :: proc()
+{
 	// Initialization
 	//--------------------------------------------------------------------------------------
 	SCREEN_WIDTH :: 800
 	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - basic window")
-	defer rl.CloseWindow() // Close window and OpenGL context
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - random values")
+	defer rl.CloseWindow()        // Close window and OpenGL context
 
-	rl.SetTargetFPS(60) 				// Set our game to run at 60 frames-per-second
+	// SetRandomSeed(0xaabbccff);   // Set a custom random seed if desired, by default: "time(NULL)"
+
+	rand_value: i32 = rl.GetRandomValue(-8, 5)   // Get a random integer number between -8 and 5 (both included)
+
+	timer: f32 // Variable used to count frames
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
-	for !rl.WindowShouldClose() { 		// Detect window close button or ESC key
+	for !rl.WindowShouldClose() {    // Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
-		// TODO: Update your variables here
+		// Every two seconds (120 frames) a new random value is generated
+		if timer >= 2 {
+			rand_value = rl.GetRandomValue(-8, 5)
+			timer = 0
+		}
+		
+		timer += rl.GetFrameTime()
 		//----------------------------------------------------------------------------------
 
 		// Draw
@@ -58,7 +56,9 @@ main :: proc() {
 
 			rl.ClearBackground(rl.RAYWHITE)
 
-			rl.DrawText("Congrats! You created your first window!", 190, 200, 20, rl.LIGHTGRAY)
+			rl.DrawText("Every 2 seconds a new random value is generated:", 130, 100, 20, rl.MAROON)
+
+			rl.DrawText(rl.TextFormat("%i", rand_value), 360, 180, 80, rl.LIGHTGRAY)
 
 		rl.EndDrawing()
 		//----------------------------------------------------------------------------------
