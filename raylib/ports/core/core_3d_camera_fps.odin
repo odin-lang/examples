@@ -55,14 +55,14 @@ Body :: struct {
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-sensitivity: rl.Vector2 = {0.001, 0.001}
+sensitivity := rl.Vector2{0.001, 0.001}
 
 player: Body
-lookRotation: rl.Vector2 = {0.0, 0.0}
+lookRotation := rl.Vector2{0.0, 0.0}
 headTimer: f32 = 0.0
 walkLerp: f32 = 0.0
 headLerp: f32 = STAND_HEIGHT
-lean: rl.Vector2 = {0.0, 0.0}
+lean := rl.Vector2{0.0, 0.0}
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -77,13 +77,13 @@ main :: proc() {
 
 	// Initialize camera variables
 	// NOTE: UpdateCameraFPS() takes care of the rest
-	camera: rl.Camera
-	camera.fovy = 60.0
-	camera.projection = .PERSPECTIVE
-	camera.position = rl.Vector3 {
+	camera := rl.Camera {
+		fovy = 60.0,
+		projection = .PERSPECTIVE,
+		position = rl.Vector3 {
 		player.position.x,
 		player.position.y + (BOTTOM_HEIGHT + headLerp),
-		player.position.z,
+		player.position.z },
 	}
 
 	update_camera_fps(&camera)	// Update camera parameters
@@ -97,16 +97,16 @@ main :: proc() {
 	for !rl.WindowShouldClose() { 	// Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
-		mouseDelta: rl.Vector2 = rl.GetMouseDelta()
+		mouseDelta := rl.GetMouseDelta()
 		lookRotation.x -= mouseDelta.x * sensitivity.x
 		lookRotation.y += mouseDelta.y * sensitivity.y
 
-		sideway := i8(i8(rl.IsKeyDown(.D)) - i8(rl.IsKeyDown(.A)))
-		forward := i8(i8(rl.IsKeyDown(.W)) - i8(rl.IsKeyDown(.S)))
+		sideway := i8(rl.IsKeyDown(.D)) - i8(rl.IsKeyDown(.A))
+		forward := i8(rl.IsKeyDown(.W)) - i8(rl.IsKeyDown(.S))
 		crouching := rl.IsKeyDown(.LEFT_CONTROL)
 		update_body(&player, lookRotation.x, sideway, forward, rl.IsKeyPressed(.SPACE), crouching)
 
-		delta: f32 = rl.GetFrameTime()
+		delta := rl.GetFrameTime()
 		headLerp = rl.Lerp(headLerp, (crouching ? CROUCH_HEIGHT : STAND_HEIGHT), 20.0 * delta)
 		camera.position = rl.Vector3 {
 			player.position.x,
@@ -172,13 +172,13 @@ update_body :: proc(body: ^Body,rot: f32, side: i8, forward: i8, jumpPressed: bo
 		}
 	}
 
-	delta: f32 = rl.GetFrameTime()
+	delta := rl.GetFrameTime()
 
 	if !body.isGrounded {
 		body.velocity.y -= GRAVITY * delta
 	}
 
-	if (body.isGrounded && jumpPressed) {
+	if body.isGrounded && jumpPressed {
 		body.velocity.y = JUMP_FORCE
 		body.isGrounded = false
 
@@ -187,20 +187,20 @@ update_body :: proc(body: ^Body,rot: f32, side: i8, forward: i8, jumpPressed: bo
 		//PlaySound(fxJump);
 	}
 
-	front: rl.Vector3 = rl.Vector3{linalg.sin(rot), 0, linalg.cos(rot)}
-	right: rl.Vector3 = rl.Vector3{linalg.cos(-rot), 0, linalg.sin(-rot)}
+	front := rl.Vector3{linalg.sin(rot), 0, linalg.cos(rot)}
+	right := rl.Vector3{linalg.cos(-rot), 0, linalg.sin(-rot)}
 
-	desiredDir: rl.Vector3 = rl.Vector3 {
+	desiredDir := rl.Vector3 {
 		input.x * right.x + input.y * front.x,
 		0.0,
 		input.x * right.z + input.y * front.z,
 	}
 	body.dir = linalg.lerp(body.dir, desiredDir, CONTROL * delta)
 
-	decel: f32 = (body.isGrounded ? FRICTION : AIR_DRAG)
-	hvel: rl.Vector3 = rl.Vector3{body.velocity.x * decel, 0.0, body.velocity.z * decel}
+	decel : f32 = (body.isGrounded ? FRICTION : AIR_DRAG)
+	hvel := rl.Vector3{body.velocity.x * decel, 0.0, body.velocity.z * decel}
 
-	hvelLength: f32 = rl.Vector3Length(hvel) // Magnitude
+	hvelLength := rl.Vector3Length(hvel) // Magnitude
 	if hvelLength < (MAX_SPEED * 0.01) {
 		hvel = rl.Vector3{0.0, 0.0, 0.0}
 	}
@@ -212,7 +212,7 @@ update_body :: proc(body: ^Body,rot: f32, side: i8, forward: i8, jumpPressed: bo
 	// a Player can make the speed faster by bringing the direction closer to horizontal velocity angle
 	// More info here: https://youtu.be/v3zT3Z5apaM?t=165
 	maxSpeed: f32 = (crouchHold ? CROUCH_SPEED : MAX_SPEED)
-	accel: f32 = rl.Clamp(maxSpeed - speed, 0, MAX_ACCEL * delta)
+	accel := rl.Clamp(maxSpeed - speed, 0, MAX_ACCEL * delta)
 	hvel.x += body.dir.x * accel
 	hvel.z += body.dir.z * accel
 
@@ -233,19 +233,19 @@ update_body :: proc(body: ^Body,rot: f32, side: i8, forward: i8, jumpPressed: bo
 
 // Update camera for FPS behaviour
 update_camera_fps :: proc(camera: ^rl.Camera) {
-	up: rl.Vector3 : rl.Vector3{0.0, 1.0, 0.0}
-	targetOffset: rl.Vector3 : rl.Vector3{0.0, 0.0, -1.0}
+	up :: rl.Vector3{0.0, 1.0, 0.0}
+	targetOffset :: rl.Vector3{0.0, 0.0, -1.0}
 
 	// Left and right
-	yaw: rl.Vector3 = rl.Vector3RotateByAxisAngle(targetOffset, up, lookRotation.x)
+	yaw := rl.Vector3RotateByAxisAngle(targetOffset, up, lookRotation.x)
 
 	// Clamp view up
-	maxAngleUp: f32 = rl.Vector3Angle(up, yaw)
+	maxAngleUp := rl.Vector3Angle(up, yaw)
 	maxAngleUp -= 0.001 // Avoid numerical errors
 	if (-(lookRotation.y) > maxAngleUp) {lookRotation.y = -maxAngleUp}
 
 	// Clamp view down
-	maxAngleDown: f32 = rl.Vector3Angle(-up, yaw)
+	maxAngleDown := rl.Vector3Angle(-up, yaw)
 	maxAngleDown *= -1.0 // Downwards angle is negative
 	maxAngleDown += 0.001 // Avoid numerical errors
 	if -(lookRotation.y) < maxAngleDown {
@@ -253,24 +253,24 @@ update_camera_fps :: proc(camera: ^rl.Camera) {
 	}
 
 	// Up and down
-	right: rl.Vector3 = rl.Vector3Normalize(rl.Vector3CrossProduct(yaw, up))
+	right := rl.Vector3Normalize(rl.Vector3CrossProduct(yaw, up))
 
 	// Rotate view vector around right axis
-	pitchAngle: f32 = -lookRotation.y - lean.y
+	pitchAngle := -lookRotation.y - lean.y
 	pitchAngle = rl.Clamp(pitchAngle, -rl.PI / 2 + 0.0001, rl.PI / 2 - 0.0001) // Clamp angle so it doesn't go past straight up or straight down
-	pitch: rl.Vector3 = rl.Vector3RotateByAxisAngle(yaw, right, pitchAngle)
+	pitch := rl.Vector3RotateByAxisAngle(yaw, right, pitchAngle)
 
 	// Head animation
 	// Rotate up direction around forward axis
-	headSin: f32 = linalg.sin(headTimer * rl.PI)
-	headCos: f32 = linalg.cos(headTimer * rl.PI)
-	STEP_ROTATION: f32 : 0.01
+	headSin := linalg.sin(headTimer * rl.PI)
+	headCos := linalg.cos(headTimer * rl.PI)
+	STEP_ROTATION :: 0.01
 	camera.up = rl.Vector3RotateByAxisAngle(up, pitch, headSin * STEP_ROTATION + lean.x)
 
 	// Camera BOB
-	BOB_SIDE: f32 : 0.1
-	BOB_UP: f32 : 0.15
-	bobbing: rl.Vector3 = right * (headSin * BOB_SIDE)
+	BOB_SIDE :: 0.1
+	BOB_UP :: 0.15
+	bobbing := right * (headSin * BOB_SIDE)
 	bobbing.y = abs(headCos * BOB_UP)
 
 	camera.position = camera.position + (bobbing * walkLerp)
@@ -279,8 +279,8 @@ update_camera_fps :: proc(camera: ^rl.Camera) {
 
 // Draw game level
 draw_level :: proc() {
-	FLOOR_EXTENT: int : 25
-	TILE_SIZE: f32 : 5.0
+	FLOOR_EXTENT :: 25
+	TILE_SIZE :: 5.0
 	TILE_COLOR_1 := rl.Color{150, 200, 200, 255}
 
 	// Floor tiles
@@ -294,10 +294,10 @@ draw_level :: proc() {
 		}
 	}
 
-	TOWER_SIZE: rl.Vector3 : rl.Vector3{16.0, 32.0, 16.0}
-	TOWER_COLOR: rl.Color : rl.Color{150, 200, 200, 255}
+	TOWER_SIZE :: rl.Vector3{16.0, 32.0, 16.0}
+	TOWER_COLOR :: rl.Color{150, 200, 200, 255}
 
-	towerPos: rl.Vector3 = rl.Vector3{16.0, 16.0, 16.0}
+	towerPos := rl.Vector3{16.0, 16.0, 16.0}
 	rl.DrawCubeV(towerPos, TOWER_SIZE, TOWER_COLOR)
 	rl.DrawCubeWiresV(towerPos, TOWER_SIZE, rl.DARKBLUE)
 
