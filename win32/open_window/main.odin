@@ -5,11 +5,11 @@ import win "core:sys/windows"
 main :: proc() {
 	instance := win.HINSTANCE(win.GetModuleHandleW(nil))
 	assert(instance != nil, "Failed to fetch current instance")
-	class_name := win.L("Windows Window")
+	CLASS_NAME :: "Windows Window"
 
 	cls := win.WNDCLASSW {
 		lpfnWndProc = win_proc,
-		lpszClassName = class_name,
+		lpszClassName = CLASS_NAME,
 		hInstance = instance,
 		hCursor = win.LoadCursorA(nil, win.IDC_ARROW),
 	}
@@ -17,7 +17,7 @@ main :: proc() {
 	class := win.RegisterClassW(&cls)
 	assert(class != 0, "Class creation failed")
 
-	hwnd := win.CreateWindowW(class_name,
+	hwnd := win.CreateWindowW(CLASS_NAME,
 		win.L("Windows Window"),
 		win.WS_OVERLAPPEDWINDOW | win.WS_VISIBLE,
 		100, 100, 1280, 720,

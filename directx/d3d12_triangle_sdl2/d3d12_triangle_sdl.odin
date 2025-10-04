@@ -81,7 +81,7 @@ main :: proc() {
 			continue
 		}
 
-		if d3d12.CreateDevice((^dxgi.IUnknown)(adapter), ._12_0, dxgi.IDevice_UUID, nil) >= 0 {
+		if d3d12.CreateDevice((^dxgi.IUnknown)(adapter), ._12_0, d3d12.IDevice_UUID, nil) >= 0 {
 			break
 		} else {
 			fmt.println("Failed to create device")
@@ -412,6 +412,8 @@ main :: proc() {
 						viewport := d3d12.VIEWPORT {
 							Width = f32(wx),
 							Height = f32(wy),
+							MinDepth = 0,
+							MaxDepth = 1,
 						}
 
 						scissor_rect := d3d12.RECT {
