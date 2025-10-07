@@ -16,11 +16,11 @@ TASK_COUNT :: 64
 main :: proc() {
 	// Declare a variable for the thread pool.
 	// The pool is not initialized and no threads are running.
-	pool : thread.Pool
+	pool: thread.Pool
 
 	// The thread pool requires an allocator which it either owns,
 	// or which is thread safe.
-	pool_allocator : mem.Allocator
+	pool_allocator: mem.Allocator
 	
 	// For simplicity's sake, we use the default context allocator.
 	// We can do it because in this example we will not allocate
@@ -55,7 +55,7 @@ main :: proc() {
 	// 
 	// For simplicity, we just create an array that contains space
 	// for all tasks we plan to perform in this example.
-	task_data_array : [TASK_COUNT]Add_Task_Data
+	task_data_array: [TASK_COUNT]Add_Task_Data
 	// NOTE: This memory is created on the stack, which does not violate
 	// the allocation limitation described above.
 
@@ -63,7 +63,7 @@ main :: proc() {
 	for task_index in 0..<TASK_COUNT {
 		// A task also requires an allocator which it either owns,
 		// or which is thread safe.
-		task_allocator : mem.Allocator
+		task_allocator: mem.Allocator
 
 		// However, the allocator is necessary only if you need to allocate memory
 		// inside the task procedure. Since we know for a fact that our task
@@ -78,8 +78,10 @@ main :: proc() {
 		
 		// We initialize the input data for the task with random integers
 		// in the range from 0 to 99 (max value is exclusive).
-		task_data.in_number_a = int(rand.int31_max(100))
-		task_data.in_number_b = int(rand.int31_max(100))
+		task_data^ = {
+			in_number_a = int(rand.int31_max(100)),
+			in_number_b = int(rand.int31_max(100)),
+		}
 
 		// Now we finally add a new task to the pool. Besides the allocator,
 		// the task creation requires a procedure that will be executed in another thread, 
@@ -113,14 +115,14 @@ main :: proc() {
 // This struct contains input data for the task
 // and a place to store the result.
 Add_Task_Data :: struct {
-	in_number_a : int,
-	in_number_b : int,
-	out_results : int,
+	in_number_a: int,
+	in_number_b: int,
+	out_results: int,
 }
 
 // This procedure handles the add task.
 // It expects two numbers and outputs their sum.
-add_task_handler :: proc(task : thread.Task) {
+add_task_handler :: proc(task: thread.Task) {
 	// The data is passed as a `rawptr`,
 	// so we cast it to the type expected by the task.
 	data := cast(^Add_Task_Data)task.data
