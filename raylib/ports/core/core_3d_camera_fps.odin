@@ -15,7 +15,7 @@
 *
 ********************************************************************************************/
 
-package main
+package raylib_examples
 
 import "core:math/linalg"
 import rl "vendor:raylib"
@@ -58,11 +58,11 @@ Body :: struct {
 sensitivity := rl.Vector2{0.001, 0.001}
 
 player: Body
-lookRotation := rl.Vector2{0.0, 0.0}
-headTimer: f32 = 0.0
-walkLerp: f32 = 0.0
+lookRotation: rl.Vector2
+headTimer: f32
+walkLerp: f32
 headLerp: f32 = STAND_HEIGHT
-lean := rl.Vector2{0.0, 0.0}
+lean: rl.Vector2
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -80,10 +80,7 @@ main :: proc() {
 	camera := rl.Camera {
 		fovy = 60.0,
 		projection = .PERSPECTIVE,
-		position = rl.Vector3 {
-		player.position.x,
-		player.position.y + (BOTTOM_HEIGHT + headLerp),
-		player.position.z },
+		position = { player.position.x, player.position.y + (BOTTOM_HEIGHT + headLerp), player.position.z },
 	}
 
 	update_camera_fps(&camera)	// Update camera parameters
@@ -108,11 +105,7 @@ main :: proc() {
 
 		delta := rl.GetFrameTime()
 		headLerp = rl.Lerp(headLerp, (crouching ? CROUCH_HEIGHT : STAND_HEIGHT), 20.0 * delta)
-		camera.position = rl.Vector3 {
-			player.position.x,
-			player.position.y + (BOTTOM_HEIGHT + headLerp),
-			player.position.z,
-		}
+		camera.position = { player.position.x, player.position.y + (BOTTOM_HEIGHT + headLerp), player.position.z }
 
 		if player.isGrounded && ((forward != 0) || (sideway != 0)) {
 			headTimer += delta * 3.0
@@ -146,7 +139,7 @@ main :: proc() {
 			rl.DrawText("Camera controls:", 15, 15, 10, rl.BLACK)
 			rl.DrawText("- Move keys: W, A, S, D, Space, Left-Ctrl", 15, 30, 10, rl.BLACK)
 			rl.DrawText("- Look around: arrow keys or mouse", 15, 45, 10, rl.BLACK)
-			rl.DrawText(rl.TextFormat("- Velocity Len: (%06.3f)", rl.Vector2Length(rl.Vector2{player.velocity.x, player.velocity.z})), 15, 60, 10, rl.BLACK)
+			rl.DrawText(rl.TextFormat("- Velocity Len: (%06.3f)", rl.Vector2Length(player.velocity.xy)), 15, 60, 10, rl.BLACK)
 
 		rl.EndDrawing()
 		//----------------------------------------------------------------------------------
@@ -162,7 +155,7 @@ main :: proc() {
 // Module Functions Definition
 //----------------------------------------------------------------------------------
 // Update body considering current world state
-update_body :: proc(body: ^Body,rot: f32, side: i8, forward: i8, jumpPressed: bool, crouchHold: bool) {
+update_body :: proc(body: ^Body, rot: f32, side: i8, forward: i8, jumpPressed: bool, crouchHold: bool) {
 	input: rl.Vector2 = {f32(side), f32(-forward)}
 
 	if NORMALIZE_INPUT {
@@ -219,9 +212,7 @@ update_body :: proc(body: ^Body,rot: f32, side: i8, forward: i8, jumpPressed: bo
 	body.velocity.x = hvel.x
 	body.velocity.z = hvel.z
 
-	body.position.x += body.velocity.x * delta
-	body.position.y += body.velocity.y * delta
-	body.position.z += body.velocity.z * delta
+	body.position += body.velocity * delta
 
 	// Fancy collision system against the floor
 	if body.position.y <= 0.0 {
@@ -233,27 +224,29 @@ update_body :: proc(body: ^Body,rot: f32, side: i8, forward: i8, jumpPressed: bo
 
 // Update camera for FPS behaviour
 update_camera_fps :: proc(camera: ^rl.Camera) {
-	up :: rl.Vector3{0.0, 1.0, 0.0}
-	targetOffset :: rl.Vector3{0.0, 0.0, -1.0}
+	UP :: rl.Vector3{0.0, 1.0, 0.0}
+	TARGET_OFFSET :: rl.Vector3{0.0, 0.0, -1.0}
 
 	// Left and right
-	yaw := rl.Vector3RotateByAxisAngle(targetOffset, up, lookRotation.x)
+	yaw := rl.Vector3RotateByAxisAngle(TARGET_OFFSET, UP, lookRotation.x)
 
 	// Clamp view up
-	maxAngleUp := rl.Vector3Angle(up, yaw)
+	maxAngleUp := rl.Vector3Angle(UP, yaw)
 	maxAngleUp -= 0.001 // Avoid numerical errors
-	if (-(lookRotation.y) > maxAngleUp) {lookRotation.y = -maxAngleUp}
+	if -lookRotation.y > maxAngleUp {
+		lookRotation.y = -maxAngleUp
+	}
 
 	// Clamp view down
-	maxAngleDown := rl.Vector3Angle(-up, yaw)
+	maxAngleDown := rl.Vector3Angle(-UP, yaw)
 	maxAngleDown *= -1.0 // Downwards angle is negative
 	maxAngleDown += 0.001 // Avoid numerical errors
-	if -(lookRotation.y) < maxAngleDown {
+	if -lookRotation.y < maxAngleDown {
 		lookRotation.y = -maxAngleDown
 	}
 
 	// Up and down
-	right := rl.Vector3Normalize(rl.Vector3CrossProduct(yaw, up))
+	right := rl.Vector3Normalize(rl.Vector3CrossProduct(yaw, UP))
 
 	// Rotate view vector around right axis
 	pitchAngle := -lookRotation.y - lean.y
@@ -265,7 +258,7 @@ update_camera_fps :: proc(camera: ^rl.Camera) {
 	headSin := linalg.sin(headTimer * rl.PI)
 	headCos := linalg.cos(headTimer * rl.PI)
 	STEP_ROTATION :: 0.01
-	camera.up = rl.Vector3RotateByAxisAngle(up, pitch, headSin * STEP_ROTATION + lean.x)
+	camera.up = rl.Vector3RotateByAxisAngle(UP, pitch, headSin * STEP_ROTATION + lean.x)
 
 	// Camera BOB
 	BOB_SIDE :: 0.1
@@ -281,11 +274,11 @@ update_camera_fps :: proc(camera: ^rl.Camera) {
 draw_level :: proc() {
 	FLOOR_EXTENT :: 25
 	TILE_SIZE :: 5.0
-	TILE_COLOR_1 := rl.Color{150, 200, 200, 255}
+	TILE_COLOR_1 :: rl.Color{150, 200, 200, 255}
 
 	// Floor tiles
-	for y: int = -FLOOR_EXTENT; y < FLOOR_EXTENT; y += 1 {
-		for x: int = -FLOOR_EXTENT; x < FLOOR_EXTENT; x += 1 {
+	for y in -FLOOR_EXTENT..< FLOOR_EXTENT {
+		for x in -FLOOR_EXTENT..< FLOOR_EXTENT {
 			if (y & 1 != 0) && (x & 1 != 0) {
 				rl.DrawPlane(rl.Vector3{f32(x) * TILE_SIZE, 0.0, f32(y) * TILE_SIZE}, rl.Vector2{TILE_SIZE, TILE_SIZE}, TILE_COLOR_1)
 			} else if (y & 1 == 0) && (x & 1 == 0) {
@@ -314,5 +307,5 @@ draw_level :: proc() {
 	rl.DrawCubeWiresV(towerPos, TOWER_SIZE, rl.DARKBLUE)
 
 	// Red sun
-	rl.DrawSphere(rl.Vector3{300.0, 300.0, 0.0}, 100, rl.Color{255, 0, 0, 255})
+	rl.DrawSphere({300.0, 300.0, 0.0}, 100, rl.Color{255, 0, 0, 255})
 }
