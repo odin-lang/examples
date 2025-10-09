@@ -183,11 +183,7 @@ update_body :: proc(body: ^Body, rot: f32, side: i8, forward: i8, jumpPressed: b
 	front := rl.Vector3{linalg.sin(rot), 0, linalg.cos(rot)}
 	right := rl.Vector3{linalg.cos(-rot), 0, linalg.sin(-rot)}
 
-	desiredDir := rl.Vector3 {
-		input.x * right.x + input.y * front.x,
-		0.0,
-		input.x * right.z + input.y * front.z,
-	}
+	desiredDir := rl.Vector3{input.x * right.x + input.y * front.x, 0.0, input.x * right.z + input.y * front.z}
 	body.dir = linalg.lerp(body.dir, desiredDir, CONTROL * delta)
 
 	decel : f32 = (body.isGrounded ? FRICTION : AIR_DRAG)
@@ -206,11 +202,9 @@ update_body :: proc(body: ^Body, rot: f32, side: i8, forward: i8, jumpPressed: b
 	// More info here: https://youtu.be/v3zT3Z5apaM?t=165
 	maxSpeed: f32 = (crouchHold ? CROUCH_SPEED : MAX_SPEED)
 	accel := rl.Clamp(maxSpeed - speed, 0, MAX_ACCEL * delta)
-	hvel.x += body.dir.x * accel
-	hvel.z += body.dir.z * accel
-
-	body.velocity.x = hvel.x
-	body.velocity.z = hvel.z
+	hvel.xz += body.dir.xz * accel
+	
+	body.velocity.xz = hvel.xz
 
 	body.position += body.velocity * delta
 
