@@ -1,28 +1,15 @@
 /*******************************************************************************************
 *
-*   raylib [core] example - basic window
+*   raylib [core] example - input mouse wheel
 *
 *   Example complexity rating: [★☆☆☆] 1/4
 *
-*   Welcome to raylib!
-*
-*   To test examples, just press F6 and execute 'raylib_compile_execute' script
-*   Note that compiled executable is placed in the same folder as .c file
-*
-*   To test the examples on Web, press F6 and execute 'raylib_compile_execute_web' script
-*   Web version of the program is generated in the same folder as .c file
-*
-*   You can find all basic examples on C:\raylib\raylib\examples folder or
-*   raylib official webpage: www.raylib.com
-*
-*   Enjoy using raylib. :)
-*
-*   Example originally created with raylib 1.0, last time updated with raylib 1.0
+*   Example originally created with raylib 1.1, last time updated with raylib 1.3
 *
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
 *
-*   Copyright (c) 2013-2025 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2014-2025 Ramon Santamaria (@raysan5)
 *
 ********************************************************************************************/
 
@@ -39,17 +26,20 @@ main :: proc() {
 	SCREEN_WIDTH :: 800
 	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - basic window")
-	defer rl.CloseWindow() // Close window and OpenGL context
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - input mouse wheel")
+	defer rl.CloseWindow()        // Close window and OpenGL context
 
-	rl.SetTargetFPS(60) 				// Set our game to run at 60 frames-per-second
+	box_position_y: int = SCREEN_HEIGHT/2 - 40
+	scroll_speed: int = 4            // Scrolling speed in pixels
+
+	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
-	for !rl.WindowShouldClose() { 		// Detect window close button or ESC key
+	for !rl.WindowShouldClose() {    // Detect window close button or ESC key
 		// Update
 		//----------------------------------------------------------------------------------
-		// TODO: Update your variables here
+		box_position_y -= int(rl.GetMouseWheelMove()*f32(scroll_speed))
 		//----------------------------------------------------------------------------------
 
 		// Draw
@@ -58,7 +48,10 @@ main :: proc() {
 
 			rl.ClearBackground(rl.RAYWHITE)
 
-			rl.DrawText("Congrats! You created your first window!", 190, 200, 20, rl.LIGHTGRAY)
+			rl.DrawRectangle(SCREEN_WIDTH/2 - 40, i32(box_position_y), 80, 80, rl.MAROON)
+
+			rl.DrawText("Use mouse wheel to move the cube up and down!", 10, 10, 20, rl.GRAY)
+			rl.DrawText(rl.TextFormat("Box position Y: %03i", box_position_y), 10, 40, 20, rl.LIGHTGRAY)
 
 		rl.EndDrawing()
 		//----------------------------------------------------------------------------------
