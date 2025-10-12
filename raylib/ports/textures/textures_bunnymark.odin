@@ -47,8 +47,6 @@ main :: proc() {
 	tex_bunny := rl.LoadTexture("resources/wabbit_alpha.png")
 
 	bunnies: [dynamic]Bunny          // Bunnies array
-
-	bunnies_count: uint           // Bunnies counter
 	//--------------------------------------------------------------------------------------
 
 	// Main game loop
@@ -57,7 +55,7 @@ main :: proc() {
 		//----------------------------------------------------------------------------------
 		if rl.IsMouseButtonDown(.LEFT) {
 			for i := 0; i < 100; i += 1 {
-				if bunnies_count < MAX_BUNNIES {
+				if len(bunnies) < MAX_BUNNIES {
 					bunny: Bunny
 					bunny.position = rl.GetMousePosition()
 					bunny.speed.x = f32(rl.GetRandomValue(-250, 250))/60
@@ -67,8 +65,6 @@ main :: proc() {
 													   u8(rl.GetRandomValue(100, 240)), 255}
 					
 					append(&bunnies, bunny)
-					
-					bunnies_count += 1
 				}
 			}
 		}
@@ -99,6 +95,8 @@ main :: proc() {
 			}
 
 			rl.DrawRectangle(0, 0, SCREEN_WIDTH, 40, rl.BLACK)
+			
+			bunnies_count := len(bunnies)
 			rl.DrawText(rl.TextFormat("bunnies: %i", bunnies_count), 120, 10, 20, rl.GREEN)
 			rl.DrawText(rl.TextFormat("batched draw calls: %i", 1 + bunnies_count/MAX_BATCH_ELEMENTS), 320, 10, 20, rl.MAROON)
 
