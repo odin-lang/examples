@@ -5,7 +5,6 @@ import DXGI "vendor:directx/dxgi"
 import D3D "vendor:directx/d3d_compiler"
 import SDL "vendor:sdl3"
 import glm "core:math/linalg/glsl"
-import fmt "core:fmt"
 // Based off https://gist.github.com/d7samurai/261c69490cce0620d0bfc93003cd1052
 
 main :: proc() {
@@ -19,7 +18,7 @@ main :: proc() {
 	)
 	defer SDL.DestroyWindow(window)
 
-	native_window := transmute(DXGI.HWND)SDL.GetPointerProperty(SDL.GetWindowProperties(window), SDL.PROP_WINDOW_WIN32_HWND_POINTER, nil)
+	native_window := DXGI.HWND(SDL.GetPointerProperty(SDL.GetWindowProperties(window), SDL.PROP_WINDOW_WIN32_HWND_POINTER, nil))
 
 	feature_levels := [?]D3D11.FEATURE_LEVEL{._11_0}
 
