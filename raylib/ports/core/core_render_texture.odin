@@ -27,7 +27,6 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - render texture")
-	defer rl.CloseWindow()        // Close window and OpenGL context
 	
 	// Define a render texture to render
 	render_texture_width: i32 = 300
@@ -99,6 +98,6 @@ main :: proc() {
 
 	// De-Initialization
 	//---------------------------------------------------------
-	
+	rl.CloseWindow()        // Close window and OpenGL context
 	//----------------------------------------------------------
 }

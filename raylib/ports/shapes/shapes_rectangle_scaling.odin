@@ -31,7 +31,6 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [shapes] example - rectangle scaling")
-	defer rl.CloseWindow()        // Close window and OpenGL context
 
 	rec := rl.Rectangle {100, 100, 200, 80}
 
@@ -109,6 +108,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	
+	rl.CloseWindow()        // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
 }

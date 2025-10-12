@@ -27,7 +27,6 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - input mouse wheel")
-	defer rl.CloseWindow()        // Close window and OpenGL context
 
 	box_position_y: int = SCREEN_HEIGHT/2 - 40
 	scroll_speed: int = 4            // Scrolling speed in pixels
@@ -59,6 +58,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	
+	rl.CloseWindow()        // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
 }

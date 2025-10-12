@@ -27,7 +27,6 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - window should close")
-	defer rl.CloseWindow()        // Close window and OpenGL context
 
 	rl.SetExitKey(.KEY_NULL)       // Disable KEY_ESCAPE to close window, X-button still works
 
@@ -77,6 +76,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	
+	rl.CloseWindow()        // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
 }

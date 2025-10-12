@@ -39,10 +39,8 @@ main :: proc() {
 	rl.SetConfigFlags({.MSAA_4X_HINT})  // NOTE: Try to enable MSAA 4X
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [audio] example - module playing")
-	defer rl.CloseWindow()          // Close window and OpenGL context
 
 	rl.InitAudioDevice()                  // Initialize audio device
-	defer rl.CloseAudioDevice()     // Close audio device (music streaming is automatically stopped)
 
 	colors: [14]rl.Color = {rl.ORANGE, rl.RED, rl.GOLD, rl.LIME, rl.BLUE, rl.VIOLET, rl.BROWN, rl.LIGHTGRAY, rl.PINK,
 						 rl.YELLOW, rl.GREEN, rl.SKYBLUE, rl.PURPLE, rl.BEIGE}
@@ -163,6 +161,7 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	
+	rl.CloseAudioDevice()     // Close audio device (music streaming is automatically stopped)
+	rl.CloseWindow()          // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
 }

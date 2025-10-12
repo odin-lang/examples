@@ -31,7 +31,6 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [textures] example - blend modes")
-	defer rl.CloseWindow()            // Close window and OpenGL context
 
 	// NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
 	bg_image := rl.LoadImage("resources/cyberpunk_street_background.png")     // Loaded in CPU memory (RAM)
@@ -43,9 +42,6 @@ main :: proc() {
 	// Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
 	rl.UnloadImage(bg_image)
 	rl.UnloadImage(fg_image)
-	
-	defer rl.UnloadTexture(fg_texture) // Unload foreground texture
-	defer rl.UnloadTexture(bg_texture) // Unload background texture
 
 	BLEND_COUNT_MAX :: 4
 	blend_mode := rl.BlendMode(0)
@@ -101,6 +97,9 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	
+	rl.UnloadTexture(fg_texture) // Unload foreground texture
+	rl.UnloadTexture(bg_texture) // Unload background texture
+
+	rl.CloseWindow()            // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
 }

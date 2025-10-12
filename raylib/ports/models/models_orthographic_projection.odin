@@ -32,7 +32,6 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [models] example - orthographic projection")
-	defer rl.CloseWindow()        // Close window and OpenGL context
 
 	// Define the camera to look into our 3d world
 	camera := rl.Camera {
@@ -103,6 +102,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	
+	rl.CloseWindow()        // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
 }

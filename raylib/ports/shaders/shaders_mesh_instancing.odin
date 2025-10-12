@@ -11,7 +11,6 @@ main :: proc() {
 	screenHeight :: 450
 
 	rl.InitWindow(screenWidth, screenHeight, "raylib [shaders] example - mesh instancing")
-	defer rl.CloseWindow()
 
 	camera := rl.Camera{
         position   = { -125, 125, -125 },
@@ -23,7 +22,6 @@ main :: proc() {
 	cube := rl.GenMeshCube(1, 1, 1)
 
 	transforms := make([]rl.Matrix, MAX_INSTANCES)
-	defer delete(transforms)
 
 	for i in 0..<MAX_INSTANCES {
 		translation := rl.MatrixTranslate(f32(rl.GetRandomValue(-50, 50)), f32(rl.GetRandomValue(-50, 50)), f32(rl.GetRandomValue(-50, 50)))
@@ -35,7 +33,6 @@ main :: proc() {
 	}
 
 	shader := rl.LoadShader("resources/shaders/lighting_instancing.vs", "resources/shaders/lighting.fs")
-	defer rl.UnloadShader(shader)
 
 	shader.locs[rl.ShaderLocationIndex.MATRIX_MVP]   = i32(rl.GetShaderLocation(shader, "mvp"))
 	shader.locs[rl.ShaderLocationIndex.VECTOR_VIEW]  = i32(rl.GetShaderLocation(shader, "viewPos"))
@@ -63,22 +60,27 @@ main :: proc() {
 
 		{
 			rl.BeginDrawing()
-			defer rl.EndDrawing()
 
 			rl.ClearBackground(rl.RAYWHITE)
 			
+			rl.EndDrawing()
 			{
 				rl.BeginMode3D(camera)
-				defer rl.EndMode3D()
 
 				rl.DrawMesh(cube, matDefault, rl.MatrixTranslate(-10, 0, 0))
 
 				rl.DrawMeshInstanced(cube, matInstances, raw_data(transforms), MAX_INSTANCES)
 
 				rl.DrawMesh(cube, matDefault, rl.MatrixTranslate(10, 0, 0))
+
+				rl.EndMode3D()
 			}
 
 			rl.DrawFPS(10, 10)
 		}
 	}
+
+	rl.UnloadShader(shader)
+	delete(transforms)
+	rl.CloseWindow()
 }

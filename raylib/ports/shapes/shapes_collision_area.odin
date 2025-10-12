@@ -27,7 +27,6 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [shapes] example - collision area")
-	defer rl.CloseWindow()        // Close window and OpenGL context
 
 	// Box A: Moving box
 	box_a := rl.Rectangle {10, f32(rl.GetScreenHeight())/2 - 50, 200, 100}
@@ -124,6 +123,6 @@ main :: proc() {
 
 	// De-Initialization
 	//---------------------------------------------------------
-	
+	rl.CloseWindow()        // Close window and OpenGL context
 	//----------------------------------------------------------
 }

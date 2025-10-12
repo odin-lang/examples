@@ -29,7 +29,6 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [shapes] example - following eyes")
-	defer rl.CloseWindow()        // Close window and OpenGL context
 
 	sclera_left_position := rl.Vector2 {f32(rl.GetScreenWidth())/2 - 100, f32(rl.GetScreenHeight())/2}
 	sclera_right_position := rl.Vector2 {f32(rl.GetScreenWidth())/2 + 100, f32(rl.GetScreenHeight())/2}
@@ -102,6 +101,6 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	
+	rl.CloseWindow()        // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
 }

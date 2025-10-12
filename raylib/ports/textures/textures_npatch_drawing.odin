@@ -31,11 +31,9 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [textures] example - npatch drawing")
-	defer rl.CloseWindow()                // Close window and OpenGL context
 
 	// NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
 	n_patch_texture := rl.LoadTexture("resources/ninepatch_button.png")
-	defer rl.UnloadTexture(n_patch_texture)       // Texture unloading
 
 	mouse_position: rl.Vector2
 	origin: rl.Vector2
@@ -125,6 +123,8 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	
+	rl.UnloadTexture(n_patch_texture)       // Texture unloading
+
+	rl.CloseWindow()                // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
 }

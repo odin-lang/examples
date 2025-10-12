@@ -36,7 +36,6 @@ SCREEN_HEIGHT :: 450
 
 main :: proc() {
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [shapes] example - basic shapes drawing")
-	defer rl.CloseWindow() // Close window and OpenGL context when leaving main.
 
 	rotation: f32
 	rl.SetTargetFPS(60) // Set frames per second.
@@ -83,4 +82,6 @@ main :: proc() {
 		rl.DrawLine(18, 42, SCREEN_WIDTH - 18, 42, rl.BLACK)
 		rl.EndDrawing()
 	}
+
+	rl.CloseWindow() // Close window and OpenGL context when leaving main.
 }

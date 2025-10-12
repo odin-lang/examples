@@ -69,7 +69,6 @@ main :: proc() {
 	SCREEN_HEIGHT :: 450
 
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [<module>] example - <name>")
-	defer rl.CloseWindow()        // Close window and OpenGL context
 
 	// TODO: Load resources / Initialize variables at this point
 
@@ -103,5 +102,7 @@ main :: proc() {
 	//--------------------------------------------------------------------------------------
 
 	// TODO: Unload all loaded resources at this point
+	
+	rl.CloseWindow()        // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
 }
