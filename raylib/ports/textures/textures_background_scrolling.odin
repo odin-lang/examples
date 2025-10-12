@@ -89,8 +89,8 @@ main :: proc() {
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	defer rl.UnloadTexture(background)  // Unload background texture
-	defer rl.UnloadTexture(midground)   // Unload midground texture
+	rl.UnloadTexture(background)  // Unload background texture
+	rl.UnloadTexture(midground)   // Unload midground texture
 	rl.UnloadTexture(foreground)  // Unload foreground texture
 	rl.CloseWindow()              // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
