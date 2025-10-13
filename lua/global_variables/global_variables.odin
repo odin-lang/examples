@@ -1,4 +1,4 @@
-package main
+package global_variables
 
 import lua "vendor:lua/5.4"
 import "core:fmt"
