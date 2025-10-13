@@ -52,9 +52,9 @@ main :: proc() {
 	position := rl.Vector3{ 0.0, 0.0, 0.0 }            // Set model position
 
     // Load animation data
-	animsCount : i32
+	animsCount: i32
 	anims := rl.LoadModelAnimations("resources/models/iqm/guyanim.iqm", &animsCount)
-	animFrameCounter : i32
+	animFrameCounter: i32
 
 	rl.DisableCursor()                    // Catch cursor
 	rl.SetTargetFPS(60)                   // Set our game to run at 60 frames-per-second
@@ -70,7 +70,7 @@ main :: proc() {
 		if rl.IsKeyDown(.SPACE) {
 			animFrameCounter += 1
 			rl.UpdateModelAnimation(model, anims[0], animFrameCounter)
-			if (animFrameCounter >= anims[0].frameCount) {
+			if animFrameCounter >= anims[0].frameCount {
 				animFrameCounter = 0
 			}
 		}
