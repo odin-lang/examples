@@ -14,7 +14,7 @@ main :: proc() {
 	lua.open_base(state)
 
 	// Set a new global integer (a Lua 5.3+ feature!) called "answer" to 42
-	// First we push the integer to the stack, which is our "postboard" to talk with the Lua VM
+	// First push the integer to the stack, essentially a "postboard" to talk with the Lua VM
 	lua.pushinteger(state, 42)
 	// Pops the top value on the stack and creates a global with it's value
 	lua.setglobal(state, "Answer")
