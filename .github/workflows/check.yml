@@ -88,6 +88,7 @@ jobs:
           odin check raylib/box2d $FLAGS
           odin check raylib/ports/core/core_3d_camera_fps.odin -file $FLAGS
           odin check raylib/ports/core/core_basic_window.odin -file $FLAGS
+          odin check raylib/ports/models/models_animation_playing.odin -file $FLAGS
           odin check raylib/ports/core/core_3d_camera_mode.odin -file $FLAGS
           odin check raylib/ports/core/core_input_mouse_wheel.odin -file $FLAGS
           odin check raylib/ports/core/core_window_should_close.odin -file $FLAGS
