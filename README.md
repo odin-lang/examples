@@ -25,7 +25,7 @@ or
 Assets and third-party libraries are provided under their own license. If in doubt, check the `LICENSE*` and `COPYING*` file(s) in a particular directory for clarification.
 
 ## Example suggestions
-Add example suggestions [here](https://github.com/odin-lang/examples/issues/73).
+Add example suggestions [as issues](https://github.com/odin-lang/examples/issues). Please be as specific as you can about what you want to learn from the example.
 
 ## Contributions
 Contributions via Pull Requests are warmly welcome. Before submitting your Pull Request, make sure of the following:
@@ -34,4 +34,5 @@ Contributions via Pull Requests are warmly welcome. Before submitting your Pull 
 - Add the example to `.github/workflows/check.yml`
 - Your code follows this style guide: https://github.com/odin-lang/examples/wiki/Naming-and-style-convention (exception can be made for direct ports of examples that need to match 1:1 to the source of the port).
 - Note that your code will fall under the licenses listed above. Only for third-party dependencies are other licenses allowed.
+
 
