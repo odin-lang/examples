@@ -60,6 +60,7 @@ jobs:
 
           odin check thread/basics $FLAGS
           odin check thread/sync_mutex $FLAGS
+          odin check thread/pool/basic $FLAGS
 
           odin check math/noise/draw_texture $FLAGS
           odin check math/rand/markov $FLAGS
@@ -67,18 +68,42 @@ jobs:
           odin check raylib/game_of_life $FLAGS
           odin check raylib/log $FLAGS
           odin check raylib/microui $FLAGS
+          odin check raylib/ports/examples_template.odin -file $FLAGS
           odin check raylib/ports/shaders/shaders_mesh_instancing.odin -file $FLAGS
           odin check raylib/ports/shapes/shapes_basic_shapes.odin -file $FLAGS
           odin check raylib/ports/shapes/shapes_bouncing_ball.odin -file $FLAGS
           odin check raylib/ports/shapes/shapes_colors_palette.odin -file $FLAGS
           odin check raylib/ports/shapes/shapes_logo_raylib_anim.odin -file $FLAGS
+          odin check raylib/ports/shapes/shapes_following_eyes.odin -file $FLAGS
+          odin check raylib/ports/shapes/shapes_rectangle_scaling.odin -file $FLAGS
+          odin check raylib/ports/shapes/shapes_collision_area.odin -file $FLAGS
+          odin check raylib/ports/shapes/shapes_logo_raylib.odin -file $FLAGS
           odin check raylib/ports/text/text_codepoints_loading.odin -file $FLAGS
           odin check raylib/ports/textures/textures_gif_player.odin -file $FLAGS
+          odin check raylib/ports/textures/textures_bunnymark.odin -file $FLAGS
+          odin check raylib/ports/textures/textures_npatch_drawing.odin -file $FLAGS
+          odin check raylib/ports/textures/textures_background_scrolling.odin -file $FLAGS
+          odin check raylib/ports/textures/textures_blend_modes.odin -file $FLAGS
           odin check raylib/tetroid $FLAGS
           odin check raylib/box2d $FLAGS
           odin check raylib/ports/core/core_3d_camera_fps.odin -file $FLAGS
           odin check raylib/ports/core/core_basic_window.odin -file $FLAGS
           odin check raylib/ports/models/models_animation_playing.odin -file $FLAGS
+          odin check raylib/ports/core/core_3d_camera_mode.odin -file $FLAGS
+          odin check raylib/ports/core/core_input_mouse_wheel.odin -file $FLAGS
+          odin check raylib/ports/core/core_window_should_close.odin -file $FLAGS
+          odin check raylib/ports/core/core_input_keys.odin -file $FLAGS
+          odin check raylib/ports/core/core_input_mouse.odin -file $FLAGS
+          odin check raylib/ports/core/core_world_screen.odin -file $FLAGS
+          odin check raylib/ports/core/core_3d_camera_free.odin -file $FLAGS
+          odin check raylib/ports/core/core_render_texture.odin -file $FLAGS
+          odin check raylib/ports/core/core_scissor_test.odin -file $FLAGS
+          odin check raylib/ports/core/core_random_values.odin -file $FLAGS
+          odin check raylib/ports/models/models_orthographic_projection.odin -file $FLAGS
+          odin check raylib/ports/models/models_geometric_shapes.odin -file $FLAGS
+          odin check raylib/ports/audio/audio_music_stream.odin -file $FLAGS
+          odin check raylib/ports/audio/audio_sound_loading.odin -file $FLAGS
+          odin check raylib/ports/audio/audio_module_playing.odin -file $FLAGS
 
           odin check directx/d3d11_minimal_sdl2 -target:windows_amd64 $FLAGS
           odin check directx/d3d11_minimal_sdl3 -target:windows_amd64 $FLAGS
