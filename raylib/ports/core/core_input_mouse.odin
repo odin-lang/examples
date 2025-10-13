@@ -29,7 +29,7 @@ main :: proc() {
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [core] example - input mouse")
 
 	ball_position := rl.Vector2 { -100, -100 }
-	ball_color: rl.Color = rl.DARKBLUE
+	ball_color := rl.DARKBLUE
 
 	rl.SetTargetFPS(60)               // Set our game to run at 60 frames-per-second
 	//---------------------------------------------------------------------------------------

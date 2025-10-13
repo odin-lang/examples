@@ -1,4 +1,4 @@
-package raylib_examples
+package main
 
 import rl "vendor:raylib"
 
@@ -10,11 +10,14 @@ main :: proc() {
 	screen_height := i32(450)
 
 	rl.InitWindow(screen_width, screen_height, "raylib [textures] example - gif playing")
+	defer rl.CloseWindow()
 
 	anim_frames: i32
 	im_scarfy_anim := rl.LoadImageAnim("resources/scarfy_run.gif", &anim_frames)
+	defer rl.UnloadImage(im_scarfy_anim)
 
 	tex_scarfy_anim := rl.LoadTextureFromImage(im_scarfy_anim)
+	defer rl.UnloadTexture(tex_scarfy_anim)
 
 	next_frame_data_offset, current_anim_frame, frame_counter: i32
 	frame_delay := i32(MAX_FRAME_DELAY/2)
@@ -65,9 +68,4 @@ main :: proc() {
 			rl.DrawText("(c) Scarfy sprite by Eiden Marsal", screen_width - 200, screen_height - 20, 10, rl.GRAY)
 		}
 	}
-
-	rl.UnloadImage(im_scarfy_anim)
-	rl.UnloadTexture(tex_scarfy_anim)
-
-	rl.CloseWindow()
 }

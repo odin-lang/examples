@@ -42,7 +42,7 @@ main :: proc() {
 
 	rl.InitAudioDevice()                  // Initialize audio device
 
-	colors: [14]rl.Color = {rl.ORANGE, rl.RED, rl.GOLD, rl.LIME, rl.BLUE, rl.VIOLET, rl.BROWN, rl.LIGHTGRAY, rl.PINK,
+	colors := [14]rl.Color {rl.ORANGE, rl.RED, rl.GOLD, rl.LIME, rl.BLUE, rl.VIOLET, rl.BROWN, rl.LIGHTGRAY, rl.PINK,
 						 rl.YELLOW, rl.GREEN, rl.SKYBLUE, rl.PURPLE, rl.BEIGE}
 
 	// Creates some circles for visual effect

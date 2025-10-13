@@ -71,7 +71,7 @@ main :: proc() {
 			rl.EndMode3D()
 
 			rl.DrawRectangle(10, 10, 320, 93, rl.Fade(rl.SKYBLUE, 0.5))
-			rl.DrawRectangleLines( 10, 10, 320, 93, rl.BLUE)
+			rl.DrawRectangleLines(10, 10, 320, 93, rl.BLUE)
 
 			rl.DrawText("Free camera default controls:", 20, 20, 10, rl.BLACK)
 			rl.DrawText("- Mouse Wheel to Zoom in-out", 40, 40, 10, rl.DARKGRAY)

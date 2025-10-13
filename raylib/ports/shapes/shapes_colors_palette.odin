@@ -80,6 +80,7 @@ initialize_colors_rects :: proc "contextless" () {
 
 main :: proc() {
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [shapes] example - colors palette")
+	defer rl.CloseWindow() // Close window and OpenGL context when leaving main.
 
 	color_state: [NUMBER_OF_COLORS]bool // Represents if the mouse is hovering over a rect.
 	mouse_pos: rl.Vector2
@@ -118,6 +119,4 @@ main :: proc() {
 		}
 		rl.EndDrawing()
 	}
-
-	rl.CloseWindow() // Close window and OpenGL context when leaving main.
 }

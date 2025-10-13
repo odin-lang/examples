@@ -61,8 +61,8 @@ main :: proc() {
 					bunny.speed.x = f32(rl.GetRandomValue(-250, 250))/60
 					bunny.speed.y = f32(rl.GetRandomValue(-250, 250))/60
 					bunny.color = {u8(rl.GetRandomValue(50, 240)),
-													   u8(rl.GetRandomValue(80, 240)),
-													   u8(rl.GetRandomValue(100, 240)), 255}
+					               u8(rl.GetRandomValue(80, 240)),
+					               u8(rl.GetRandomValue(100, 240)), 255}
 					
 					append(&bunnies, bunny)
 				}

@@ -39,6 +39,7 @@ text: cstring = "いろはにほへと　ちりぬるを\nわかよたれそ　�
 
 main :: proc() {
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [text] example - codepoints loading")
+	defer rl.CloseWindow()
 
 	// Set our game to run at 60 frames-per-second
 	rl.SetTargetFPS(60)
@@ -51,6 +52,7 @@ main :: proc() {
 	// Load font containing all the provided codepoint glyphs
 	// A texture font atlas is automatically generated
 	font := rl.LoadFontEx("resources/DotGothic16-Regular.ttf", 36, raw_data(deduplicated), i32(len(deduplicated)))
+	defer rl.UnloadFont(font)
 
 	// Free codepoints, atlas has already been generated
 	delete(deduplicated)
@@ -103,10 +105,6 @@ main :: proc() {
 
 			rl.DrawText("Press SPACE to toggle font atlas view!", 10, rl.GetScreenHeight() - 30, 20, rl.GRAY)
 	}
-
-	rl.CloseWindow()
-
-	rl.UnloadFont(font)
 }
 
 // Remove codepoint duplicates if requested

@@ -36,10 +36,11 @@ SCREEN_HEIGHT :: 450
 main :: proc() {
 	rl.SetConfigFlags(rl.ConfigFlags{.MSAA_4X_HINT}) // Try to enable MSAA 4X.
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [shapes] example - bouncing ball")
+	defer rl.CloseWindow() // Close window and OpenGL context when leaving main.
 
 	// Ball position, velocity, radius, and color.
-	ball_pos   := rl.Vector2 {f32(rl.GetScreenWidth() / 2), f32(rl.GetScreenHeight() / 2)}
-	ball_vel   := rl.Vector2 {5,4}
+	ball_pos   := rl.Vector2{f32(rl.GetScreenWidth() / 2), f32(rl.GetScreenHeight() / 2)}
+	ball_vel   := rl.Vector2{5,4}
 	ball_rad   :: 20
 	ball_color :: rl.MAROON
 
@@ -82,6 +83,4 @@ main :: proc() {
 
 		rl.EndDrawing()
 	}
-
-	rl.CloseWindow() // Close window and OpenGL context when leaving main.
 }
