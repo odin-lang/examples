@@ -44,12 +44,13 @@ State :: enum u8 {
 
 main :: proc() {
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [shapes] example - raylib logo animation")
+	defer rl.CloseWindow() // Close window and OpenGL context when leaving main.
 
 	logoPosX: i32 = SCREEN_WIDTH  / 2 - 128
 	logoPosY: i32 = SCREEN_HEIGHT / 2 - 128
 
 	framesCounter := 0
-	lettersCount: i32
+	lettersCount: i32 = 0
 
 	topSideRecWidth:    i32 = 16
 	leftSideRecHeight:  i32 = 16
@@ -151,6 +152,4 @@ main :: proc() {
 		}
 		rl.EndDrawing()
 	}
-
-	rl.CloseWindow() // Close window and OpenGL context when leaving main.
 }
