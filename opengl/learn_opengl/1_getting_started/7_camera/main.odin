@@ -112,7 +112,7 @@ main :: proc() {
 
 	gl.load_up_to(3, 3, glfw.gl_set_proc_address)
 
-	gl.Viewport(0, 0, 800, 600)
+	gl.Viewport(0, 0, SCR_WIDTH, SCR_HEIGHT)
 
 	glfw.SetFramebufferSizeCallback(window, framebuffer_size_callback)
 	glfw.SetCursorPosCallback(window, mouse_callback)
