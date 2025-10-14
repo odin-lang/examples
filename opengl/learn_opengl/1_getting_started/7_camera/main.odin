@@ -1,6 +1,5 @@
 package main
 
-import "base:runtime"
 import "core:math/linalg/glsl"
 import gl "vendor:OpenGL"
 import "vendor:glfw"
