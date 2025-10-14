@@ -20,7 +20,7 @@ main :: proc() {
 	lua.setglobal(state, "Answer")
 
 	// Run code and check if it succeeded
-	if (lua.L_dostring(state, CODE) != 0) {
+	if lua.L_dostring(state, CODE) != 0 {
 		// Get the error string from the top of the stack and print it
 		error := lua.tostring(state, -1)
 		fmt.println(error)
