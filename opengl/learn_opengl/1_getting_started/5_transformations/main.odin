@@ -1,5 +1,6 @@
 package main
 
+import "core:math/linalg/glsl"
 import gl "vendor:OpenGL"
 import "vendor:glfw"
 import "core:fmt"
@@ -14,18 +15,6 @@ processInput :: proc "c" (window: glfw.WindowHandle) {
 	if glfw.GetKey(window, glfw.KEY_ESCAPE) == glfw.PRESS {
 		glfw.SetWindowShouldClose(window, true)
 	}
-}
-
-shader_set_bool :: proc(id: u32, name: cstring, value: bool) {
-	gl.Uniform1i(gl.GetUniformLocation(id, name), i32(value))
-}
-
-shader_set_int :: proc(id: u32, name: cstring, value: i32) {
-	gl.Uniform1i(gl.GetUniformLocation(id, name), value)
-}
-
-shader_set_float :: proc(id: u32, name: cstring, value: f32) {
-	gl.Uniform1f(gl.GetUniformLocation(id, name), value)
 }
 
 SCR_WIDTH :: 800
@@ -52,10 +41,10 @@ main :: proc() {
 	glfw.SetFramebufferSizeCallback(window, framebuffer_size_callback)
 
 	vertices := [?]f32 {
-         0.5,  0.5, 0.0,   1.0, 0.0, 0.0,   1.0, 1.0,
-         0.5, -0.5, 0.0,   0.0, 1.0, 0.0,   1.0, 0.0, 
-        -0.5, -0.5, 0.0,   0.0, 0.0, 1.0,   0.0, 0.0, 
-        -0.5,  0.5, 0.0,   1.0, 1.0, 0.0,   0.0, 1.0, 
+         0.5,  0.5, 0.0,  1.0, 1.0,
+         0.5, -0.5, 0.0,  1.0, 0.0, 
+        -0.5, -0.5, 0.0,  0.0, 0.0, 
+        -0.5,  0.5, 0.0,  0.0, 1.0, 
 	}
 
 	indices := [?]u32 {
@@ -82,14 +71,11 @@ main :: proc() {
 	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, EBO)
 	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, size_of(indices), raw_data(&indices), gl.STATIC_DRAW)
 
-	gl.VertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 8 * size_of(f32), 0)
+	gl.VertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 5 * size_of(f32), 0)
 	gl.EnableVertexAttribArray(0)
 
-	gl.VertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 8 * size_of(f32), 3 * size_of(f32))
+	gl.VertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, 5 * size_of(f32), 3 * size_of(f32))
 	gl.EnableVertexAttribArray(1)
-
-	gl.VertexAttribPointer(2, 2, gl.FLOAT, gl.FALSE, 8 * size_of(f32), 6 * size_of(f32))
-	gl.EnableVertexAttribArray(2)
 
 	texture1, texture2: u32
 	gl.GenTextures(1, &texture1)
@@ -150,7 +136,13 @@ main :: proc() {
 		gl.ActiveTexture(gl.TEXTURE1)
 		gl.BindTexture(gl.TEXTURE_2D, texture2)
 
+		transform: glsl.mat4 = 1
+		transform *= glsl.mat4Translate({0.5, -0.5, 0.0})
+		transform *= glsl.mat4Rotate({0, 0, 1}, f32(glfw.GetTime()))
+
 		gl.UseProgram(shaderProgram)
+		shader_set_mat4(shaderProgram, "transform", transform)
+
 		gl.BindVertexArray(VAO)
 		gl.DrawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, nil)
 

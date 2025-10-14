@@ -15,17 +15,20 @@ processInput :: proc "c" (window: glfw.WindowHandle) {
 	}
 }
 
-shader_set_bool :: proc(shader_id: u32, name: cstring, value: bool) {
-	gl.Uniform1i(gl.GetUniformLocation(shader_id, name), i32(value))
+shader_set_bool :: proc(id: u32, name: cstring, value: bool) {
+	gl.Uniform1i(gl.GetUniformLocation(id, name), i32(value))
 }
 
-shader_set_int :: proc(shader_id: u32, name: cstring, value: i32) {
-	gl.Uniform1i(gl.GetUniformLocation(shader_id, name), value)
+shader_set_int :: proc(id: u32, name: cstring, value: i32) {
+	gl.Uniform1i(gl.GetUniformLocation(id, name), value)
 }
 
-shader_set_float :: proc(shader_id: u32, name: cstring, value: f32) {
-	gl.Uniform1f(gl.GetUniformLocation(shader_id, name), value)
+shader_set_float :: proc(id: u32, name: cstring, value: f32) {
+	gl.Uniform1f(gl.GetUniformLocation(id, name), value)
 }
+
+SCR_WIDTH :: 800
+SCR_HEIGHT :: 600
 
 main :: proc() {
 	glfw.Init()
@@ -33,7 +36,7 @@ main :: proc() {
 	glfw.WindowHint(glfw.CONTEXT_VERSION_MINOR, 3)
 	glfw.WindowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
 
-	window := glfw.CreateWindow(800, 600, "LearnOpenGL", nil, nil)
+	window := glfw.CreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", nil, nil)
 	if window == nil {
 		fmt.println("Failed to create GLFW window")
 		glfw.Terminate()
@@ -54,7 +57,10 @@ main :: proc() {
 	}
 
 	// The shader loading they create can be replaced with just this
-	shaderProgram, _ := gl.load_shaders_file("./res/vertex.vs", "./res/fragment.fs")
+	shaderProgram, loaded_ok := gl.load_shaders_file("./res/vertex.vs", "./res/fragment.fs")
+	if !loaded_ok {
+		os.exit(-1)
+	}
 
 	VBO, VAO: u32
 	gl.GenVertexArrays(1, &VAO)

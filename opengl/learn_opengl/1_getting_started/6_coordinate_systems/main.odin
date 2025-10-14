@@ -1,5 +1,6 @@
 package main
 
+import "core:math/linalg/glsl"
 import gl "vendor:OpenGL"
 import "vendor:glfw"
 import "core:fmt"
@@ -14,18 +15,6 @@ processInput :: proc "c" (window: glfw.WindowHandle) {
 	if glfw.GetKey(window, glfw.KEY_ESCAPE) == glfw.PRESS {
 		glfw.SetWindowShouldClose(window, true)
 	}
-}
-
-shader_set_bool :: proc(id: u32, name: cstring, value: bool) {
-	gl.Uniform1i(gl.GetUniformLocation(id, name), i32(value))
-}
-
-shader_set_int :: proc(id: u32, name: cstring, value: i32) {
-	gl.Uniform1i(gl.GetUniformLocation(id, name), value)
-}
-
-shader_set_float :: proc(id: u32, name: cstring, value: f32) {
-	gl.Uniform1f(gl.GetUniformLocation(id, name), value)
 }
 
 SCR_WIDTH :: 800
@@ -51,16 +40,63 @@ main :: proc() {
 
 	glfw.SetFramebufferSizeCallback(window, framebuffer_size_callback)
 
+	gl.Enable(gl.DEPTH_TEST)
+
 	vertices := [?]f32 {
-         0.5,  0.5, 0.0,   1.0, 0.0, 0.0,   1.0, 1.0,
-         0.5, -0.5, 0.0,   0.0, 1.0, 0.0,   1.0, 0.0, 
-        -0.5, -0.5, 0.0,   0.0, 0.0, 1.0,   0.0, 0.0, 
-        -0.5,  0.5, 0.0,   1.0, 1.0, 0.0,   0.0, 1.0, 
+        -0.5, -0.5, -0.5,  0.0, 0.0,
+         0.5, -0.5, -0.5,  1.0, 0.0,
+         0.5,  0.5, -0.5,  1.0, 1.0,
+         0.5,  0.5, -0.5,  1.0, 1.0,
+        -0.5,  0.5, -0.5,  0.0, 1.0,
+        -0.5, -0.5, -0.5,  0.0, 0.0,
+
+        -0.5, -0.5,  0.5,  0.0, 0.0,
+         0.5, -0.5,  0.5,  1.0, 0.0,
+         0.5,  0.5,  0.5,  1.0, 1.0,
+         0.5,  0.5,  0.5,  1.0, 1.0,
+        -0.5,  0.5,  0.5,  0.0, 1.0,
+        -0.5, -0.5,  0.5,  0.0, 0.0,
+
+        -0.5,  0.5,  0.5,  1.0, 0.0,
+        -0.5,  0.5, -0.5,  1.0, 1.0,
+        -0.5, -0.5, -0.5,  0.0, 1.0,
+        -0.5, -0.5, -0.5,  0.0, 1.0,
+        -0.5, -0.5,  0.5,  0.0, 0.0,
+        -0.5,  0.5,  0.5,  1.0, 0.0,
+
+         0.5,  0.5,  0.5,  1.0, 0.0,
+         0.5,  0.5, -0.5,  1.0, 1.0,
+         0.5, -0.5, -0.5,  0.0, 1.0,
+         0.5, -0.5, -0.5,  0.0, 1.0,
+         0.5, -0.5,  0.5,  0.0, 0.0,
+         0.5,  0.5,  0.5,  1.0, 0.0,
+
+        -0.5, -0.5, -0.5,  0.0, 1.0,
+         0.5, -0.5, -0.5,  1.0, 1.0,
+         0.5, -0.5,  0.5,  1.0, 0.0,
+         0.5, -0.5,  0.5,  1.0, 0.0,
+        -0.5, -0.5,  0.5,  0.0, 0.0,
+        -0.5, -0.5, -0.5,  0.0, 1.0,
+
+        -0.5,  0.5, -0.5,  0.0, 1.0,
+         0.5,  0.5, -0.5,  1.0, 1.0,
+         0.5,  0.5,  0.5,  1.0, 0.0,
+         0.5,  0.5,  0.5,  1.0, 0.0,
+        -0.5,  0.5,  0.5,  0.0, 0.0,
+        -0.5,  0.5, -0.5,  0.0, 1.0,
 	}
 
-	indices := [?]u32 {
-		0, 1, 3,
-		1, 2, 3,
+	cubePositions := [?]glsl.vec3{
+		{0.0, 0.0, 0.0},
+		{2.0, 5.0, -15.0},
+		{-1.5, -2.2, -2.5},
+		{-3.8, -2.0, -12.3},
+		{2.4, -0.4, -3.5},
+		{-1.7, 3.0, -7.5},
+		{1.3, -2.0, -2.5},
+		{1.5, 2.0, -2.5},
+		{1.5, 0.2, -1.5},
+		{-1.3, 1.0, -1.5},
 	}
 
 	// The shader loading they create can be replaced with just this
@@ -69,27 +105,20 @@ main :: proc() {
 		os.exit(-1)
 	}
 
-	VBO, VAO, EBO: u32
+	VBO, VAO: u32
 	gl.GenVertexArrays(1, &VAO)
 	gl.GenBuffers(1, &VBO)
-	gl.GenBuffers(1, &EBO)
 
 	gl.BindVertexArray(VAO)
 
 	gl.BindBuffer(gl.ARRAY_BUFFER, VBO)
 	gl.BufferData(gl.ARRAY_BUFFER, size_of(vertices), raw_data(&vertices), gl.STATIC_DRAW)
 
-	gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, EBO)
-	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, size_of(indices), raw_data(&indices), gl.STATIC_DRAW)
-
-	gl.VertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 8 * size_of(f32), 0)
+	gl.VertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 5 * size_of(f32), 0)
 	gl.EnableVertexAttribArray(0)
 
-	gl.VertexAttribPointer(1, 3, gl.FLOAT, gl.FALSE, 8 * size_of(f32), 3 * size_of(f32))
+	gl.VertexAttribPointer(1, 2, gl.FLOAT, gl.FALSE, 5 * size_of(f32), 3 * size_of(f32))
 	gl.EnableVertexAttribArray(1)
-
-	gl.VertexAttribPointer(2, 2, gl.FLOAT, gl.FALSE, 8 * size_of(f32), 6 * size_of(f32))
-	gl.EnableVertexAttribArray(2)
 
 	texture1, texture2: u32
 	gl.GenTextures(1, &texture1)
@@ -143,7 +172,7 @@ main :: proc() {
 		processInput(window)
 
 		gl.ClearColor(0.2, 0.3, 0.3, 1.0)
-		gl.Clear(gl.COLOR_BUFFER_BIT)
+		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
 		gl.ActiveTexture(gl.TEXTURE0)
 		gl.BindTexture(gl.TEXTURE_2D, texture1)
@@ -151,8 +180,26 @@ main :: proc() {
 		gl.BindTexture(gl.TEXTURE_2D, texture2)
 
 		gl.UseProgram(shaderProgram)
+
+		view: glsl.mat4 = 1
+		view *= glsl.mat4Translate({0.0, 0.0, -3.0})
+
+		projection: glsl.mat4 = 1
+		projection *= glsl.mat4Perspective(glsl.radians_f32(45), f32(f32(SCR_WIDTH) / f32(SCR_HEIGHT)), 0.1, 100)
+
+		shader_set_mat4(shaderProgram, "projection", projection)
+		shader_set_mat4(shaderProgram, "view", view)
+
 		gl.BindVertexArray(VAO)
-		gl.DrawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, nil)
+		for position, i in cubePositions {
+			model: glsl.mat4 = 1
+			model *= glsl.mat4Translate(position)
+			angle := 20.0 * f32(i)
+			model *= glsl.mat4Rotate({1.0, 0.3, 0.5}, glsl.radians(angle))
+			shader_set_mat4(shaderProgram, "model", model)
+
+			gl.DrawArrays(gl.TRIANGLES, 0, 36)
+		}
 
 		glfw.SwapBuffers(window)
 		glfw.PollEvents()
@@ -160,7 +207,6 @@ main :: proc() {
 
 	gl.DeleteVertexArrays(1, &VAO)
 	gl.DeleteBuffers(1, &VBO)
-	gl.DeleteBuffers(1, &EBO)
 	gl.DeleteProgram(shaderProgram)
 
 	glfw.Terminate()

@@ -33,13 +33,16 @@ void main()
 	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
 }`
 
+SCR_WIDTH :: 800
+SCR_HEIGHT :: 600
+
 main :: proc() {
 	glfw.Init()
 	glfw.WindowHint(glfw.CONTEXT_VERSION_MAJOR, 3)
 	glfw.WindowHint(glfw.CONTEXT_VERSION_MINOR, 3)
 	glfw.WindowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
 
-	window := glfw.CreateWindow(800, 600, "LearnOpenGL", nil, nil)
+	window := glfw.CreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", nil, nil)
 	if window == nil {
 		fmt.println("Failed to create GLFW window")
 		glfw.Terminate()
@@ -136,6 +139,7 @@ main :: proc() {
 
 	gl.DeleteVertexArrays(1, &VAO)
 	gl.DeleteBuffers(1, &VBO)
+	gl.DeleteBuffers(1, &EBO)
 	gl.DeleteProgram(shaderProgram)
 
 	glfw.Terminate()
