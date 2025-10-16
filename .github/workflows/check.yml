@@ -113,6 +113,14 @@ jobs:
 
           odin check opengl/minimal_sdl2 $FLAGS
 
+          odin check opengl/learn_opengl/1_getting_started/1_hello_window $FLAGS
+          odin check opengl/learn_opengl/1_getting_started/2_hello_triangle $FLAGS
+          odin check opengl/learn_opengl/1_getting_started/3_shaders $FLAGS
+          odin check opengl/learn_opengl/1_getting_started/4_textures $FLAGS
+          odin check opengl/learn_opengl/1_getting_started/5_transformations $FLAGS
+          odin check opengl/learn_opengl/1_getting_started/6_coordinate_systems $FLAGS
+          odin check opengl/learn_opengl/1_getting_started/7_camera $FLAGS
+
           odin check vulkan/triangle_glfw $FLAGS
 
           odin check metal/minimal_sdl2 $FLAGS
