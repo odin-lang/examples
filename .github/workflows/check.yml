@@ -62,6 +62,9 @@ jobs:
           odin check thread/sync_mutex $FLAGS
           odin check thread/pool/basic $FLAGS
 
+          odin check lua/global_variables $FLAGS
+          odin check lua/hellope_lua $FLAGS
+
           odin check math/noise/draw_texture $FLAGS
           odin check math/rand/markov $FLAGS
 
