@@ -168,3 +168,4 @@ jobs:
           odin check net/udp_echo_server/server $FLAGS
 
           odin check miniaudio/simple_playback_sine.odin -file $FLAGS
+          odin check miniaudio/playback_scale.odin -file $FLAGS
