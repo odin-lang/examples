@@ -29,6 +29,9 @@ jobs:
           echo "$(pwd)" >> "$GITHUB_PATH"
           ./odin report
 
+      - name: Build miniaudio
+        run: make -C "/Users/runner/work/odin-examples/odin-examples/Odin/vendor/miniaudio/src"
+        
       - name: Check everything
         run: |
           FLAGS="-vet -strict-style -vet-tabs -disallow-do -warnings-as-errors"
