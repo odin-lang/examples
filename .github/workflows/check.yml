@@ -30,7 +30,7 @@ jobs:
           ./odin report
 
       - name: Build miniaudio
-        run: make -C "/Users/runner/work/odin-examples/odin-examples/Odin/vendor/miniaudio/src"
+        run: make -C "./Odin/vendor/miniaudio/src"
         
       - name: Check everything
         run: |
