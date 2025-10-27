@@ -23,6 +23,8 @@ add :: proc "c" (state: ^lua.State) -> i32 {
 	// Since the integer type that the Lua library uses is a distinct copy of an i32 (because it is a C library), basic math operations are supported by default
 	result := a + b
 
+	// Make room for the integer we're about to push onto the stack
+	lua.checkstack(state, 1)
 	// Push the result onto the stack
 	lua.pushinteger(state, result)
 
