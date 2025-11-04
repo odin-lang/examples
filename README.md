@@ -18,11 +18,11 @@ Clone this repository. Most examples can be run by navigating into the folder an
 Some examples have a `README` with additional information and instructions.
 
 ## License
-The contents of this repository is available under two licenses. Choose the one that you prefer:
+The contents of this repository are available under two licenses. Choose the one that you prefer:
 
 - [Public Domain](https://unlicense.org)
 or
-- [Odin's BSD-3 license](https://github.com/odin-lang/Odin/blob/master/LICENSE)
+- [Odin's zlib  license](https://github.com/odin-lang/Odin/blob/master/LICENSE)
 
 Assets and third-party libraries are provided under their own license. If in doubt, check the `LICENSE*` and `COPYING*` file(s) in a particular directory for clarification.
 
