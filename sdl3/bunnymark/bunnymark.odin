@@ -1,6 +1,5 @@
 package bunnymark
 
-import "core:log"
 import "core:mem"
 import "core:os"
 import "core:thread"
@@ -84,14 +83,14 @@ SpriteAoS  :: struct {
 // by the power of #soa, by Odin.
 SpriteSoA  :: struct #align(16) {
 	x , y : f32,
-	vx, vy: f32
+	vx, vy: f32,
 }
 
 // Used to send slices out to threads in the thread pool, so that they can loop of 100,000 entities in parallel.
 ThreadTask :: struct {
 	dt          :      f32,
 	sprites_aos :      []SpriteAoS,
-	sprites_soa : #soa []SpriteSoA
+	sprites_soa : #soa []SpriteSoA,
 }
 // Reusable resources, returned by populate bunnies, so we don't keep re instanciating them.
 Buffers    :: struct {
@@ -136,7 +135,7 @@ setup_pipeline :: proc() {
 			num_samplers         = 0,
 			num_storage_buffers  = 1,    // for SSBO
 			num_storage_textures = 0,
-			props                = 0
+			props                = 0,
 		},
 	)
 	frag_shader := sdl.CreateGPUShader(
@@ -151,7 +150,7 @@ setup_pipeline :: proc() {
 			num_samplers         = 1,
 			num_storage_buffers  = 0,
 			num_storage_textures = 0,
-			props                = 0
+			props                = 0,
 		},
 	)
 
@@ -187,10 +186,10 @@ setup_pipeline :: proc() {
 						src_alpha_blendfactor   = sdl.GPUBlendFactor.ONE,
 						dst_color_blendfactor   = sdl.GPUBlendFactor.ONE_MINUS_SRC_ALPHA,
 						dst_alpha_blendfactor   = sdl.GPUBlendFactor.ONE_MINUS_SRC_ALPHA,
-					}
+					},
 				}),
 				has_depth_stencil_target = false,
-				depth_stencil_format     = .INVALID                // ✅ no depth buffer
+				depth_stencil_format     = .INVALID,               // ✅ no depth buffer
 			},
 		},
 	)
@@ -229,7 +228,7 @@ load_bunny_texture :: proc() -> (texture: ^sdl.GPUTexture) {
 
 	tex_transfer_buf := sdl.CreateGPUTransferBuffer(gpu, {
 		usage = .UPLOAD,
-		size  = u32(pixels_byte_size)
+		size  = u32(pixels_byte_size),
 	})
 
 	tex_transfer_mem := sdl.MapGPUTransferBuffer(gpu, tex_transfer_buf, false)
@@ -242,7 +241,7 @@ load_bunny_texture :: proc() -> (texture: ^sdl.GPUTexture) {
 	sdl.UploadToGPUTexture(copy_pass,
 		{ transfer_buffer = tex_transfer_buf },
 		{ texture = texture, w = u32(surface.w), h = u32(surface.h), d = 1 },
-		false
+		false,
 	)
 
 	sdl.EndGPUCopyPass(copy_pass)
@@ -258,23 +257,27 @@ populate_bunnies :: proc(sprites_soa: ^#soa[]SpriteSoA, sprites_aos: ^[]SpriteAo
 		x := rand.float32_range(0, f32(SCREEN_SIZE.x))
 		y := rand.float32_range(0, f32(SCREEN_SIZE.y))
 
-		sprites_aos[i].position_and_color = 0 | u32(x) << 21 | u32(y) << 11 | u32(sdl.rand(5)) << 7
+		sprites_aos[i] = {
+			position_and_color = 0 | u32(x) << 21 | u32(y) << 11 | u32(sdl.rand(5)) << 7,
+		}
 
-		sprites_soa.x [i] = x
-		sprites_soa.y [i] = y
-		sprites_soa.vx[i] = rand.float32_range(-18, 20) + 2
-		sprites_soa.vy[i] = rand.float32_range(-16, 20) + 4
+		sprites_soa[i] = {
+			x  = x,
+			y  = y,
+			vx = rand.float32_range(-18, 20) + 2,
+			vy = rand.float32_range(-16, 20) + 4,
+		}
 	}
 
 	sprites_instances_byte_size := BUNNIES * size_of(SpriteAoS)
 
 	sprites_instances_buffer := sdl.CreateGPUBuffer(gpu, {
 		usage = {.GRAPHICS_STORAGE_READ},
-		size  = u32(sprites_instances_byte_size)
+		size  = u32(sprites_instances_byte_size),
 	})
 	transfer_buf := sdl.CreateGPUTransferBuffer(gpu, {
 		usage = .UPLOAD,
-		size  = u32(sprites_instances_byte_size)
+		size  = u32(sprites_instances_byte_size),
 	})
 	transfer_mem := sdl.MapGPUTransferBuffer(gpu, transfer_buf, true)
 	mem.copy(transfer_mem, raw_data(sprites_aos[:]), sprites_instances_byte_size)
@@ -285,7 +288,7 @@ populate_bunnies :: proc(sprites_soa: ^#soa[]SpriteSoA, sprites_aos: ^[]SpriteAo
 		{ transfer_buffer = transfer_buf },
 		{ buffer          = sprites_instances_buffer,
 		  size            = u32(sprites_instances_byte_size) },
-		true
+		true,
 	)
 	sdl.EndGPUCopyPass(copy_pass)
 	ok := sdl.SubmitGPUCommandBuffer(copy_cmd_buf); assert(ok)
@@ -307,7 +310,7 @@ simulate :: proc(t: thread.Task) {
 	for i := 0; i < len(data.sprites_aos); i += 100 {
 		#unroll for j in 0..<100 {
 			idx := i + j
-			if idx >= len(data.sprites_aos) do break
+			if idx >= len(data.sprites_aos) { break }
 
 			packed := data.sprites_aos[idx].position_and_color
 
@@ -316,26 +319,26 @@ simulate :: proc(t: thread.Task) {
 			s := i32(packed >>  7 & 0xF  )
 
 			// Apply velocity
-		    x += i32(vxs[idx])
-		    y += i32(vys[idx])
+			x += i32(vxs[idx])
+			y += i32(vys[idx])
 
 		    // Bounce X
-		    if x < 0 {
-			    x        = -x
-			    vxs[idx] = -vxs[idx]
+			if x < 0 {
+				x        = -x
+				vxs[idx] = -vxs[idx]
 			} else if x > SCREEN_SIZE.x {
-			    x        = 2 * SCREEN_SIZE.x - x
-			    vxs[idx] = -vxs[idx]
+				x        = 2 * SCREEN_SIZE.x - x
+				vxs[idx] = -vxs[idx]
 			}
 
 		    // Bounce Y
-		    if y < 0 {
-		        y        = -y
-		        vys[idx] = -vys[idx]
-		    } else if y > SCREEN_SIZE.y {
-		        y        = 2 * SCREEN_SIZE.y - y
-		        vys[idx] = -vys[idx]
-		    }
+			if y < 0 {
+				y        = -y
+				vys[idx] = -vys[idx]
+			} else if y > SCREEN_SIZE.y {
+				y        = 2 * SCREEN_SIZE.y - y
+				vys[idx] = -vys[idx]
+			}
 
 			packed = u32((i32(x) << 21) | (i32(y) << 11) | (i32(s) << 8))
 
@@ -360,22 +363,22 @@ simulate_soa :: proc(t: thread.Task) {
 		xs[i] += vxs[i] * dt
 
 		if xs[i] < 0 {
-		    xs[i]  = -xs[i]
-		    vxs[i] = -vxs[i]
+			xs[i]  = -xs[i]
+			vxs[i] = -vxs[i]
 		} else if xs[i] > f32(SCREEN_SIZE.x) {
-		    xs[i]  = 2 * f32(SCREEN_SIZE.x) - xs[i]
-		    vxs[i] = -vxs[i]
+			xs[i]  = 2 * f32(SCREEN_SIZE.x) - xs[i]
+			vxs[i] = -vxs[i]
 		}
 	}
 	for i in 0..<n {
-		 ys[i] += vys[i] * dt
+		ys[i] += vys[i] * dt
 
 		if ys[i] < 0 {
-		    ys[i]  = -ys[i]
-		    vys[i] = -vys[i]
+			ys[i]  = -ys[i]
+			vys[i] = -vys[i]
 		} else if ys[i] > f32(SCREEN_SIZE.y) {
-		    ys[i]  = 2 * f32(SCREEN_SIZE.y) - ys[i]
-		    vys[i] = -vys[i]
+			ys[i]  = 2 * f32(SCREEN_SIZE.y) - ys[i]
+			vys[i] = -vys[i]
 		}
 	}
 	for i in 0..<n {
@@ -395,38 +398,37 @@ simulate_soa_simd :: proc(t: thread.Task) {
 
 	n    := len(data.sprites_soa)
 
-    screen_x := Vecf32(SCREEN_SIZE.x)
-    screen_y := Vecf32(SCREEN_SIZE.y) 
-    zero     := Vecf32(0.0)
-    two      := Vecf32(2.0)
+	screen_x := Vecf32(SCREEN_SIZE.x)
+	screen_y := Vecf32(SCREEN_SIZE.y) 
+	zero     := Vecf32(0.0)
 
-    index    := iota(Vecf32)
-    mask     := simd.lanes_lt(index, Vecf32(n))
+	index    := iota(Vecf32)
+	mask     := simd.lanes_lt(index, Vecf32(n))
 
 	// X Axis
 	i := 0
-	for ; i+4 <= n; i += 4 {
+	for ;i+4 <= n; i += 4 {
 		// load lanes from slices
-        x  := simd.from_slice(Vecf32,  xs[i : i + W])
-        vx := simd.from_slice(Vecf32, vxs[i : i + W])
+		x  := simd.from_slice(Vecf32,  xs[i : i + W])
+		vx := simd.from_slice(Vecf32, vxs[i : i + W])
 
-        x = simd.add(x, vx)
+		x = simd.add(x, vx)
 
         // compute bounce masks (per-lane)
-        mask_lt  := simd.lanes_lt(x, zero)                  // x < 0
-        vx        = simd.select(mask_lt, +simd.abs(vx), vx)
+		mask_lt  := simd.lanes_lt(x, zero)                  // x < 0
+		vx        = simd.select(mask_lt, +simd.abs(vx), vx)
 
-        mask_gt  := simd.lanes_gt(x, screen_x)              // x > screen_x
-        vx        = simd.select(mask_gt, -simd.abs(vx), vx)
+		mask_gt  := simd.lanes_gt(x, screen_x)              // x > screen_x
+		vx        = simd.select(mask_gt, -simd.abs(vx), vx)
 
-        mask_any := mask_lt | mask_gt                       // lanes that bounced
+		mask_any := mask_lt | mask_gt                       // lanes that bounced
 
-        simd.masked_store(&xs [i], x, mask)
-        simd.masked_store(&vxs[i], vx, mask_any)
+		simd.masked_store(&xs [i], x, mask)
+		simd.masked_store(&vxs[i], vx, mask_any)
 	}
 
 	// Tail for X
-	for ; i < n; i += 1 {
+	for ;i < n; i += 1 {
 		xs[i] += vxs[i]
 
 		if xs[i] < 0 {
@@ -440,27 +442,27 @@ simulate_soa_simd :: proc(t: thread.Task) {
 
 	// Y Axis
 	i = 0
-	for ; i+4 <= n; i += 4 {
+	for ;i+4 <= n; i += 4 {
 		y  := simd.from_slice(Vecf32,  ys[i : i + W])
-        vy := simd.from_slice(Vecf32, vys[i : i + W])
+		vy := simd.from_slice(Vecf32, vys[i : i + W])
 
-        y = simd.add(y, vy)
+		y = simd.add(y, vy)
 
         // compute bounce masks (per-lane)
-        mask_lt  := simd.lanes_lt(y, zero)                  // y < 0
-        vy        = simd.select(mask_lt, +simd.abs(vy), vy)
+		mask_lt  := simd.lanes_lt(y, zero)                  // y < 0
+		vy        = simd.select(mask_lt, +simd.abs(vy), vy)
 
-        mask_gt  := simd.lanes_gt(y, screen_y)              // y > screen_y
-        vy        = simd.select(mask_gt, -simd.abs(vy), vy)
+		mask_gt  := simd.lanes_gt(y, screen_y)              // y > screen_y
+		vy        = simd.select(mask_gt, -simd.abs(vy), vy)
 
-        mask_any := mask_lt | mask_gt                       // lanes that bounced
+		mask_any := mask_lt | mask_gt                       // lanes that bounced
 
-        simd.masked_store(&ys [i], y, mask)
-        simd.masked_store(&vys[i], vy, mask_any)
+		simd.masked_store(&ys [i], y, mask)
+		simd.masked_store(&vys[i], vy, mask_any)
 	}
 
 	// Tail for Y
-	for ; i < n; i += 1 {
+	for ;i < n; i += 1 {
 		ys[i] += vys[i]
 
 		if ys[i] < 0 {
@@ -473,8 +475,8 @@ simulate_soa_simd :: proc(t: thread.Task) {
 	}
 
 	// Pack-Em-up
-	for i in 0..<n {
-		data.sprites_aos[i].position_and_color =
+	for p in 0..<n {
+		data.sprites_aos[p].position_and_color =
 			(u32(xs[i]) << 21) | (u32(ys[i]) << 11) | (u32(3) << 8)
 	}
 }
@@ -528,7 +530,7 @@ main :: proc() {
 	prev_counter              := sdl.GetPerformanceCounter()
 	delta_ticks, curr_counter : u64
 	updates, fixed_updates    : int
-	accumulator, new_time, last_time, dt, alpha: f64 = 0, 0, 0, 0, 0
+	accumulator, dt, alpha    : f64 = 0, 0, 0
 
 	frame_count               : u16
 	time_accumulator          : f64
@@ -548,7 +550,7 @@ main :: proc() {
 			case .QUIT:
 				break main_loop
 			case .KEY_DOWN:
-				if ev.key.scancode == .ESCAPE do break main_loop
+				if ev.key.scancode == .ESCAPE { break main_loop }
 			}
 		}
 
@@ -563,7 +565,7 @@ main :: proc() {
 			for i in 0..<thread_count {
 				start_id = i * chunks
 				end_id   = math.min(start_id + chunks, BUNNIES)
-				if start_id >= BUNNIES do break
+				if start_id >= BUNNIES { break }
 
 				data              = new(ThreadTask)
 				data.dt           = f32(FIXED_DELTA_TIME) * 20
@@ -575,7 +577,7 @@ main :: proc() {
 				// thread.pool_add_task(&pool, context.allocator, simulate_soa_simd, data, i)
 			}
 
-		    thread.pool_finish(&pool)
+			thread.pool_finish(&pool)
 
 		    // This freezes the screen while trying to quit, even though it runs a bit faster.
 		    // Adding boundary collision slows it down to the same speed as Multi Threaded one.
@@ -606,7 +608,7 @@ main :: proc() {
 				{ transfer_buffer = buffers.transfer_buf },
 				{ buffer          = buffers.sprites_instances_buffer,
 				  size            = u32(buffers.sprites_instances_byte_size) },
-				true
+				true,
 			)
 			sdl.EndGPUCopyPass(copy_pass)
 			ok = sdl.SubmitGPUCommandBuffer(copy_cmd_buf); assert(ok)
@@ -666,20 +668,20 @@ main :: proc() {
 }
 
 premultiply_surface_alpha_bitwise :: proc(surf: ^sdl.Surface) {
-    pixels := cast(^u32) surf.pixels; assert(surf.format == .ABGR8888)
+	pixels := cast(^u32) surf.pixels; assert(surf.format == .ABGR8888)
 
-    for i in 0..< surf.w * surf.h {
-    	p := mem.ptr_offset(pixels, i)
+	for i in 0..< surf.w * surf.h {
+		p := mem.ptr_offset(pixels, i)
 
-    	a := p^ >> 24 & 0xFF
-    	b := p^ >> 16 & 0xFF
-    	g := p^ >> 8  & 0xFF
-    	r := p^       & 0xFF
+		a := p^ >> 24 & 0xFF
+		b := p^ >> 16 & 0xFF
+		g := p^ >> 8  & 0xFF
+		r := p^       & 0xFF
 
-    	unchanged_alpha := a
-        a /= 255.0
+		unchanged_alpha := a
+		a /= 255.0
 
-        p^ = unchanged_alpha << 24 | b * a << 16 | g * a << 8 | r * a
+		p^ = unchanged_alpha << 24 | b * a << 16 | g * a << 8 | r * a
     }
 }
 
