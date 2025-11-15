@@ -5,6 +5,7 @@ import "core:os"
 import "core:thread"
 import "core:simd"
 import "core:fmt"
+import "core:sync"
 import "core:math"
 import "core:math/rand"
 
@@ -41,7 +42,7 @@ SoA                 ✅
 SIMD                🚧
 */
 
-BUNNIES          :: 6_00_000
+BUNNIES          :: 6_50_000
 
 // If you want to change the resolution, you must update the same
 // in the shader.hlsl.vert.
@@ -91,6 +92,7 @@ ThreadTask :: struct {
 	dt          :      f32,
 	sprites_aos :      []SpriteAoS,
 	sprites_soa : #soa []SpriteSoA,
+	wg          :       ^sync.Wait_Group,
 }
 // Reusable resources, returned by populate bunnies, so we don't keep re instanciating them.
 Buffers    :: struct {
@@ -257,7 +259,7 @@ populate_bunnies :: proc(sprites_soa: ^#soa[]SpriteSoA, sprites_aos: ^[]SpriteAo
 		x := rand.float32_range(0, f32(SCREEN_SIZE.x))
 		y := rand.float32_range(0, f32(SCREEN_SIZE.y))
 
-		sprites_aos[i] = {
+		sprites_aos[i]    = {
 			position_and_color = 0 | u32(x) << 21 | u32(y) << 11 | u32(sdl.rand(5)) << 7,
 		}
 
@@ -345,6 +347,8 @@ simulate :: proc(t: thread.Task) {
 			data.sprites_aos[idx].position_and_color = packed
 		}
 	}
+
+	sync.wait_group_done(data.wg)
 }
 
 simulate_soa :: proc(t: thread.Task) {
@@ -386,6 +390,8 @@ simulate_soa :: proc(t: thread.Task) {
 		s      := i32(packed >>  7 & 0xF)
 		data.sprites_aos[i].position_and_color = (u32(xs[i]) << 21) | (u32(ys[i]) << 11) | (u32(s) << 7)
 	}
+
+	sync.wait_group_done(data.wg)
 }
 
 simulate_soa_simd :: proc(t: thread.Task) {
@@ -479,6 +485,8 @@ simulate_soa_simd :: proc(t: thread.Task) {
 		data.sprites_aos[p].position_and_color =
 			(u32(xs[i]) << 21) | (u32(ys[i]) << 11) | (u32(3) << 8)
 	}
+
+	sync.wait_group_done(data.wg)
 }
 
 main :: proc() {
@@ -511,6 +519,7 @@ main :: proc() {
 	chunks       := int(math.ceil(f64(BUNNIES) / f64(thread_count)))
 	data         : ^ThreadTask
 
+	wg  : sync.Wait_Group
 	pool: thread.Pool
 	thread.pool_init(&pool, context.allocator, thread_count)
 	thread.pool_start(&pool)
@@ -548,9 +557,13 @@ main :: proc() {
 		for sdl.PollEvent(&ev) {
 			#partial switch ev.type {
 			case .QUIT:
+				thread.pool_finish(&pool)
 				break main_loop
 			case .KEY_DOWN:
-				if ev.key.scancode == .ESCAPE { break main_loop }
+				if ev.key.scancode == .ESCAPE {
+					thread.pool_finish(&pool)
+					break main_loop
+				}
 			}
 		}
 
@@ -567,17 +580,21 @@ main :: proc() {
 				end_id   = math.min(start_id + chunks, BUNNIES)
 				if start_id >= BUNNIES { break }
 
+				sync.wait_group_add(&wg, 1)
+
 				data              = new(ThreadTask)
 				data.dt           = f32(FIXED_DELTA_TIME) * 20
 				data.sprites_soa  = sprites_soa[start_id:end_id]
 				data.sprites_aos  = sprites_aos[start_id:end_id]
+				data.wg           = &wg
 
 				// thread.pool_add_task(&pool, context.allocator, simulate,          data, i)
 				thread.pool_add_task(&pool, context.allocator, simulate_soa,      data, i)
 				// thread.pool_add_task(&pool, context.allocator, simulate_soa_simd, data, i)
 			}
 
-			thread.pool_finish(&pool)
+			// thread.pool_finish(&pool)
+			sync.wait_group_wait(&wg)
 
 		    // This freezes the screen while trying to quit, even though it runs a bit faster.
 		    // Adding boundary collision slows it down to the same speed as Multi Threaded one.
