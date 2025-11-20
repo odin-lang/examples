@@ -6,7 +6,7 @@ import "core:fmt"
 // The code the Lua VM will run
 CODE :: "print(add(2, 2))"
 
-// Since Lua is a C library, it expects procedures with the "c" calling convention
+// Because Lua is a C library, it expects procedures with the "c" calling convention
 // Odin takes advantage of an overall implied context that is implicitly passed with each procedure when it is called
 // As such, calling procedures with the Odin calling convention (the regular one) inside of a "c" procedure will require you to include "base:runtime" and "context = runtime.default_context()" at the beginning of the "c" procedure
 // There is a compiler check for this, and a note, so this issue is very easy to catch
@@ -23,8 +23,6 @@ add :: proc "c" (state: ^lua.State) -> i32 {
 	// Since the integer type that the Lua library uses is a distinct copy of an i32 (because it is a C library), basic math operations are supported by default
 	result := a + b
 
-	// Make room for the integer we're about to push onto the stack
-	lua.checkstack(state, 1)
 	// Push the result onto the stack
 	lua.pushinteger(state, result)
 
@@ -47,7 +45,7 @@ main :: proc() {
 	// This is a macro to push a CFunction to the stack, and then popping and using it to set a global value in the Lua VM's global table
 	lua.register(state, "add", add)
 
-	// Here is the extended version, for reference:
+	// The extended version, for reference:
 	/*
 	lua.pushcfunction(state, add)
 	lua.setglobal(state, "add")
