@@ -72,6 +72,7 @@ jobs:
           odin check raylib/game_of_life $FLAGS
           odin check raylib/log $FLAGS
           odin check raylib/microui $FLAGS
+          odin check raylib/clock $FLAGS
           odin check raylib/ports/examples_template.odin -file $FLAGS
           odin check raylib/ports/shaders/shaders_mesh_instancing.odin -file $FLAGS
           odin check raylib/ports/shapes/shapes_basic_shapes.odin -file $FLAGS
