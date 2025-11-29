@@ -16,7 +16,7 @@ Time_Period :: enum {
 }
 
 Error :: enum {
-	LocalTimeFailed,
+	LocalTimeFailed = 1,
 	TimeToDateTimeFailed,
 	DateTimeToTimezoneFailed,
 	DateTimeToTimeFailed,
@@ -125,7 +125,9 @@ main :: proc() {
 		default_font := rl.GetFontDefault()
 		text_size := rl.MeasureTextEx(default_font, c_str, 30, f32(default_font.glyphPadding) + 1)
 
-		rl.DrawTextEx(default_font, c_str, {screen_center.x - (text_size.x / 2), f32(rl.GetScreenHeight()) - (30 * 1.25)}, 30 * 1.0001, f32(default_font.glyphPadding) + 1, rl.DARKGRAY)
+		text_position := rl.Vector2 {screen_center.x - (text_size.x / 2), f32(rl.GetScreenHeight()) - (30 * 1.25)}
+
+		rl.DrawTextEx(default_font, c_str, text_position, 30 * 1.0001, f32(default_font.glyphPadding) + 1, rl.DARKGRAY)
 
 		rl.EndDrawing()
 
