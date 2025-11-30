@@ -16,10 +16,10 @@ Time_Period :: enum {
 }
 
 Error :: enum {
-	LocalTimeFailed = 1,
-	TimeToDateTimeFailed,
-	DateTimeToTimezoneFailed,
-	DateTimeToTimeFailed,
+	Local_Time_Failed = 1,
+	Time_To_DateTime_Failed,
+	DateTime_To_Timezone_Failed,
+	DateTime_To_Time_Failed,
 }
 
 // Create a vector with a specific direction and magnitude
@@ -39,7 +39,7 @@ throw_error :: proc(ok: bool, error: Error) {
 main :: proc() {
 	// Load the local timezone for the user
 	tz, ok := timezone.region_load("local")
-	throw_error(ok, .LocalTimeFailed)
+	throw_error(ok, .Local_Time_Failed)
 
 	// Turn on anti-aliasing
 	rl.SetConfigFlags({.MSAA_4X_HINT})
@@ -60,16 +60,16 @@ main :: proc() {
 		// Basic error handling
 		// Get the current time, convert it to DateTime
 		date_time, ok = time.time_to_datetime(time.now())
-		throw_error(ok, .TimeToDateTimeFailed)
+		throw_error(ok, .Time_To_DateTime_Failed)
 
 		// Get the current DateTime, convert it to the user's local timezone
 		date_time, ok = timezone.datetime_to_tz(date_time, tz)
-		throw_error(ok, .DateTimeToTimezoneFailed)
+		throw_error(ok, .DateTime_To_Timezone_Failed)
 
 		// Convert the DateTime back to a regular Time struct
 		regular_time: time.Time
 		regular_time, ok = time.datetime_to_time(date_time)
-		throw_error(ok, .DateTimeToTimeFailed)
+		throw_error(ok, .DateTime_To_Time_Failed)
 
 		// Determine if it's AM or PM
 		period: Time_Period
