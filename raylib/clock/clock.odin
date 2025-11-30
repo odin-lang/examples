@@ -118,14 +118,14 @@ main :: proc() {
 		}
 
 		// Format time into a string
-		str := fmt.aprintfln("%2d:%2d:%2d %s", hour, min, sec, period, allocator = context.temp_allocator)
+		str := fmt.aprintf("%2d:%2d:%2d %s", hour, min, sec, period, allocator = context.temp_allocator)
 		c_str := strings.clone_to_cstring(str, context.temp_allocator)
 
 		// Center and draw text
 		default_font := rl.GetFontDefault()
 		text_size := rl.MeasureTextEx(default_font, c_str, 30, f32(default_font.glyphPadding) + 1)
 
-		text_position := rl.Vector2 {screen_center.x - (text_size.x / 2), f32(rl.GetScreenHeight()) - (30 * 1.25)}
+		text_position := rl.Vector2 {screen_center.x - (text_size.x / 2), f32(rl.GetScreenHeight()) - (text_size.y * 1.25)}
 
 		rl.DrawTextEx(default_font, c_str, text_position, 30 * 1.0001, f32(default_font.glyphPadding) + 1, rl.DARKGRAY)
 
