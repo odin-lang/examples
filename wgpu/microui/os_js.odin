@@ -21,7 +21,8 @@ os_init :: proc() {
 	assert(js.add_window_event_listener(.Mouse_Up, nil, mouse_up_callback))
 	assert(js.add_event_listener("wgpu-canvas", .Mouse_Move, nil, mouse_move_callback))
 	assert(js.add_window_event_listener(.Wheel, nil, scroll_callback))
-	assert(js.add_window_event_listener(.Resize,   nil, size_callback))
+	assert(js.add_window_event_listener(.Resize, nil, size_callback))
+	assert(js.add_window_event_listener(.Blur, nil, blur_callback))
 }
 
 // NOTE: frame loop is done by the runtime.js repeatedly calling `step`.
@@ -49,7 +50,8 @@ os_fini :: proc() {
 	js.remove_window_event_listener(.Mouse_Up, nil, mouse_up_callback)
 	js.remove_event_listener("wgpu-canvas", .Mouse_Move, nil, mouse_move_callback)
 	js.remove_window_event_listener(.Wheel, nil, scroll_callback)
-	js.remove_window_event_listener(.Resize,   nil, size_callback)
+	js.remove_window_event_listener(.Resize, nil, size_callback)
+	js.remove_window_event_listener(.Blur, nil, blur_callback)
 }
 
 os_get_render_bounds :: proc() -> (width, height: u32) {
@@ -184,4 +186,14 @@ scroll_callback :: proc(e: js.Event) {
 size_callback :: proc(e: js.Event) {
 	context = state.ctx
 	r_resize()
+}
+
+@(private="file")
+blur_callback :: proc(e: js.Event) {
+	// Release all mouse buttons and keys when focus is lost.
+
+	state.mu_ctx.mouse_released_bits = state.mu_ctx.mouse_down_bits
+	state.mu_ctx.mouse_down_bits = {}
+
+	state.mu_ctx.key_down_bits = {}
 }
