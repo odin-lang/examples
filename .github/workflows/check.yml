@@ -140,6 +140,7 @@ jobs:
           odin check slices/prefer_to_pass_slices $FLAGS
 
           odin check wasm/js_wasm32 $FLAGS
+          odin check wasm/webgl/webgl_triangle -target:js_wasm32 $FLAGS
 
           odin check wgpu/microui -target:windows_amd64 $FLAGS
           odin check wgpu/microui -target:js_wasm32 $FLAGS
