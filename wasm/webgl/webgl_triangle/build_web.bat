@@ -8,5 +8,5 @@ set /a MAX_MEMORY_BYTES=%MAX_MEMORY_PAGES% * %PAGE_SIZE%
 
 call odin.exe build . -vet -strict-style -target:js_wasm32 -out:web/triangle.wasm -o:size -extra-linker-flags:"--export-table --import-memory --initial-memory=%INITIAL_MEMORY_BYTES% --max-memory=%MAX_MEMORY_BYTES%"
 
-for /f "delims=" %%i in ('odin.exe root') do set "ODIN_ROOT=%%i"
-copy "%ODIN_ROOT%\core\sys\wasm\js\odin.js" "web\odin.js"
+for /f "delims=" %%i in ('odin.exe root') do set "ODIN_PATH=%%i"
+copy "%ODIN_PATH%\core\sys\wasm\js\odin.js" "web\odin.js"

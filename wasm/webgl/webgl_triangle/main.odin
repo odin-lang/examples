@@ -33,7 +33,7 @@ main :: proc() {
 	gl.EnableVertexAttribArray(attr_col)
 	gl.VertexAttribPointer(attr_col, 4, gl.UNSIGNED_BYTE, true, size_of(Vertex), offset_of(Vertex, color))
 
-	fit_canvas_to_body()
+	update_canvas_size()
 	gl.Disable(gl.DEPTH_TEST)
 	gl.Enable(gl.BLEND)
 	gl.Enable(gl.CULL_FACE)
@@ -72,7 +72,7 @@ triangle_vertices := [3]Vertex {
 	},
 }
 
-fit_canvas_to_body :: proc() {
+update_canvas_size :: proc() {
 	rect := js.get_bounding_client_rect(CANVAS_ID)
 	dpi := js.device_pixel_ratio()
 
@@ -85,7 +85,7 @@ fit_canvas_to_body :: proc() {
 }
 
 resize_callback :: proc(e: js.Event) {
-	fit_canvas_to_body()
+	update_canvas_size()
 }
 
 SHADER_VERT :: `
