@@ -71,9 +71,9 @@ main :: proc() {
 		regular_time, ok = time.datetime_to_time(date_time)
 		throw_error(ok, .DateTime_To_Time_Failed)
 
+		hour, min, sec, nanos := time.precise_clock_from_time(regular_time)
 		// Determine if it's AM or PM
 		period: Time_Period
-		hour, min, sec, nanos := time.precise_clock_from_time(regular_time)
 		if hour > 12 {
 			hour -= 12
 			period = .PM
@@ -93,11 +93,11 @@ main :: proc() {
 		hour_scalar := (f32(hour) + min_scalar) / 12
 
 		// Draw the hour hand
-		rl.DrawLineEx(screen_center, screen_center + distance_angle(radius * .7, hour_scalar * math.TAU), 4, rl.DARKGREEN)
+		rl.DrawLineEx(screen_center, screen_center + distance_angle(radius * .6, hour_scalar * math.TAU), 6, rl.DARKGREEN)
 		// Draw the minute hand
 		rl.DrawLineEx(screen_center, screen_center + distance_angle(radius * .75, min_scalar * math.TAU), 4, rl.BLACK)
 		// Draw the second hand
-		rl.DrawLineEx(screen_center, screen_center + distance_angle(radius * .5, sec_scalar * math.TAU), 4, rl.RED)
+		rl.DrawLineEx(screen_center, screen_center + distance_angle(radius * .85, sec_scalar * math.TAU), 2, rl.RED)
 
 		rl.DrawCircleV(screen_center, 6, {40, 40, 40, 255})
 
