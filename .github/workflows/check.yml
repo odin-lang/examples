@@ -158,6 +158,14 @@ jobs:
           odin check nanovg/example.odin -file $FLAGS
           odin check nanovg/fbo.odin -file $FLAGS
 
+          odin check nbio/context $FLAGS
+          odin check nbio/game-loop $FLAGS
+          odin check nbio/no-callbacks $FLAGS
+          odin check nbio/sendfile $FLAGS
+          odin check nbio/tcp-echo $FLAGS
+          odin check nbio/udp-echo $FLAGS
+          odin check nbio/workers $FLAGS
+
           # TODO: fix orca examples after update.
           # odin check orca/breakout -target:orca_wasm32 $FLAGS
           # odin check orca/clock -target:orca_wasm32 $FLAGS
