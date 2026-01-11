@@ -73,6 +73,7 @@ tcp_echo_server :: proc(ip: string, port: int) {
 		cli, _, err_accept := net.accept_tcp(sock)
 		if err_accept != nil {
 			fmt.println("Failed to accept TCP connection")
+			continue
 		}
 		thread.create_and_start_with_poly_data(cli, handle_msg)
 	}
