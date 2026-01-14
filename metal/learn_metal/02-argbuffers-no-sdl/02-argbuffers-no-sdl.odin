@@ -28,7 +28,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 
 	create_main_menu(app)
 
-	screen_rect := get_main_screen_rect()
+	screen_rect := NS.Screen.mainScreen()->visibleFrame()
 	window_size := NS.Size{800, 600}
 	window_origin: NS.Point =  {
 		NS.Float(math.floor(f64(screen_rect.size.width - window_size.width) / 2)),
@@ -265,11 +265,4 @@ create_main_menu :: proc(app: ^NS.Application) {
 	main_menu_view_item->setSubmenu(view_menu)
 
 	app->setMainMenu(main_menu)
-}
-
-get_main_screen_rect :: proc() -> NS.Rect {
-	the_screen: NS.Screen
-	main_screen := the_screen.mainScreen()
-
-	return main_screen->visibleFrame()
 }
