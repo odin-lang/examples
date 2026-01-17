@@ -36,10 +36,10 @@ main :: proc() {
 
 		// Call can also take an offset, a length, a timeout.
 		// By default it sends the entire file, without a timeout.
-		op := nbio.sendfile(op.dial.socket, file, on_sent, progress_updates=true)
+		sendfile_op := nbio.sendfile(op.dial.socket, file, on_sent, progress_updates=true)
 
 		fmt.print(ansi.CSI + ansi.DECTCEM_HIDE)
-		render_progress(op, clear=false)
+		render_progress(sendfile_op, clear=false)
 	}
 
 	on_sent :: proc(op: ^nbio.Operation) {
