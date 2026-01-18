@@ -10,7 +10,6 @@ package main
 import "core:container/xar"
 import "core:fmt"
 import "core:nbio"
-import log "core:log"
 
 Server :: struct {
 	socket:      nbio.TCP_Socket,
@@ -25,7 +24,6 @@ Connection :: struct {
 }
 
 main :: proc() {
-	context.logger = log.create_console_logger()
 	err := nbio.acquire_thread_event_loop()
 	fmt.assertf(err == nil, "Could not initialize nbio: %v", err)
 	defer nbio.release_thread_event_loop()
