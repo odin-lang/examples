@@ -10,6 +10,7 @@ package main
 import "core:container/xar"
 import "core:fmt"
 import "core:nbio"
+import log "core:log"
 
 Server :: struct {
 	socket:      nbio.TCP_Socket,
@@ -24,13 +25,14 @@ Connection :: struct {
 }
 
 main :: proc() {
+	context.logger = log.create_console_logger()
 	err := nbio.acquire_thread_event_loop()
 	fmt.assertf(err == nil, "Could not initialize nbio: %v", err)
 	defer nbio.release_thread_event_loop()
 
 	server: Server
 
-	socket, listen_err := nbio.listen_tcp({nbio.IP4_Loopback, 1234})
+	socket, listen_err := nbio.listen_tcp({nbio.IP4_Any, 1234})
 	fmt.assertf(listen_err == nil, "Error listening on localhost:1234: %v", err)
 	server.socket = socket
 
@@ -57,6 +59,11 @@ on_accept :: proc(op: ^nbio.Operation, server: ^Server) {
 
 on_recv :: proc(op: ^nbio.Operation, connection: ^Connection) {
 	fmt.assertf(op.recv.err == nil, "Error receiving from client: %v", op.recv.err)
+	if op.recv.received == 0 {
+		// NOTE: leaking `connection`.
+		nbio.close(connection.sock)
+		return
+	}
 
 	nbio.send_poly(connection.sock, {connection.buf[:op.recv.received]}, connection, on_sent)
 }
