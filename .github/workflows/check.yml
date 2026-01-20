@@ -133,7 +133,7 @@ jobs:
           odin check sdl2/hellope $FLAGS
           odin check sdl2/microui $FLAGS
 
-          oding check sdl3/hellope $FLAGS
+          odin check sdl3/hellope $FLAGS
 
           odin check simd/approaches $FLAGS
           odin check simd/basic-sum $FLAGS
