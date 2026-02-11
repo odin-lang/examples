@@ -17,10 +17,9 @@ main :: proc() {
 	ground_bodydef := box2d.DefaultBodyDef()
 	ground_bodydef.position = box2d.Vec2{0.0,-10.0}
 	ground_Id := box2d.CreateBody(world_id,ground_bodydef)
+	
 	// Create Body 
-
 	ground_box := box2d.MakeBox(50.0,10.0)
-
 	ground_shape_def := box2d.DefaultShapeDef()
 	ground_polygon := box2d.CreatePolygonShape(ground_Id,ground_shape_def,ground_box)
 
@@ -32,15 +31,14 @@ main :: proc() {
 
 	dynamic_box := box2d.MakeBox(1.0,1.0)
 	shape_def := box2d.DefaultShapeDef()
+
 	// Reset friction and density
 	shape_def.density = 1.0
 	shape_def.material.friction = 0.3
-	
 	shape_body:=box2d.CreatePolygonShape(body_id,shape_def,dynamic_box)
 
 	// simulation time step
 	time_step := 1.0/60.0
-
 	substep_count := 4
 
 	// Keep handles for potential use
@@ -56,6 +54,7 @@ main :: proc() {
 		
 		fmt.printfln("%4.2f %4.2f %4.2f\n", pos.x, pos.y, box2d.Rot_GetAngle(rot))
     }
+	// Delete World
 	box2d.DestroyWorld(world_id)
 
 }
