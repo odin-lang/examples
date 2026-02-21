@@ -29,6 +29,9 @@ jobs:
           echo "$(pwd)" >> "$GITHUB_PATH"
           ./odin report
 
+      - name: Build miniaudio
+        run: make -C "./Odin/vendor/miniaudio/src"
+        
       - name: Check everything
         run: |
           FLAGS="-vet -strict-style -vet-tabs -disallow-do -warnings-as-errors"
@@ -176,3 +179,6 @@ jobs:
 
           odin check net/udp_echo_server/client $FLAGS
           odin check net/udp_echo_server/server $FLAGS
+
+          odin check miniaudio/simple_playback_sine.odin -file $FLAGS
+          odin check miniaudio/playback_scale.odin -file $FLAGS
