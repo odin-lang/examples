@@ -337,7 +337,10 @@ r_clear :: proc(color: mu.Color) -> bool {
 		}
 		r_resize()
 		return false
-	case .OutOfMemory, .DeviceLost, .Error:
+	case .Occluded:
+		// Window is occluded (e.g. minimized), skip this frame.
+		return false
+	case .Error:
 		fmt.panicf("get_current_texture status=%v", r.curr_texture.status)
 	}
 

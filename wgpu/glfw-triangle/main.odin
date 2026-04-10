@@ -136,7 +136,10 @@ frame :: proc "c" (dt: f32) {
 		}
 		resize()
 		return
-	case .OutOfMemory, .DeviceLost, .Error:
+	case .Occluded:
+		// Window is occluded (e.g. minimized), skip this frame.
+		return
+	case .Error:
 		// Fatal error
 		fmt.panicf("[triangle] get_current_texture status=%v", surface_texture.status)
 	}
