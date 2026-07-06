@@ -57,7 +57,7 @@
 
 package raylib_examples
 
-import rl "vendor:raylib/v55"
+import rl "vendor:raylib"
 
 //------------------------------------------------------------------------------------
 // Program main entry point

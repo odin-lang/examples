@@ -5,7 +5,7 @@ import       "base:runtime"
 import       "core:log"
 import       "core:c"
 
-import rl    "vendor:raylib/v55"
+import rl    "vendor:raylib"
 import stbsp "vendor:stb/sprintf"
 
 SCREEN_WIDTH  :: 800

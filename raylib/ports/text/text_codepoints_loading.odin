@@ -27,7 +27,7 @@ package text_codepoints_loading
 ********************************************************************************************/
 
 
-import rl "vendor:raylib/v55"
+import rl "vendor:raylib"
 import "core:slice"
 
 SCREEN_WIDTH  :: 800

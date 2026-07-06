@@ -5,7 +5,7 @@ import "core:fmt"
 import "core:strings"
 import "core:unicode/utf8"
 
-import rl "vendor:raylib/v55"
+import rl "vendor:raylib"
 import mu "vendor:microui"
 
 state := struct{

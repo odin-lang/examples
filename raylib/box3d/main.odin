@@ -1,7 +1,7 @@
 package main
 
-import rl "vendor:raylib/v6"
-import gl "vendor:raylib/v6/rlgl"
+import rl "vendor:raylib"
+import gl "vendor:raylib/rlgl"
 import b3 "vendor:box3d"
 
 NUM_BOXES :: 25
