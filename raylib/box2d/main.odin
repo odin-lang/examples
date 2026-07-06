@@ -75,7 +75,7 @@ main :: proc() {
 		entity.extent  = ground_extent
 		entity.texture = ground_texture
 		shape_def := b2.DefaultShapeDef()
-		_ = b2.CreatePolygonShape(entity.body_id, shape_def, ground_polygon)
+		_ = b2.CreatePolygonShape(entity.body_id, shape_def, &ground_polygon)
 	}
 
 	box_entities: [BOX_COUNT]Entity
@@ -95,7 +95,7 @@ main :: proc() {
 			entity.texture = box_texture
 			entity.extent  = box_extent
 			shape_def := b2.DefaultShapeDef()
-			_ = b2.CreatePolygonShape(entity.body_id, shape_def, box_polygon)
+			_ = b2.CreatePolygonShape(entity.body_id, shape_def, &box_polygon)
 
 			box_index += 1
 		}
