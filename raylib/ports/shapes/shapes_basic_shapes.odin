@@ -54,7 +54,7 @@ main :: proc() {
 
 		// Draw circle shapes and lines.
 		rl.DrawCircle(SCREEN_WIDTH / 5, 120, 35, rl.DARKBLUE)
-		rl.DrawCircleGradient(SCREEN_WIDTH / 5, 220, 60, rl.GREEN, rl.SKYBLUE)
+		rl.DrawCircleGradient({SCREEN_WIDTH / 5, 220}, 60, rl.GREEN, rl.SKYBLUE)
 		rl.DrawCircleLines(SCREEN_WIDTH / 5, 340, 80, rl.DARKBLUE)
 
 		// Draw rectangle shapes and lines.

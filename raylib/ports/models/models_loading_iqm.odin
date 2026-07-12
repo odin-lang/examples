@@ -1,6 +1,6 @@
 /*******************************************************************************************
 *
-*   raylib [models] example - animation playing
+*   raylib [models] example - loading iqm
 *
 *   Example complexity rating: [★★☆☆] 2/4
 *
@@ -34,7 +34,7 @@ main :: proc() {
 	SCREEN_WIDTH :: 800
 	SCREEN_HEIGHT :: 450
 
-	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [models] example - animation playing")
+	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "raylib [models] example - loading iqm")
 
     // Define the camera to look into our 3d world
 	camera := rl.Camera { 
@@ -54,7 +54,7 @@ main :: proc() {
     // Load animation data
 	animsCount: i32
 	anims := rl.LoadModelAnimations("resources/models/iqm/guyanim.iqm", &animsCount)
-	animFrameCounter: i32
+	animFrameCounter: f32
 
 	rl.DisableCursor()                    // Catch cursor
 	rl.SetTargetFPS(60)                   // Set our game to run at 60 frames-per-second
@@ -64,16 +64,14 @@ main :: proc() {
 	for !rl.WindowShouldClose() {        // Detect window close button or ESC key
         // Update
         //----------------------------------------------------------------------------------
-		rl.UpdateCamera(&camera, .FIRST_PERSON)
+		rl.UpdateCamera(&camera, .ORBITAL)
 
-        // Play animation when spacebar is held down
-		if rl.IsKeyDown(.SPACE) {
-			animFrameCounter += 1
-			rl.UpdateModelAnimation(model, anims[0], animFrameCounter)
-			if animFrameCounter >= anims[0].frameCount {
-				animFrameCounter = 0
-			}
+		animFrameCounter += 1
+		rl.UpdateModelAnimation(model, anims[0], animFrameCounter)
+		if animFrameCounter >= f32(anims[0].keyframeCount) {
+			animFrameCounter = 0
 		}
+
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -86,8 +84,8 @@ main :: proc() {
 
 				rl.DrawModelEx(model, position, { 1.0, 0.0, 0.0 }, -90.0, { 1.0, 1.0, 1.0 }, rl.WHITE)
 
-				for i := 0; i < int(model.boneCount); i += 1 {
-					rl.DrawCube(anims[0].framePoses[animFrameCounter][i].translation, 0.2, 0.2, 0.2, rl.RED)
+				for i := 0; i < int(model.skeleton.boneCount); i += 1 {
+					// rl.DrawCube(anims[0].keyframePoses[i32(animFrameCounter)][i].translation, 0.2, 0.2, 0.2, rl.RED)
                 }
 
 				rl.DrawGrid(10, 1.0)         // Draw a grid
