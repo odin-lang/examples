@@ -1,5 +1,4 @@
 package main
-import "core:c/libc"
 import "core:log"
 import "core:mem"
 import "core:os"
@@ -36,7 +35,12 @@ main :: proc() {
 	tracking_allocator: mem.Tracking_Allocator
 	mem.tracking_allocator_init(&tracking_allocator, context.allocator)
 	context.allocator = mem.tracking_allocator(&tracking_allocator)
-	defer mem_check_leaks(&tracking_allocator)
+	defer {
+		for _, entry in tracking_allocator.allocation_map {
+			log.errorf("%v: Leaked %v bytes", entry.location, entry.size)
+		}
+		mem.tracking_allocator_destroy(&tracking_allocator)
+	}
 
 	// Program initialization
 	app := App{}
@@ -47,29 +51,11 @@ main :: proc() {
 		input(&app)
 		render(&app)
 		glfw.PollEvents()
-		mem_check_bad_free(&tracking_allocator)
 		free_all(context.temp_allocator)
 	}
    
 	// Exit the program
 	exit(&app)
-}
-
-mem_check_leaks :: proc(tracking_allocator: ^mem.Tracking_Allocator) {
-	for _, leak in tracking_allocator.allocation_map {
-		log.errorf("%v: Leaked %v bytes", leak.location, leak.size)
-	}
-	mem.tracking_allocator_clear(tracking_allocator)
-}
-
-mem_check_bad_free :: proc(tracking_allocator: ^mem.Tracking_Allocator) {
-	if len(tracking_allocator.bad_free_array) > 0 {
-		for bad_free in tracking_allocator.bad_free_array {
-			log.errorf("Bad free at: %v", bad_free.location)
-		}
-		libc.getchar()
-		panic("Bad free detected!")
-	}
 }
 
 gl_check_error :: proc(location := #caller_location) {
