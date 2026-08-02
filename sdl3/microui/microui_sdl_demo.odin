@@ -1,6 +1,5 @@
 package microui_sdl
 
-// import "core:c"
 import "core:fmt"
 import "core:strings"
 import SDL "vendor:sdl3"
@@ -67,7 +66,6 @@ main :: proc() {
 		fmt.eprintln("SDL.UpdateTexture: %s", SDL.GetError())
 		return
 	}
-
 
 	// NOTE(Jeroen): We don't see text edit events from SDL 3 unless we enable it.
 	//               Microui doesn't give you a handle to its widgets so you can ask if a given
@@ -401,5 +399,4 @@ all_windows :: proc(ctx: ^mu.Context) {
 			mu.draw_rect(ctx, mu.layout_next(ctx), ctx.style.colors[col])
 		}
 	}
-
 }
