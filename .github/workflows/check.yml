@@ -180,3 +180,5 @@ jobs:
           odin check net/udp_echo_server/server $FLAGS
 
           odin check miniaudio/ports/simple_playback.odin -target:windows_amd64 -file $FLAGS
+
+          odin check text_edit $FLAGS
