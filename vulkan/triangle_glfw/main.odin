@@ -80,7 +80,7 @@ g_command_pool: vk.CommandPool
 g_command_buffers: [MAX_FRAMES_IN_FLIGHT]vk.CommandBuffer
 
 g_image_available_semaphores: [MAX_FRAMES_IN_FLIGHT]vk.Semaphore
-g_render_finished_semaphores: [MAX_FRAMES_IN_FLIGHT]vk.Semaphore
+g_render_finished_semaphores: []vk.Semaphore
 g_in_flight_fences: [MAX_FRAMES_IN_FLIGHT]vk.Fence
 
 // KHR_PORTABILITY_SUBSET_EXTENSION_NAME :: "VK_KHR_portability_subset"
@@ -161,7 +161,7 @@ main :: proc() {
 		dbg_create_info := vk.DebugUtilsMessengerCreateInfoEXT {
 			sType           = .DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
 			messageSeverity = severity,
-			messageType     = {.GENERAL, .VALIDATION, .PERFORMANCE, .DEVICE_ADDRESS_BINDING}, // all of them.
+			messageType     = {.GENERAL, .VALIDATION, .PERFORMANCE},
 			pfnUserCallback = vk_messenger_callback,
 		}
 		create_info.pNext = &dbg_create_info
@@ -212,8 +212,6 @@ main :: proc() {
 			sType                   = .DEVICE_CREATE_INFO,
 			pQueueCreateInfos       = raw_data(queue_create_infos),
 			queueCreateInfoCount    = u32(len(queue_create_infos)),
-			enabledLayerCount       = create_info.enabledLayerCount,
-			ppEnabledLayerNames     = create_info.ppEnabledLayerNames,
 			ppEnabledExtensionNames = raw_data(DEVICE_EXTENSIONS),
 			enabledExtensionCount   = u32(len(DEVICE_EXTENSIONS)),
 		}
@@ -403,12 +401,10 @@ main :: proc() {
 		}
 		for i in 0 ..< MAX_FRAMES_IN_FLIGHT {
 			must(vk.CreateSemaphore(g_device, &sem_info, nil, &g_image_available_semaphores[i]))
-			must(vk.CreateSemaphore(g_device, &sem_info, nil, &g_render_finished_semaphores[i]))
 			must(vk.CreateFence(g_device, &fence_info, nil, &g_in_flight_fences[i]))
 		}
 	}
 	defer for sem in g_image_available_semaphores {vk.DestroySemaphore(g_device, sem, nil)}
-	defer for sem in g_render_finished_semaphores {vk.DestroySemaphore(g_device, sem, nil)}
 	defer for fence in g_in_flight_fences {vk.DestroyFence(g_device, fence, nil)}
 
 	current_frame := 0
@@ -453,7 +449,7 @@ main :: proc() {
 			commandBufferCount   = 1,
 			pCommandBuffers      = &g_command_buffers[current_frame],
 			signalSemaphoreCount = 1,
-			pSignalSemaphores    = &g_render_finished_semaphores[current_frame],
+			pSignalSemaphores    = &g_render_finished_semaphores[image_index],
 		}
 		must(vk.QueueSubmit(g_graphics_queue, 1, &submit_info, g_in_flight_fences[current_frame]))
 
@@ -461,7 +457,7 @@ main :: proc() {
 		present_info := vk.PresentInfoKHR {
 			sType              = .PRESENT_INFO_KHR,
 			waitSemaphoreCount = 1,
-			pWaitSemaphores    = &g_render_finished_semaphores[current_frame],
+			pWaitSemaphores    = &g_render_finished_semaphores[image_index],
 			swapchainCount     = 1,
 			pSwapchains        = &g_swapchain,
 			pImageIndices      = &image_index,
@@ -792,6 +788,7 @@ create_swapchain :: proc() {
 
 		g_swapchain_images = make([]vk.Image, count)
 		g_swapchain_views = make([]vk.ImageView, count)
+		g_render_finished_semaphores = make([]vk.Semaphore, count)
 		must(vk.GetSwapchainImagesKHR(g_device, g_swapchain, &count, raw_data(g_swapchain_images)))
 
 		for image, i in g_swapchain_images {
@@ -803,16 +800,23 @@ create_swapchain :: proc() {
 				subresourceRange = {aspectMask = {.COLOR}, levelCount = 1, layerCount = 1},
 			}
 			must(vk.CreateImageView(g_device, &create_info, nil, &g_swapchain_views[i]))
+
+			semaphore_ci := vk.SemaphoreCreateInfo {
+				sType = .SEMAPHORE_CREATE_INFO,
+			}
+			must(vk.CreateSemaphore(g_device, &semaphore_ci, nil, &g_render_finished_semaphores[i]))
 		}
 	}
 }
 
 destroy_swapchain :: proc() {
-	for view in g_swapchain_views {
+	for view, i in g_swapchain_views {
 		vk.DestroyImageView(g_device, view, nil)
+		vk.DestroySemaphore(g_device, g_render_finished_semaphores[i], nil)
 	}
 	delete(g_swapchain_views)
 	delete(g_swapchain_images)
+	delete(g_render_finished_semaphores)
 	vk.DestroySwapchainKHR(g_device, g_swapchain, nil)
 }
 
