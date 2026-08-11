@@ -132,6 +132,7 @@ jobs:
           odin check sdl2/chase_in_space $FLAGS
           odin check sdl2/hellope $FLAGS
           odin check sdl2/microui $FLAGS
+          odin check sdl2/colorbuffer_and_font_rendering $FLAGS
 
           odin check sdl3/microui $FLAGS
 
