@@ -134,6 +134,8 @@ jobs:
           odin check sdl2/hellope $FLAGS
           odin check sdl2/microui $FLAGS
 
+          odin check sdl3/microui $FLAGS
+
           odin check simd/approaches $FLAGS
           odin check simd/basic-sum $FLAGS
           odin check simd/motion $FLAGS
@@ -179,3 +181,5 @@ jobs:
           odin check net/udp_echo_server/server $FLAGS
 
           odin check miniaudio/ports/simple_playback.odin -target:windows_amd64 -file $FLAGS
+
+          odin check text_edit $FLAGS
