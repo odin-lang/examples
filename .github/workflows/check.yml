@@ -112,6 +112,7 @@ jobs:
           odin check directx/d3d11_minimal_sdl3 -target:windows_amd64 $FLAGS
 
           odin check opengl/minimal_sdl2 $FLAGS
+          odin check opengl/model_loading_and_font_rendering $FLAGS
 
           odin check vulkan/triangle_glfw $FLAGS
 
