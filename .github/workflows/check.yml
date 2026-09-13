@@ -134,6 +134,7 @@ jobs:
           odin check sdl2/microui $FLAGS
 
           odin check sdl3/microui $FLAGS
+          odin check sdl3/gpu $FLAGS
 
           odin check simd/approaches $FLAGS
           odin check simd/basic-sum $FLAGS
