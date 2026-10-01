@@ -1,0 +1,421 @@
+// Read this file as UTF-8
+#pragma code_page(65001)
+
+#include <winuser.h>
+#include <CommCtrl.h>
+#include "resource.h"
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "app.manifest"
+
+// NOTE: The icon with the lowest ID value becomes the executable's main icon (displayed in Windows Explorer).
+IDI_MAIN           ICON    "icon.ico"
+IDB_ABOUT          BITMAP  "about.bmp"
+IDR_PIECES_NORMAL  RCDATA  "piecesnormal.png"
+IDR_PIECES_GINGER  RCDATA  "billchess.png"
+IDW_CLACK          WAVE    "clack.wav"
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+IDM_MAIN_MENU MENU
+BEGIN
+	POPUP "&File"
+	BEGIN
+		MENUITEM "&Reset to starting position", IDM_RESET_TO_STARTING_POSITION
+		MENUITEM SEPARATOR
+		MENUITEM "&New\tCtrl+N", IDM_NEW
+		MENUITEM "&Open...\tCtrl+O", IDM_OPEN
+		MENUITEM "&Save\tCtrl+S", IDM_SAVE
+		MENUITEM "Save &As...\tCtrl+Shift+S", IDM_SAVE_AS
+		MENUITEM SEPARATOR
+		MENUITEM "E&xit", IDM_EXIT
+	END
+	POPUP "&Options"
+	BEGIN
+		MENUITEM "Play &sound", IDM_PLAY_SOUND, CHECKED
+		MENUITEM SEPARATOR
+		MENUITEM "&Normal visuals", IDM_VISUALS_NORMAL
+		MENUITEM "&Ginger visuals", IDM_VISUALS_GINGER
+	END
+	POPUP "&Help"
+	BEGIN
+		MENUITEM "&About\tF12", IDM_ABOUT
+	END
+END
+
+// Help hints for IDM_MAIN_MENU
+STRINGTABLE
+BEGIN
+	IDM_NEW                            "Creates a new position."
+	IDM_OPEN                           "Opens a position from a file."
+	IDM_SAVE                           "Saves the current position to the current file."
+	IDM_SAVE_AS                        "Saves the current position to a new file."
+	IDM_EXIT                           "Closes the application."
+	IDM_RESET_TO_STARTING_POSITION     "Discards the current position and reloads the starting position."
+	IDM_ABOUT                          "Shows information about this application."
+	IDM_PLAY_SOUND                     "Toggles whether to play a sound when a piece is placed."
+END
+
+IDD_MAIN DIALOGEX 0, 0, 410, 320
+CAPTION "FEN tool"
+STYLE WS_OVERLAPPEDWINDOW | DS_SHELLFONT | DS_CENTER
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+MENU IDM_MAIN_MENU
+BEGIN
+	LTEXT "FEN:", IDC_STATIC, 11, 10, 248, 10
+	EDITTEXT IDC_TEXTBOX_FEN, 10, 22, 390, 12, ES_AUTOHSCROLL
+
+	RADIOBUTTON "White to move", IDC_RADIOBUTTON_WHITE_TO_MOVE, 10, 50, 120, 12
+	RADIOBUTTON "Black to move", IDC_RADIOBUTTON_BLACK_TO_MOVE, 10, 62, 120, 12
+
+	CHECKBOX "White can castle kingside",  IDC_CHECKBOX_WHITE_CASTLE_KINGSIDE,  10, 80,  120, 12
+	CHECKBOX "White can castle queenside", IDC_CHECKBOX_WHITE_CASTLE_QUEENSIDE, 10, 92,  120, 12
+	CHECKBOX "Black can castle kingside",  IDC_CHECKBOX_BLACK_CASTLE_KINGSIDE,  10, 104, 120, 12
+	CHECKBOX "Black can castle queenside", IDC_CHECKBOX_BLACK_CASTLE_QUEENSIDE, 10, 116, 120, 12
+
+	LTEXT "En passant target square:", IDC_STATIC, 11, 134, 120, 12
+	EDITTEXT IDC_TEXTBOX_EN_PASSANT_TARGET_SQUARE, 10, 146, 90, 12
+	PUSHBUTTON "❌", IDC_BUTTON_CLEAR_EN_PASSANT, 110, 146, 16, 12
+
+	LTEXT "Halfmove clock:", IDC_STATIC, 11, 160, 120, 12
+	EDITTEXT IDC_TEXTBOX_HALFMOVE_CLOCK, 10, 172, 120, 12, ES_NUMBER
+
+	LTEXT "Fullmove number:", IDC_STATIC, 11, 190, 120, 12
+	EDITTEXT IDC_TEXTBOX_FULLMOVE_NUMBER, 10, 202, 120, 12, ES_NUMBER
+
+	CONTROL "", IDC_BOARD_CONTROL, "board_control", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 140, 50, 260, 260
+
+	CONTROL "", IDC_STATUSBAR, STATUSCLASSNAME, WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 115, 300, 15
+END
+
+IDM_BOARD_CONTEXT_MENU MENU
+BEGIN
+	POPUP ""
+	BEGIN
+		MENUITEM "xx", IDM_SQUARE_INFO, INACTIVE
+		MENUITEM SEPARATOR
+		MENUITEM "&Clear square", IDM_CLEAR_SQUARE
+		MENUITEM SEPARATOR
+		POPUP "&Pawn"
+		BEGIN
+			MENUITEM "&White", IDM_PAWN_WHITE
+			MENUITEM "&Black", IDM_PAWN_BLACK
+		END
+		POPUP "&Bishop"
+		BEGIN
+			MENUITEM "&White", IDM_BISHOP_WHITE
+			MENUITEM "&Black", IDM_BISHOP_BLACK
+		END
+		POPUP "K&night"
+		BEGIN
+			MENUITEM "&White", IDM_KNIGHT_WHITE
+			MENUITEM "&Black", IDM_KNIGHT_BLACK
+		END
+		POPUP "&Rook"
+		BEGIN
+			MENUITEM "&White", IDM_ROOK_WHITE
+			MENUITEM "&Black", IDM_ROOK_BLACK
+		END
+		POPUP "&Queen"
+		BEGIN
+			MENUITEM "&White", IDM_QUEEN_WHITE
+			MENUITEM "&Black", IDM_QUEEN_BLACK
+		END
+		POPUP "&King"
+		BEGIN
+			MENUITEM "&White", IDM_KING_WHITE
+			MENUITEM "&Black", IDM_KING_BLACK
+		END
+		MENUITEM SEPARATOR
+		MENUITEM "Set &En Passant target square", IDM_SET_EN_PASSANT_TARGET_SQUARE
+		MENUITEM "Toggle castling right", IDM_TOGGLE_CASTLING_RIGHT
+	END
+END
+
+// Help hints for IDM_BOARD_CONTEXT_MENU
+STRINGTABLE
+BEGIN
+	IDM_SQUARE_INFO                    "Displays the selected square."
+	IDM_CLEAR_SQUARE                   "Removes the piece from the selected square."
+	IDM_ROOK_WHITE                     "Sets a rook for white on the selected square."
+	IDM_KNIGHT_WHITE                   "Sets a knight for white on the selected square."
+	IDM_BISHOP_WHITE                   "Sets a bishop for white on the selected square."
+	IDM_QUEEN_WHITE                    "Sets a queen for white on the selected square."
+	IDM_KING_WHITE                     "Sets a king for white on the selected square."
+	IDM_PAWN_WHITE                     "Sets a pawn for white on the selected square."
+	IDM_ROOK_BLACK                     "Sets a rook for black on the selected square."
+	IDM_KNIGHT_BLACK                   "Sets a knight for black on the selected square."
+	IDM_BISHOP_BLACK                   "Sets a bishop for black on the selected square."
+	IDM_QUEEN_BLACK                    "Sets a queen for black on the selected square."
+	IDM_KING_BLACK                     "Sets a king for black on the selected square."
+	IDM_PAWN_BLACK                     "Sets a pawn for black on the selected square."
+	IDM_SET_EN_PASSANT_TARGET_SQUARE   "Sets this square as the target for a possible en passant capture."
+	IDM_TOGGLE_CASTLING_RIGHT          "Toggles the castling right associated with the rook on the selected square."
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 150, 70
+CAPTION "About"
+STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_MODALFRAME | DS_SHELLFONT
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+	DEFPUSHBUTTON "OK", IDOK, 80, 45, 60, 15
+	RTEXT "FEN tool\r\nDemo project", IDC_STATIC, 80, 10, 60, 20
+END
+
+STRINGTABLE
+BEGIN
+	IDS_FEN_ERR_RANK_SEPARATOR_AT_INVALID_POSITION_0     "Rank separator '/' at invalid position: {0}"
+	IDS_FEN_ERR_RANK_OVERFLOW_ADVANCE_0_1                "Rank overflow (cannot advance by {0} empty squares): {1}"
+	IDS_FEN_ERR_BOARD_SEPARATOR_AT_INVALID_POSITION_0    "Board separator ' ' at invalid position: {0}"
+	IDS_FEN_ERR_INVALID_CHARACTER_0_AT_POSITION_1        "Invalid character '{0}' at position: {1}"
+	IDS_FEN_ERR_RANK_OVERFLOW_CANNOT_PLACE_0_1_AT_2      "Rank overflow (cannot place {0} {1}) at {2}"
+	IDS_FEN_ERR_EXPECTED_PLAYER_TO_MOVE_0                "Expected player to move (w/b), got {0}"
+	IDS_FEN_ERR_EXPECTED_SPACE_0                         "Expected space, got {0}"
+	IDS_FEN_ERR_DUPLICATE_CASTLING_RIGHT_SPECIFIER_0     "Duplicate castling right specifier: {0}"
+	IDS_FEN_ERR_CASTLING_RIGHT_SPECIFIER_CONFLICT        "Castling right specifier conflict"
+	IDS_FEN_ERR_EXPECTED_CASTLING_RIGHTS_SPECIFIER_0     "Expected castling rights specifier, got {0}"
+	IDS_FEN_ERR_INVALID_EN_PASSANT_TARGET_SQUARE_FILE_0  "Invalid en passant target square file: {0}"
+	IDS_FEN_ERR_INVALID_EN_PASSANT_TARGET_SQUARE_RANK_0  "Invalid en passant target square rank: {0}"
+	IDS_FEN_ERR_INVALID_HALFMOVE_CLOCK_0                 "Invalid halfmove clock: {0}"
+	IDS_FEN_ERR_INVALID_FULLMOVE_NUMBER_0                "Invalid fullmove number: {0}"
+	IDS_FEN_ERR_EXPECTED_END_OF_STRING                   "Expected end of string"
+	IDS_INVALID_EN_PASSANT_TARGET_SQUARE                 "Invalid en passant target square"
+	IDS_INVALID_EN_PASSANT_TARGET_SQUARE_HINT            "Enter a square such as ""e3"", or ""-""."
+	IDS_INVALID_FEN_STRING                               "Invalid FEN string"
+	IDS_ROOK                                             "Rook"
+	IDS_KNIGHT                                           "Knight"
+	IDS_BISHOP                                           "Bishop"
+	IDS_QUEEN                                            "Queen"
+	IDS_KING                                             "King"
+	IDS_PAWN                                             "Pawn"
+	IDS_WHITE                                            "White"
+	IDS_BLACK                                            "Black"
+	IDS_TITLE                                            "FEN tool"
+	IDS_CONFIRM_RESET_CAPTION                            "Confirm reset"
+	IDS_CONFIRM_RESET_MESSAGE                            "Really discard the current position and reset to starting position?"
+	IDS_ERROR_CAPTION                                    "Error"
+	IDS_FEN_FILES_FILTER                                 "FEN files (*.fen)"
+	IDS_ALL_FILES_FILTER                                 "All files"
+	IDS_UNSAVED_CHANGES_CAPTION                          "Unsaved changes"
+	IDS_UNSAVED_CHANGES_MESSAGE                          "There are unsaved changes. Do you want to save?"
+	IDS_ALLOW_CASTLING_WHITE_KINGSIDE                    "Allow &castling kingside for white"
+	IDS_DISALLOW_CASTLING_WHITE_KINGSIDE                 "Disallow &castling kingside for white"
+	IDS_ALLOW_CASTLING_WHITE_QUEENSIDE                   "Allow &castling queenside for white"
+	IDS_DISALLOW_CASTLING_WHITE_QUEENSIDE                "Disallow &castling queenside for white"
+	IDS_ALLOW_CASTLING_BLACK_KINGSIDE                    "Allow &castling kingside for black"
+	IDS_DISALLOW_CASTLING_BLACK_KINGSIDE                 "Disallow &castling kingside for black"
+	IDS_ALLOW_CASTLING_BLACK_QUEENSIDE                   "Allow &castling queenside for black"
+	IDS_DISALLOW_CASTLING_BLACK_QUEENSIDE                "Disallow &castling queenside for black"
+END
+
+IDC_ACCELERATOR_TABLE ACCELERATORS
+BEGIN
+	"N",      IDM_NEW,             VIRTKEY,  CONTROL
+	"O",      IDM_OPEN,            VIRTKEY,  CONTROL
+	"S",      IDM_SAVE,            VIRTKEY,  CONTROL
+	"S",      IDM_SAVE_AS,         VIRTKEY,  CONTROL, SHIFT
+	VK_F12,   IDM_ABOUT,           VIRTKEY
+END
+
+LANGUAGE LANG_DUTCH, SUBLANG_DUTCH
+
+IDM_MAIN_MENU MENU
+BEGIN
+	POPUP "&Bestand"
+	BEGIN
+		MENUITEM "&Reset naar beginpositie", IDM_RESET_TO_STARTING_POSITION
+		MENUITEM SEPARATOR
+		MENUITEM "&Nieuw\tCtrl+N", IDM_NEW
+		MENUITEM "&Openen...\tCtrl+O", IDM_OPEN
+		MENUITEM "&Opslaan\tCtrl+S", IDM_SAVE
+		MENUITEM "Opslaan &als...\tCtrl+Shift+S", IDM_SAVE_AS
+		MENUITEM SEPARATOR
+		MENUITEM "A&fsluiten", IDM_EXIT
+	END
+	POPUP "&Opties"
+	BEGIN
+		MENUITEM "Geluid a&fspelen", IDM_PLAY_SOUND, CHECKED
+		MENUITEM SEPARATOR
+		MENUITEM "&Normale vormgeving", IDM_VISUALS_NORMAL
+		MENUITEM "&Ginger-vormgeving", IDM_VISUALS_GINGER
+	END
+	POPUP "&Help"
+	BEGIN
+		MENUITEM "&Over\tF12", IDM_ABOUT
+	END
+END
+
+// Help hints for IDM_MAIN_MENU
+STRINGTABLE
+BEGIN
+	IDM_NEW                            "Maakt een nieuwe positie aan."
+	IDM_OPEN                           "Opent een positie uit een bestand."
+	IDM_SAVE                           "Slaat de huidige positie op in het huidige bestand."
+	IDM_SAVE_AS                        "Slaat de huidige positie op in een nieuw bestand."
+	IDM_EXIT                           "Sluit de toepassing."
+	IDM_RESET_TO_STARTING_POSITION     "Verwerpt de huidige positie en laadt de beginpositie opnieuw."
+	IDM_ABOUT                          "Toont informatie over deze toepassing."
+	IDM_PLAY_SOUND                     "Schakelt het geluid in of uit wanneer een stuk wordt geplaatst."
+	IDS_FEN_FILES_FILTER               "FEN-bestanden (*.fen)"
+	IDS_ALL_FILES_FILTER               "Alle bestanden"
+	IDS_UNSAVED_CHANGES_CAPTION        "Niet-opgeslagen wijzigingen"
+	IDS_UNSAVED_CHANGES_MESSAGE        "Er zijn niet-opgeslagen wijzigingen. Wilt u deze opslaan?"
+	IDS_ALLOW_CASTLING_WHITE_KINGSIDE  "Korte &rokade voor wit toestaan"
+	IDS_DISALLOW_CASTLING_WHITE_KINGSIDE "Korte &rokade voor wit verbieden"
+	IDS_ALLOW_CASTLING_WHITE_QUEENSIDE "Lange &rokade voor wit toestaan"
+	IDS_DISALLOW_CASTLING_WHITE_QUEENSIDE "Lange &rokade voor wit verbieden"
+	IDS_ALLOW_CASTLING_BLACK_KINGSIDE  "Korte &rokade voor zwart toestaan"
+	IDS_DISALLOW_CASTLING_BLACK_KINGSIDE "Korte &rokade voor zwart verbieden"
+	IDS_ALLOW_CASTLING_BLACK_QUEENSIDE "Lange &rokade voor zwart toestaan"
+	IDS_DISALLOW_CASTLING_BLACK_QUEENSIDE "Lange &rokade voor zwart verbieden"
+END
+
+IDD_MAIN DIALOGEX 0, 0, 410, 320
+CAPTION "FEN tool"
+STYLE WS_OVERLAPPEDWINDOW | DS_SHELLFONT | DS_CENTER
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+MENU IDM_MAIN_MENU
+BEGIN
+	LTEXT "FEN:", IDC_STATIC, 11, 10, 248, 10
+	EDITTEXT IDC_TEXTBOX_FEN, 10, 22, 390, 12, ES_AUTOHSCROLL
+
+	RADIOBUTTON "Wit aan zet", IDC_RADIOBUTTON_WHITE_TO_MOVE, 10, 50, 120, 12
+	RADIOBUTTON "Zwart aan zet", IDC_RADIOBUTTON_BLACK_TO_MOVE, 10, 62, 120, 12
+
+	CHECKBOX "Wit mag kort rokeren",  IDC_CHECKBOX_WHITE_CASTLE_KINGSIDE,  10, 80,  120, 12
+	CHECKBOX "Wit mag lang rokeren", IDC_CHECKBOX_WHITE_CASTLE_QUEENSIDE, 10, 92,  120, 12
+	CHECKBOX "Zwart mag kort rokeren",  IDC_CHECKBOX_BLACK_CASTLE_KINGSIDE,  10, 104, 120, 12
+	CHECKBOX "Zwart mag lang rokeren", IDC_CHECKBOX_BLACK_CASTLE_QUEENSIDE, 10, 116, 120, 12
+
+	LTEXT "En-passantdoelveld:", IDC_STATIC, 11, 134, 120, 12
+	EDITTEXT IDC_TEXTBOX_EN_PASSANT_TARGET_SQUARE, 10, 146, 90, 12
+	PUSHBUTTON "❌", IDC_BUTTON_CLEAR_EN_PASSANT, 110, 146, 16, 12
+
+	LTEXT "Halfzettenklok:", IDC_STATIC, 11, 160, 120, 12
+	EDITTEXT IDC_TEXTBOX_HALFMOVE_CLOCK, 10, 172, 120, 12, ES_NUMBER
+
+	LTEXT "Volledige zet:", IDC_STATIC, 11, 190, 120, 12
+	EDITTEXT IDC_TEXTBOX_FULLMOVE_NUMBER, 10, 202, 120, 12, ES_NUMBER
+
+	CONTROL "", IDC_BOARD_CONTROL, "board_control", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 140, 50, 260, 260
+
+	CONTROL "", IDC_STATUSBAR, STATUSCLASSNAME, WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 115, 300, 15
+END
+
+IDM_BOARD_CONTEXT_MENU MENU
+BEGIN
+	POPUP ""
+	BEGIN
+		MENUITEM "xx", IDM_SQUARE_INFO, INACTIVE
+		MENUITEM SEPARATOR
+		MENUITEM "Vak &leegmaken", IDM_CLEAR_SQUARE
+		MENUITEM SEPARATOR
+		POPUP "&Pion"
+		BEGIN
+			MENUITEM "&Wit", IDM_PAWN_WHITE
+			MENUITEM "&Zwart", IDM_PAWN_BLACK
+		END
+		POPUP "&Loper"
+		BEGIN
+			MENUITEM "&Wit", IDM_BISHOP_WHITE
+			MENUITEM "&Zwart", IDM_BISHOP_BLACK
+		END
+		POPUP "&Paard"
+		BEGIN
+			MENUITEM "&Wit", IDM_KNIGHT_WHITE
+			MENUITEM "&Zwart", IDM_KNIGHT_BLACK
+		END
+		POPUP "&Toren"
+		BEGIN
+			MENUITEM "&Wit", IDM_ROOK_WHITE
+			MENUITEM "&Zwart", IDM_ROOK_BLACK
+		END
+		POPUP "&Dame"
+		BEGIN
+			MENUITEM "&Wit", IDM_QUEEN_WHITE
+			MENUITEM "&Zwart", IDM_QUEEN_BLACK
+		END
+		POPUP "K&oning"
+		BEGIN
+			MENUITEM "&Wit", IDM_KING_WHITE
+			MENUITEM "&Zwart", IDM_KING_BLACK
+		END
+		MENUITEM SEPARATOR
+		MENUITEM "En-passantdoelveld in&stellen", IDM_SET_EN_PASSANT_TARGET_SQUARE
+		MENUITEM "Rokaderecht omschakelen", IDM_TOGGLE_CASTLING_RIGHT
+	END
+END
+
+// Help hints for IDM_BOARD_CONTEXT_MENU
+STRINGTABLE
+BEGIN
+	IDM_SQUARE_INFO                    "Toont het geselecteerde veld."
+	IDM_CLEAR_SQUARE                   "Verwijdert het stuk van het geselecteerde veld."
+	IDM_ROOK_WHITE                     "Plaatst een witte toren op het geselecteerde veld."
+	IDM_KNIGHT_WHITE                   "Plaatst een wit paard op het geselecteerde veld."
+	IDM_BISHOP_WHITE                   "Plaatst een witte loper op het geselecteerde veld."
+	IDM_QUEEN_WHITE                    "Plaatst een witte dame op het geselecteerde veld."
+	IDM_KING_WHITE                     "Plaatst een witte koning op het geselecteerde veld."
+	IDM_PAWN_WHITE                     "Plaatst een witte pion op het geselecteerde veld."
+	IDM_ROOK_BLACK                     "Plaatst een zwarte toren op het geselecteerde veld."
+	IDM_KNIGHT_BLACK                   "Plaatst een zwart paard op het geselecteerde veld."
+	IDM_BISHOP_BLACK                   "Plaatst een zwarte loper op het geselecteerde veld."
+	IDM_QUEEN_BLACK                    "Plaatst een zwarte dame op het geselecteerde veld."
+	IDM_KING_BLACK                     "Plaatst een zwarte koning op het geselecteerde veld."
+	IDM_PAWN_BLACK                     "Plaatst een zwarte pion op het geselecteerde veld."
+	IDM_SET_EN_PASSANT_TARGET_SQUARE   "Stelt dit veld in als doel voor een mogelijke en-passantslag."
+	IDM_TOGGLE_CASTLING_RIGHT          "Schakelt het rokaderecht van de toren op dit veld om."
+END
+
+IDD_ABOUT DIALOGEX 0, 0, 150, 70
+CAPTION "Over"
+STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU | DS_MODALFRAME | DS_SHELLFONT
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+	DEFPUSHBUTTON "OK", IDOK, 80, 45, 60, 15
+	RTEXT "FEN tool\r\nDemoproject", IDC_STATIC, 80, 10, 60, 20
+END
+
+STRINGTABLE
+BEGIN
+	IDS_FEN_ERR_RANK_SEPARATOR_AT_INVALID_POSITION_0     "Rangscheidingsteken '/' op ongeldige positie: {0}"
+	IDS_FEN_ERR_RANK_OVERFLOW_ADVANCE_0_1                "Rij loopt over (kan niet {0} lege velden opschuiven): {1}"
+	IDS_FEN_ERR_BOARD_SEPARATOR_AT_INVALID_POSITION_0    "Bordscheidingsteken ' ' op ongeldige positie: {0}"
+	IDS_FEN_ERR_INVALID_CHARACTER_0_AT_POSITION_1        "Ongeldig teken '{0}' op positie: {1}"
+	IDS_FEN_ERR_RANK_OVERFLOW_CANNOT_PLACE_0_1_AT_2      "Rij loopt over (kan {0} {1} niet plaatsen) op {2}"
+	IDS_FEN_ERR_EXPECTED_PLAYER_TO_MOVE_0                "Speler aan zet verwacht (w/b), kreeg {0}"
+	IDS_FEN_ERR_EXPECTED_SPACE_0                         "Spatie verwacht, kreeg {0}"
+	IDS_FEN_ERR_DUPLICATE_CASTLING_RIGHT_SPECIFIER_0     "Dubbele aanduiding voor rokaderecht: {0}"
+	IDS_FEN_ERR_CASTLING_RIGHT_SPECIFIER_CONFLICT        "Tegenstrijdige aanduidingen voor rokaderecht"
+	IDS_FEN_ERR_EXPECTED_CASTLING_RIGHTS_SPECIFIER_0     "Aanduiding voor rokaderechten verwacht, kreeg {0}"
+	IDS_FEN_ERR_INVALID_EN_PASSANT_TARGET_SQUARE_FILE_0  "Ongeldige kolom van het en-passantdoelveld: {0}"
+	IDS_FEN_ERR_INVALID_EN_PASSANT_TARGET_SQUARE_RANK_0  "Ongeldige rij van het en-passantdoelveld: {0}"
+	IDS_FEN_ERR_INVALID_HALFMOVE_CLOCK_0                 "Ongeldige halfzettenklok: {0}"
+	IDS_FEN_ERR_INVALID_FULLMOVE_NUMBER_0                "Ongeldig volledig zetnummer: {0}"
+	IDS_FEN_ERR_EXPECTED_END_OF_STRING                   "Einde van de tekenreeks verwacht"
+	IDS_INVALID_EN_PASSANT_TARGET_SQUARE                 "Ongeldig en-passantdoelveld"
+	IDS_INVALID_EN_PASSANT_TARGET_SQUARE_HINT            "Voer een veld in, zoals ""e3"", of ""-""."
+	IDS_INVALID_FEN_STRING                               "Ongeldige FEN-tekenreeks"
+	IDS_ROOK                                             "Toren"
+	IDS_KNIGHT                                           "Paard"
+	IDS_BISHOP                                           "Loper"
+	IDS_QUEEN                                            "Dame"
+	IDS_KING                                             "Koning"
+	IDS_PAWN                                             "Pion"
+	IDS_WHITE                                            "Wit"
+	IDS_BLACK                                            "Zwart"
+	IDS_TITLE                                            "FEN tool"
+	IDS_CONFIRM_RESET_CAPTION                            "Beginpositie herstellen?"
+	IDS_CONFIRM_RESET_MESSAGE                            "Wilt u de huidige positie echt verwerpen en de beginpositie herstellen?"
+	IDS_ERROR_CAPTION                                    "Fout"
+END
+
+IDC_ACCELERATOR_TABLE ACCELERATORS
+BEGIN
+	"N",      IDM_NEW,             VIRTKEY,  CONTROL
+	"O",      IDM_OPEN,            VIRTKEY,  CONTROL
+	"S",      IDM_SAVE,            VIRTKEY,  CONTROL
+	"S",      IDM_SAVE_AS,         VIRTKEY,  CONTROL, SHIFT
+	VK_F12,   IDM_ABOUT,           VIRTKEY
+END
