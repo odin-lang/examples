@@ -111,6 +111,7 @@ jobs:
           odin check directx/d3d11_minimal_sdl2 -target:windows_amd64 $FLAGS
           odin check directx/d3d11_minimal_sdl3 -target:windows_amd64 $FLAGS
 
+          odin check opengl/compute_shader_glfw $FLAGS
           odin check opengl/minimal_sdl2 $FLAGS
 
           odin check vulkan/triangle_glfw $FLAGS
