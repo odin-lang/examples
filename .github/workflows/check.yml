@@ -51,6 +51,7 @@ jobs:
           odin check arena_allocator $FLAGS
 
           odin check directx/d3d12_triangle_sdl2 -target:windows_amd64 $FLAGS
+          odin check directx/d3d11_minimal_win32 -target:windows_amd64 $FLAGS
 
           odin check glfw/window $FLAGS
 
