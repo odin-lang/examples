@@ -1234,14 +1234,17 @@ drawParagraph :: proc(ctx: ^nvg.Context, x, y, width, height: f32, mx, my: f32) 
 			if hit {
 				caretx := (mx < x + row.width / 2) ? x : x + row.width
 				px := x
-				nglyphs := nvg.TextGlyphPositions(ctx, x, y, text, &glyphs)
+				// Glyph positions come back in device pixels relative to the origin,
+				// so query them at 0 and scale back to logical units.
+				invscale := 1.0 / ctx.devicePxRatio
+				nglyphs := nvg.TextGlyphPositions(ctx, 0, y, text, &glyphs)
 
 				for j in 0 ..< nglyphs {
-					x0 := glyphs[j].x
-					x1 := (j + 1 < nglyphs) ? glyphs[j + 1].x : x + row.width
+					x0 := x + glyphs[j].x * invscale
+					x1 := (j + 1 < nglyphs) ? x + glyphs[j + 1].x * invscale : x + row.width
 					gx = x0 * 0.3 + x1 * 0.7
 					if mx >= px && mx < gx {
-						caretx = glyphs[j].x
+						caretx = x0
 					}
 
 					px = gx
