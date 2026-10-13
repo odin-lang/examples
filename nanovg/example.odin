@@ -119,7 +119,7 @@ main :: proc() {
 		}
 
 		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT)
-		px_ratio := f32(fw) / f32(fw)
+		px_ratio := f32(fw) / f32(w)
 
 		{
 			xx, yy := glfw.GetCursorPos(window)
