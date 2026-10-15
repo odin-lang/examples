@@ -1,6 +1,7 @@
 package main
 
 import NS  "core:sys/darwin/Foundation"
+import AK  "vendor:darwin/AppKit"
 import MTL "vendor:darwin/Metal"
 import CA  "vendor:darwin/QuartzCore"
 
@@ -123,7 +124,7 @@ build_buffers :: proc(device: ^MTL.Device) -> (vertex_buffer, index_buffer, inst
 
 	vertex_buffer   = device->newBufferWithSlice(positions[:], {.StorageModeManaged})
 	index_buffer    = device->newBufferWithSlice(indices[:],   {.StorageModeManaged})
-	instance_buffer = device->newBuffer(NUM_INSTANCES*size_of(Instance_Data), {.StorageModeManaged})
+	instance_buffer = device->newBufferWithLength(NUM_INSTANCES*size_of(Instance_Data), {.StorageModeManaged})
 	return
 }
 
@@ -145,7 +146,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	SDL.GetWindowWMInfo(window, &window_system_info)
 	assert(window_system_info.subsystem == .COCOA)
 
-	native_window := (^NS.Window)(window_system_info.info.cocoa.window)
+	native_window := (^AK.Window)(window_system_info.info.cocoa.window)
 
 	device := MTL.CreateSystemDefaultDevice()
 	defer device->release()
@@ -173,7 +174,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	defer index_buffer->release()
 	defer instance_buffer->release()
 
-	camera_buffer := device->newBuffer(size_of(Camera_Data), {.StorageModeManaged})
+	camera_buffer := device->newBufferWithLength(size_of(Camera_Data), {.StorageModeManaged})
 	defer camera_buffer->release()
 
 	depth_texture: ^MTL.Texture = nil
@@ -288,7 +289,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		render_encoder->setVertexBuffer(vertex_buffer,   0, 0)
 		render_encoder->setVertexBuffer(instance_buffer, 0, 1)
 		render_encoder->setVertexBuffer(camera_buffer,   0, 2)
-		render_encoder->drawIndexedPrimitivesWithInstanceCount(.Triangle, 6*6, .UInt16, index_buffer, 0, NUM_INSTANCES)
+		render_encoder->drawIndexedPrimitives(.Triangle, 6*6, .UInt16, index_buffer, 0, NUM_INSTANCES)
 
 		render_encoder->endEncoding()
 

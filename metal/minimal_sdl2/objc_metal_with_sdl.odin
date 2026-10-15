@@ -1,6 +1,7 @@
 package objc_test
 
 import NS  "core:sys/darwin/Foundation"
+import AK  "vendor:darwin/AppKit"
 import MTL "vendor:darwin/Metal"
 import CA  "vendor:darwin/QuartzCore"
 	
@@ -30,7 +31,7 @@ main :: proc() {
 	swapchain: ^CA.MetalLayer
 	device: ^MTL.Device
 	when true {
-		native_window := (^NS.Window)(window_system_info.info.cocoa.window)
+		native_window := (^AK.Window)(window_system_info.info.cocoa.window)
 
 		device = MTL.CreateSystemDefaultDevice()
 

@@ -1,6 +1,7 @@
 package main
 
 import NS  "core:sys/darwin/Foundation"
+import AK  "vendor:darwin/AppKit"
 import MTL "vendor:darwin/Metal"
 import CA  "vendor:darwin/QuartzCore"
 
@@ -27,7 +28,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	SDL.GetWindowWMInfo(window, &window_system_info)
 	assert(window_system_info.subsystem == .COCOA)
 
-	native_window := (^NS.Window)(window_system_info.info.cocoa.window)
+	native_window := (^AK.Window)(window_system_info.info.cocoa.window)
 
 	device := MTL.CreateSystemDefaultDevice()
 	defer device->release()

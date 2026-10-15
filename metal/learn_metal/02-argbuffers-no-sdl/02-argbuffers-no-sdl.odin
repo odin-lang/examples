@@ -6,6 +6,8 @@ import "core:os"
 import "core:math"
 import "core:fmt"
 import NS "core:sys/darwin/Foundation"
+import AK "vendor:darwin/AppKit"
+import ObjC "core:sys/darwin/ObjectiveC"
 
 import MTL "vendor:darwin/Metal"
 import CA "vendor:darwin/QuartzCore"
@@ -21,29 +23,29 @@ main :: proc() {
 metal_main :: proc() -> (err: ^NS.Error) {
 	@static quit := false
 
-	app := NS.Application.sharedApplication()
+	app := AK.Application.sharedApplication()
 	defer app->release()
 	app->setActivationPolicy(.Regular) // without this window is not brought to foreground on launch
 	app->finishLaunching()
 
 	create_main_menu(app)
 
-	screen_rect := NS.Screen.mainScreen()->visibleFrame()
+	screen_rect := AK.Screen.mainScreen()->visibleFrame()
 	window_size := NS.Size{800, 600}
 	window_origin: NS.Point =  {
 		NS.Float(math.floor(f64(screen_rect.size.width - window_size.width) / 2)),
 		NS.Float(math.floor(f64(screen_rect.size.height - window_size.height) / 2)),
 	}
 
-	CustomWindowClass := NS.objc_allocateClassPair(intrinsics.objc_find_class("NSWindow"), "CustomWindow", 0)
+	CustomWindowClass := ObjC.objc_allocateClassPair(intrinsics.objc_find_class("NSWindow"), "CustomWindow", 0)
 	assert(CustomWindowClass != nil)
-	keyDown :: proc "c" (self: NS.id, sel: NS.SEL, event: ^NS.Event) { /* ignore key down events */ }
-	NS.class_addMethod(CustomWindowClass, intrinsics.objc_find_selector("keyDown:"), NS.IMP(keyDown), "v@:@")
-	NS.objc_registerClassPair(CustomWindowClass)
-	window := cast(^NS.Window)(NS.class_createInstance(CustomWindowClass, size_of(NS.Window)))
+	keyDown :: proc "c" (self: NS.id, sel: NS.SEL, event: ^AK.Event) { /* ignore key down events */ }
+	ObjC.class_addMethod(CustomWindowClass, intrinsics.objc_find_selector("keyDown:"), ObjC.IMP(keyDown), "v@:@")
+	ObjC.objc_registerClassPair(CustomWindowClass)
+	window := cast(^AK.Window)(ObjC.class_createInstance(CustomWindowClass, size_of(AK.Window)))
 	defer window->release()
 	window->initWithContentRect({window_origin, window_size}, { .Resizable, .Closable, .Titled, .Miniaturizable }, .Buffered, NS.NO)
-	window->setDelegate(NS.window_delegate_register_and_alloc({
+	window->setDelegate(AK.window_delegate_register_and_alloc({
 		windowWillClose = proc(^NS.Notification) {
 			quit = true
 		},
@@ -78,7 +80,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	vertex_positions_buffer, vertex_colors_buffer, arg_buffer := build_buffers(device, library)
 	defer arg_buffer->release()
 
-	frame_data_buffer := device->newBuffer(size_of(Frame_Data), {.StorageModeManaged})
+	frame_data_buffer := device->newBufferWithLength(size_of(Frame_Data), {.StorageModeManaged})
 	defer frame_data_buffer->release()
 
 	command_queue := device->newCommandQueue()
@@ -90,12 +92,12 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		{
 			NS.scoped_autoreleasepool()
 			// Use `NS.Date.distantFuture()` for `expiration` param, so that we idle without wasting any CPU while waiting for events.
-			event := app->nextEventMatchingMask(NS.EventMaskAny, NS.Date.distantFuture(), NS.DefaultRunLoopMode, true)
+			event := app->nextEventMatchingMask(AK.EventMaskAny, NS.Date.distantFuture(), NS.DefaultRunLoopMode, true)
 			for event != nil {
 				event_type := event->type()
 				#partial switch event_type {
 				case .KeyDown, .KeyUp:
-					code := NS.kVK(event->keyCode())
+					code := AK.kVK(event->keyCode())
 					#partial switch code {
 					case .Escape:
 						quit = true
@@ -111,12 +113,12 @@ metal_main :: proc() -> (err: ^NS.Error) {
 				app->sendEvent(event)
 
 				// Once we wake up from idle, process all events in the queue before we can idle again.
-				event = app->nextEventMatchingMask(NS.EventMaskAny, nil, NS.DefaultRunLoopMode, true)
+				event = app->nextEventMatchingMask(AK.EventMaskAny, nil, NS.DefaultRunLoopMode, true)
 			}
 			app->updateWindows()
 		}
 
-		frame_data := (^Frame_Data)(frame_data_buffer->contentsPointer())
+		frame_data := (^Frame_Data)(frame_data_buffer->contents())
 		frame_data.angle = angle
 		frame_data_buffer->didModifyRange(NS.Range_Make(0, size_of(Frame_Data)))
 
@@ -234,11 +236,11 @@ build_buffers :: proc(device: ^MTL.Device, library: ^MTL.Library) -> (vertex_pos
 	vertex_function := library->newFunctionWithName(NS.AT("vertex_main"))
 	defer vertex_function->release()
 
-	arg_encoder := vertex_function->newArgumentEncoder(0)
+	arg_encoder := vertex_function->newArgumentEncoderWithBufferIndex(0)
 	defer arg_encoder->release()
 
-	arg_buffer = device->newBuffer(arg_encoder->encodedLength(), {.StorageModeManaged})
-	arg_encoder->setArgumentBufferWithOffset(arg_buffer, 0)
+	arg_buffer = device->newBufferWithLength(arg_encoder->encodedLength(), {.StorageModeManaged})
+	arg_encoder->setArgumentBuffer(arg_buffer, 0)
 	arg_encoder->setBuffer(vertex_positions_buffer, 0, 0)
 	arg_encoder->setBuffer(vertex_colors_buffer,    0, 1)
 	arg_buffer->didModifyRange(NS.Range_Make(0, arg_buffer->length()))
@@ -246,21 +248,21 @@ build_buffers :: proc(device: ^MTL.Device, library: ^MTL.Library) -> (vertex_pos
 	return
 }
 
-create_main_menu :: proc(app: ^NS.Application) {
-	main_menu := NS.Menu.alloc()->init()
-	main_menu->addItem(NS.MenuItem.alloc()->init())
+create_main_menu :: proc(app: ^AK.Application) {
+	main_menu := AK.Menu.alloc()->init()
+	main_menu->addItem(AK.MenuItem.alloc()->init())
 
 	main_menu_app_item := main_menu->addItemWithTitle(NS.AT("Metal"), nil, NS.AT(""))
-	app_menu := NS.Menu.alloc()->init()
+	app_menu := AK.Menu.alloc()->init()
 	app_menu->addItemWithTitle(NS.AT("Quit"), intrinsics.objc_find_selector("terminate:"), NS.AT("q"))
 	main_menu_app_item->setSubmenu(app_menu)
 
 	main_menu_edit_item := main_menu->addItemWithTitle(NS.AT("Edit"), nil, NS.AT(""))
-	edit_menu := NS.Menu.alloc()->init()
+	edit_menu := AK.Menu.alloc()->init()
 	main_menu_edit_item->setSubmenu(edit_menu)
 
 	main_menu_view_item := main_menu->addItemWithTitle(NS.AT("View"), nil, NS.AT(""))
-	view_menu := NS.Menu.alloc()->init()
+	view_menu := AK.Menu.alloc()->init()
 	view_menu->addItemWithTitle(NS.AT("Enter Full Screen"), intrinsics.objc_find_selector("toggleFullScreen:"), NS.AT("f"))
 	main_menu_view_item->setSubmenu(view_menu)
 

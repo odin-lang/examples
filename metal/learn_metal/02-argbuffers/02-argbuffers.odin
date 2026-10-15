@@ -1,6 +1,7 @@
 package main
 
 import NS  "core:sys/darwin/Foundation"
+import AK  "vendor:darwin/AppKit"
 import MTL "vendor:darwin/Metal"
 import CA  "vendor:darwin/QuartzCore"
 
@@ -76,11 +77,11 @@ build_buffers :: proc(device: ^MTL.Device, library: ^MTL.Library) -> (vertex_pos
 	vertex_function := library->newFunctionWithName(NS.AT("vertex_main"))
 	defer vertex_function->release()
 
-	arg_encoder := vertex_function->newArgumentEncoder(0)
+	arg_encoder := vertex_function->newArgumentEncoderWithBufferIndex(0)
 	defer arg_encoder->release()
 
-	arg_buffer = device->newBuffer(arg_encoder->encodedLength(), {.StorageModeManaged})
-	arg_encoder->setArgumentBufferWithOffset(arg_buffer, 0)
+	arg_buffer = device->newBufferWithLength(arg_encoder->encodedLength(), {.StorageModeManaged})
+	arg_encoder->setArgumentBuffer(arg_buffer, 0)
 	arg_encoder->setBuffer(vertex_positions_buffer, 0, 0)
 	arg_encoder->setBuffer(vertex_colors_buffer,    0, 1)
 	arg_buffer->didModifyRange(NS.Range_Make(0, arg_buffer->length()))
@@ -106,7 +107,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	SDL.GetWindowWMInfo(window, &window_system_info)
 	assert(window_system_info.subsystem == .COCOA)
 
-	native_window := (^NS.Window)(window_system_info.info.cocoa.window)
+	native_window := (^AK.Window)(window_system_info.info.cocoa.window)
 
 	device := MTL.CreateSystemDefaultDevice()
 	defer device->release()
