@@ -5,7 +5,8 @@ import "base:intrinsics"
 import "core:os"
 import "core:math"
 import "core:fmt"
-import NS "core:sys/darwin/Foundation"
+import NS "vendor:darwin/AppKit"
+import ObjC "core:sys/darwin/ObjectiveC"
 
 import MTL "vendor:darwin/Metal"
 import CA "vendor:darwin/QuartzCore"
@@ -35,12 +36,12 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		NS.Float(math.floor(f64(screen_rect.size.height - window_size.height) / 2)),
 	}
 
-	CustomWindowClass := NS.objc_allocateClassPair(intrinsics.objc_find_class("NSWindow"), "CustomWindow", 0)
+	CustomWindowClass := ObjC.objc_allocateClassPair(intrinsics.objc_find_class("NSWindow"), "CustomWindow", 0)
 	assert(CustomWindowClass != nil)
 	keyDown :: proc "c" (self: NS.id, sel: NS.SEL, event: ^NS.Event) { /* ignore key down events */ }
-	NS.class_addMethod(CustomWindowClass, intrinsics.objc_find_selector("keyDown:"), NS.IMP(keyDown), "v@:@")
-	NS.objc_registerClassPair(CustomWindowClass)
-	window := cast(^NS.Window)(NS.class_createInstance(CustomWindowClass, size_of(NS.Window)))
+	ObjC.class_addMethod(CustomWindowClass, intrinsics.objc_find_selector("keyDown:"), ObjC.IMP(keyDown), "v@:@")
+	ObjC.objc_registerClassPair(CustomWindowClass)
+	window := cast(^NS.Window)(ObjC.class_createInstance(CustomWindowClass, size_of(NS.Window)))
 	defer window->release()
 	window->initWithContentRect({window_origin, window_size}, { .Resizable, .Closable, .Titled, .Miniaturizable }, .Buffered, NS.NO)
 	window->setDelegate(NS.window_delegate_register_and_alloc({
@@ -78,7 +79,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 	vertex_positions_buffer, vertex_colors_buffer, arg_buffer := build_buffers(device, library)
 	defer arg_buffer->release()
 
-	frame_data_buffer := device->newBuffer(size_of(Frame_Data), {.StorageModeManaged})
+	frame_data_buffer := device->newBufferWithLength(size_of(Frame_Data), {.StorageModeManaged})
 	defer frame_data_buffer->release()
 
 	command_queue := device->newCommandQueue()
@@ -116,7 +117,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 			app->updateWindows()
 		}
 
-		frame_data := (^Frame_Data)(frame_data_buffer->contentsPointer())
+		frame_data := (^Frame_Data)(frame_data_buffer->contents())
 		frame_data.angle = angle
 		frame_data_buffer->didModifyRange(NS.Range_Make(0, size_of(Frame_Data)))
 
@@ -234,11 +235,11 @@ build_buffers :: proc(device: ^MTL.Device, library: ^MTL.Library) -> (vertex_pos
 	vertex_function := library->newFunctionWithName(NS.AT("vertex_main"))
 	defer vertex_function->release()
 
-	arg_encoder := vertex_function->newArgumentEncoder(0)
+	arg_encoder := vertex_function->newArgumentEncoderWithBufferIndex(0)
 	defer arg_encoder->release()
 
-	arg_buffer = device->newBuffer(arg_encoder->encodedLength(), {.StorageModeManaged})
-	arg_encoder->setArgumentBufferWithOffset(arg_buffer, 0)
+	arg_buffer = device->newBufferWithLength(arg_encoder->encodedLength(), {.StorageModeManaged})
+	arg_encoder->setArgumentBuffer(arg_buffer, 0)
 	arg_encoder->setBuffer(vertex_positions_buffer, 0, 0)
 	arg_encoder->setBuffer(vertex_colors_buffer,    0, 1)
 	arg_buffer->didModifyRange(NS.Range_Make(0, arg_buffer->length()))

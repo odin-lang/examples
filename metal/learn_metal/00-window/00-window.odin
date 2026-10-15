@@ -1,6 +1,6 @@
 package main
 
-import NS  "core:sys/darwin/Foundation"
+import NS  "vendor:darwin/AppKit"
 import MTL "vendor:darwin/Metal"
 import CA  "vendor:darwin/QuartzCore"
 

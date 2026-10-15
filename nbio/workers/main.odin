@@ -22,6 +22,8 @@ import "core:time"
 Connection :: struct {
 	loop:   ^nbio.Event_Loop,
 	socket: nbio.TCP_Socket,
+	// What is sent has to outlive `do_work`, as the send completes later on the main thread.
+	bufs:   [1][]byte,
 }
 
 main :: proc() {
@@ -67,7 +69,8 @@ main :: proc() {
 
 		// Work has been done, we can now tell the client about it.
 		// NOTE: that we pass the event loop of the main IO thread here so it queues it on that.
-		nbio.send_poly(connection.socket, {transmute([]byte)string("Hellope!\n")}, connection, on_sent, l=connection.loop)
+		connection.bufs = {transmute([]byte)string("Hellope!\n")}
+		nbio.send_poly(connection.socket, connection.bufs[:], connection, on_sent, l=connection.loop)
 	}
 
 	on_sent :: proc(op: ^nbio.Operation, connection: ^Connection) {
