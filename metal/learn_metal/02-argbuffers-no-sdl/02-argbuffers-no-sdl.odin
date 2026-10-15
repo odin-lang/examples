@@ -5,8 +5,7 @@ import "base:intrinsics"
 import "core:os"
 import "core:math"
 import "core:fmt"
-import NS "core:sys/darwin/Foundation"
-import AK "vendor:darwin/AppKit"
+import NS "vendor:darwin/AppKit"
 import ObjC "core:sys/darwin/ObjectiveC"
 
 import MTL "vendor:darwin/Metal"
@@ -23,14 +22,14 @@ main :: proc() {
 metal_main :: proc() -> (err: ^NS.Error) {
 	@static quit := false
 
-	app := AK.Application.sharedApplication()
+	app := NS.Application.sharedApplication()
 	defer app->release()
 	app->setActivationPolicy(.Regular) // without this window is not brought to foreground on launch
 	app->finishLaunching()
 
 	create_main_menu(app)
 
-	screen_rect := AK.Screen.mainScreen()->visibleFrame()
+	screen_rect := NS.Screen.mainScreen()->visibleFrame()
 	window_size := NS.Size{800, 600}
 	window_origin: NS.Point =  {
 		NS.Float(math.floor(f64(screen_rect.size.width - window_size.width) / 2)),
@@ -39,13 +38,13 @@ metal_main :: proc() -> (err: ^NS.Error) {
 
 	CustomWindowClass := ObjC.objc_allocateClassPair(intrinsics.objc_find_class("NSWindow"), "CustomWindow", 0)
 	assert(CustomWindowClass != nil)
-	keyDown :: proc "c" (self: NS.id, sel: NS.SEL, event: ^AK.Event) { /* ignore key down events */ }
+	keyDown :: proc "c" (self: NS.id, sel: NS.SEL, event: ^NS.Event) { /* ignore key down events */ }
 	ObjC.class_addMethod(CustomWindowClass, intrinsics.objc_find_selector("keyDown:"), ObjC.IMP(keyDown), "v@:@")
 	ObjC.objc_registerClassPair(CustomWindowClass)
-	window := cast(^AK.Window)(ObjC.class_createInstance(CustomWindowClass, size_of(AK.Window)))
+	window := cast(^NS.Window)(ObjC.class_createInstance(CustomWindowClass, size_of(NS.Window)))
 	defer window->release()
 	window->initWithContentRect({window_origin, window_size}, { .Resizable, .Closable, .Titled, .Miniaturizable }, .Buffered, NS.NO)
-	window->setDelegate(AK.window_delegate_register_and_alloc({
+	window->setDelegate(NS.window_delegate_register_and_alloc({
 		windowWillClose = proc(^NS.Notification) {
 			quit = true
 		},
@@ -92,12 +91,12 @@ metal_main :: proc() -> (err: ^NS.Error) {
 		{
 			NS.scoped_autoreleasepool()
 			// Use `NS.Date.distantFuture()` for `expiration` param, so that we idle without wasting any CPU while waiting for events.
-			event := app->nextEventMatchingMask(AK.EventMaskAny, NS.Date.distantFuture(), NS.DefaultRunLoopMode, true)
+			event := app->nextEventMatchingMask(NS.EventMaskAny, NS.Date.distantFuture(), NS.DefaultRunLoopMode, true)
 			for event != nil {
 				event_type := event->type()
 				#partial switch event_type {
 				case .KeyDown, .KeyUp:
-					code := AK.kVK(event->keyCode())
+					code := NS.kVK(event->keyCode())
 					#partial switch code {
 					case .Escape:
 						quit = true
@@ -113,7 +112,7 @@ metal_main :: proc() -> (err: ^NS.Error) {
 				app->sendEvent(event)
 
 				// Once we wake up from idle, process all events in the queue before we can idle again.
-				event = app->nextEventMatchingMask(AK.EventMaskAny, nil, NS.DefaultRunLoopMode, true)
+				event = app->nextEventMatchingMask(NS.EventMaskAny, nil, NS.DefaultRunLoopMode, true)
 			}
 			app->updateWindows()
 		}
@@ -248,21 +247,21 @@ build_buffers :: proc(device: ^MTL.Device, library: ^MTL.Library) -> (vertex_pos
 	return
 }
 
-create_main_menu :: proc(app: ^AK.Application) {
-	main_menu := AK.Menu.alloc()->init()
-	main_menu->addItem(AK.MenuItem.alloc()->init())
+create_main_menu :: proc(app: ^NS.Application) {
+	main_menu := NS.Menu.alloc()->init()
+	main_menu->addItem(NS.MenuItem.alloc()->init())
 
 	main_menu_app_item := main_menu->addItemWithTitle(NS.AT("Metal"), nil, NS.AT(""))
-	app_menu := AK.Menu.alloc()->init()
+	app_menu := NS.Menu.alloc()->init()
 	app_menu->addItemWithTitle(NS.AT("Quit"), intrinsics.objc_find_selector("terminate:"), NS.AT("q"))
 	main_menu_app_item->setSubmenu(app_menu)
 
 	main_menu_edit_item := main_menu->addItemWithTitle(NS.AT("Edit"), nil, NS.AT(""))
-	edit_menu := AK.Menu.alloc()->init()
+	edit_menu := NS.Menu.alloc()->init()
 	main_menu_edit_item->setSubmenu(edit_menu)
 
 	main_menu_view_item := main_menu->addItemWithTitle(NS.AT("View"), nil, NS.AT(""))
-	view_menu := AK.Menu.alloc()->init()
+	view_menu := NS.Menu.alloc()->init()
 	view_menu->addItemWithTitle(NS.AT("Enter Full Screen"), intrinsics.objc_find_selector("toggleFullScreen:"), NS.AT("f"))
 	main_menu_view_item->setSubmenu(view_menu)
 
