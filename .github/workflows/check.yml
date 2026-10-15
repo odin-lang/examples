@@ -87,6 +87,7 @@ jobs:
           odin check raylib/ports/textures/textures_npatch_drawing.odin -file $FLAGS
           odin check raylib/ports/textures/textures_background_scrolling.odin -file $FLAGS
           odin check raylib/ports/textures/textures_blend_modes.odin -file $FLAGS
+          odin check raylib/ports/textures/textures_mouse_painting.odin -file $FLAGS
           odin check raylib/tetroid $FLAGS
           odin check raylib/box2d $FLAGS
           odin check raylib/ports/core/core_3d_camera_fps.odin -file $FLAGS
