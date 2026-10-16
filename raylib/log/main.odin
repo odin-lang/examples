@@ -32,18 +32,8 @@ main :: proc() {
 		case:                log.panicf("unexpected log level %v", rl_level)
 		}
 
-		@static buf: [dynamic]byte
-		log_len: i32
-		for {
-			buf_len := i32(len(buf))
-			log_len = stbsp.vsnprintf(raw_data(buf), buf_len, message, args)
-			if log_len <= buf_len {
-				break
-			}
-
-			non_zero_resize(&buf, max(128, len(buf)*2))
-		}
-
+		buf: [1024]byte
+		log_len := stbsp.vsnprintf(raw_data(buf[:]), i32(len(buf)), message, args)
 		context.logger.procedure(context.logger.data, level, string(buf[:log_len]), context.logger.options)
 	})
 
