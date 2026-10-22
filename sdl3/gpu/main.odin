@@ -298,7 +298,7 @@ load_texture :: proc(r: ^Renderer, path: string) -> (res: Texture) {
 	defer delete(cpath)
 
 	surface := sdl3.LoadPNG(cpath)
-	fmt.assertf(r.pipeline != nil, "failed to load image %s: %s", path, sdl3.GetError())
+	fmt.assertf(surface != nil, "failed to load image %s: %s", path, sdl3.GetError())
 	defer sdl3.DestroySurface(surface)
 
 	converted := sdl3.ConvertSurface(surface, .ABGR8888)
