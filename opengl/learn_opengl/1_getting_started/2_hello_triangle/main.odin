@@ -83,9 +83,9 @@ main :: proc() {
 	gl.AttachShader(shaderProgram, fragmentShader)
 	gl.LinkProgram(shaderProgram)
 
-	gl.GetProgramiv(fragmentShader, gl.LINK_STATUS, &success)
+	gl.GetProgramiv(shaderProgram, gl.LINK_STATUS, &success)
 	if success != 1 {
-		gl.GetProgramInfoLog(fragmentShader, 512, nil, raw_data(&infoLog))
+		gl.GetProgramInfoLog(shaderProgram, 512, nil, raw_data(&infoLog))
 		os.exit(-1)
 	}
 
