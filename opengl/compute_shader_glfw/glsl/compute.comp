@@ -1,0 +1,13 @@
+#version 430 core
+
+layout (local_size_x = 10, local_size_y = 10, local_size_z = 1) in;
+layout(rgba32f, binding = 0) uniform image2D out_colorbuffer;
+
+void main() {
+	vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
+	ivec2 texel_coord = ivec2(gl_GlobalInvocationID.xy);
+	vec2 pos = vec2(float(texel_coord.x) / (gl_NumWorkGroups.x * gl_WorkGroupSize.x), float(texel_coord.y) / (gl_NumWorkGroups.y * gl_WorkGroupSize.y));
+	// NOTE: Do stuff here and then store the color in the colorbuffer
+	color.xy = pos; // <-- Replace this
+	imageStore(out_colorbuffer, texel_coord, color);
+}
