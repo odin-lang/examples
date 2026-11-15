@@ -16,7 +16,7 @@ processInput :: proc "c" (window: glfw.WindowHandle) {
 	}
 }
 
-vertexShaderSource: cstring = 
+vertexShaderSource: cstring =
 `#version 330 core
 layout (location = 0) in vec3 aPos;
 void main()
@@ -24,7 +24,7 @@ void main()
 	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
 }`
 
-fragmentShaderSource: cstring = 
+fragmentShaderSource: cstring =
 `#version 330 core
 out vec4 FragColor;
 
@@ -83,9 +83,9 @@ main :: proc() {
 	gl.AttachShader(shaderProgram, fragmentShader)
 	gl.LinkProgram(shaderProgram)
 
-	gl.GetProgramiv(fragmentShader, gl.LINK_STATUS, &success)
+	gl.GetProgramiv(shaderProgram, gl.LINK_STATUS, &success)
 	if success != 1 {
-		gl.GetProgramInfoLog(fragmentShader, 512, nil, raw_data(&infoLog))
+		gl.GetProgramInfoLog(shaderProgram, 512, nil, raw_data(&infoLog))
 		os.exit(-1)
 	}
 
@@ -93,7 +93,7 @@ main :: proc() {
 	gl.DeleteShader(fragmentShader)
 
 	vertices := [?]f32 {
-		 0.5,  0.5, 0.0, 
+		 0.5,  0.5, 0.0,
          0.5, -0.5, 0.0,
         -0.5, -0.5, 0.0,
         -0.5,  0.5, 0.0,
@@ -119,7 +119,7 @@ main :: proc() {
 
 	gl.VertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 3 * size_of(f32), 0)
 	gl.EnableVertexAttribArray(0)
-	
+
 	gl.BindBuffer(gl.ARRAY_BUFFER, 0)
 	gl.BindVertexArray(0)
 
