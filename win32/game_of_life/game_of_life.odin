@@ -256,7 +256,7 @@ WM_PAINT :: proc(hwnd: win32.HWND) -> win32.LRESULT {
 
 		win32.SelectObject(hdc_source, win32.HGDIOBJ(app.hbitmap))
 		client_size := get_rect_size(&ps.rcPaint)
-		win32.StretchBlt(hdc, 0, 0, client_size.x, client_size.y, hdc_source, 0, 0, app.size.x, app.size.y, win32.SRCCOPY)
+		win32.StretchBlt(hdc, ps.rcPaint.left, ps.rcPaint.top, client_size.x, client_size.y, hdc_source, 0, 0, app.size.x, app.size.y, win32.SRCCOPY)
 	}
 
 	if show_help {
