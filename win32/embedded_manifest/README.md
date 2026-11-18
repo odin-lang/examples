@@ -1,7 +1,7 @@
 # Embedded manifest example
 
 Windows executables can contain manifests.
-Manifests are metadata can control various aspects before and during program execution.
+Manifests are metadata that can control various aspects before and during program execution.
 The most common use cases are:
 
 * UAC awareness (for privilege escalation)
