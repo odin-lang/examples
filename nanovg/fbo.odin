@@ -94,7 +94,7 @@ main :: proc() {
 
 	fw, fh := glfw.GetFramebufferSize(window)
 	w, h := glfw.GetWindowSize(window)
-	px_ratio := f32(fw) / f32(fw)
+	px_ratio := f32(fw) / f32(w)
 	fb := nvg_gl.CreateFramebuffer(
 		ctx,
 		int(100 * px_ratio),
@@ -112,7 +112,7 @@ main :: proc() {
 
 		fw, fh = glfw.GetFramebufferSize(window)
 		w, h = glfw.GetWindowSize(window)
-		px_ratio = f32(fw) / f32(fw)
+		px_ratio = f32(fw) / f32(w)
 
 		renderPattern(ctx, &fb, f32(t), px_ratio)
 
